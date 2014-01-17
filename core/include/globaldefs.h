@@ -1,0 +1,12 @@
+#ifndef MEDIAMODEL_GLOBAL_H
+#define MEDIAMODEL_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(MEDIAMODEL_LIBRARY)
+#  define MEDIAMODELSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define MEDIAMODELSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // MEDIAMODEL_GLOBAL_H
