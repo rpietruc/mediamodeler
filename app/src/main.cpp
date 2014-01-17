@@ -5,7 +5,7 @@
 int main(int argc, char *argv[])
     {
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
-    QApplication::setOrganizationName("mediamodeler");
+    QApplication::setOrganizationName("qmediamodeler");
     QApplication::setApplicationName("app");
     QApplication a(argc, argv);
     MainWindow mainWindow;

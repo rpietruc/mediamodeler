@@ -1,6 +1,6 @@
 include(../config.pri)
 QT += widgets
-TARGET = mediamodeler
+TARGET = qmediamodeler
 CONFIG += console
 CONFIG += debug_and_release
 CONFIG(debug, debug|release):TARGET = $$join(TARGET,,,_debug)
