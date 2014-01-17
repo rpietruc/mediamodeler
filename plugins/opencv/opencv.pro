@@ -1,7 +1,6 @@
 CONFIG  += ordered
 TEMPLATE = subdirs
 SUBDIRS += pictureframes
-SUBDIRS += contourapproximation
 SUBDIRS += picturefilesource
 SUBDIRS += picturefiledestination
 SUBDIRS += picturerenderdestination
@@ -20,6 +19,5 @@ SUBDIRS += picturewatershedtransform
 SUBDIRS += picturesmoothingtransform
 SUBDIRS += picturemorphologytransform
 SUBDIRS += picturethresholdtransform
-SUBDIRS += pictureapproximationtransform
 SUBDIRS += videofilesource
 SUBDIRS += videocamerasource
