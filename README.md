@@ -21,12 +21,14 @@ Main author:
 Build instructions
 ------------------
 
-Build project using qmake (from the main directory, binaries will be put into the 'bin' subdirectory)
-Create makefiles e.g:
-    qmake mediamodeler.pro -r -spec linux-g++ CONFIG+=debug INCLUDEPATH+=/usr/include/qt INCLUDEPATH+=/usr/include/ITK-4.3
+Build project using qmake (from the main directory, output files will be put into the 'bin' subdirectory)
+Create makefiles, compile and install:
+    qmake mediamodeler.pro -r -spec linux-g++ CONFIG+=debug INCLUDEPATH+=/usr/include/ITK-4.3
     make -j10
+    sudo make install
 
-Run application using libraries, plugins from 'bin' subdirectory
-    cd bin
-    LD_LIBRARY_PATH=. ./app
+Run application:
+    LD_LIBRARY_PATH=/usr/local/lib ./mediamodeler_debug
+
+Open some ini file from 'ini' directory to build processing graph...
 
