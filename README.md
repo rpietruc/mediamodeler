@@ -23,11 +23,15 @@ Build instructions
 
 Build project using qmake (from the main directory, output files will be put into the 'bin' subdirectory)
 Create makefiles, compile and install:
+
     qmake qmediamodeler.pro -r -spec linux-g++ CONFIG+=debug INCLUDEPATH+=/usr/include/ITK-4.3
+
     make -j10
+
     sudo make install
 
 Run application:
+
     LD_LIBRARY_PATH=/usr/local/lib ./qmediamodeler_debug
 
 Open some ini file from 'ini' directory to build processing graph...
