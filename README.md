@@ -32,7 +32,7 @@ Create makefiles, compile and install:
 
 Run application:
 
-    LD_LIBRARY_PATH=/usr/local/lib ./qmediamodeler_debug
+    LD_LIBRARY_PATH=/usr/local/lib qmediamodeler_debug
 
 Open some ini file from 'ini' directory to build processing graph...
 
