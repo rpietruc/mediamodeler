@@ -14,6 +14,7 @@ SOURCES += \
     src/elementbase.cpp
 
 HEADERS += \
+    include/globaldefs.h \
     include/matrixframe.h \
     include/modelcreator.h \
     include/elementbase.h \
