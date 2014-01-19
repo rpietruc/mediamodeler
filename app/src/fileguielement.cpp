@@ -10,6 +10,7 @@ FileGuiElement::FileGuiElement(QWidget *aParent) :
     {
     mUi->setupUi(this);
     mUi->pushButton->setText("Open File ...");
+    mFileDialog.setFileMode(QFileDialog::AnyFile);
 
     QObject::connect(&mFileDialog, SIGNAL(fileSelected(QString)), this, SLOT(fileOpen(QString)));
     QObject::connect(mUi->pushButton, SIGNAL(clicked()), &mFileDialog, SLOT(show()));
@@ -37,6 +38,7 @@ FilesGuiElement::FilesGuiElement(QWidget *aParent) :
     {
     mUi->setupUi(this);
     mUi->pushButton->setText("Open Files ...");
+    mFileDialog.setFileMode(QFileDialog::ExistingFiles);
 
     QObject::connect(&mFileDialog, SIGNAL(filesSelected(QStringList)), this, SLOT(filesOpen(QStringList)));
     QObject::connect(mUi->pushButton, SIGNAL(pressed()), &mFileDialog, SLOT(show()));
