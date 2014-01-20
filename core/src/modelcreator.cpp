@@ -3,17 +3,23 @@
 
 namespace media {
 
-ModelCreator::ModelCreator(const QDir& aDir, QObject *aParent) :
+ModelCreator::ModelCreator(QObject *aParent) :
     QObject(aParent)
     {
-    ElementFactoryContainer *factoryContainer = new ElementFactoryContainer(this);
-    factoryContainer->load(aDir);
-    factoryContainer->getElementFactoryList(mFactoryList);
     }
 
 ModelCreator::~ModelCreator()
     {
     clearModel();
+    }
+
+int ModelCreator::loadElements(const QDir& aDir)
+    {
+    int size = mFactoryList.size();
+    ElementFactoryContainer *factoryContainer = new ElementFactoryContainer(this);
+    factoryContainer->load(aDir);
+    factoryContainer->getElementFactoryList(mFactoryList);
+    return mFactoryList.size() - size; //new elements no
     }
 
 void ModelCreator::clearModel()

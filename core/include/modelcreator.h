@@ -11,9 +11,10 @@ class ModelCreator : public QObject
     Q_OBJECT
 
 public:
-    ModelCreator(const QDir& aDir, QObject *aParent = NULL);
+    ModelCreator(QObject *aParent = NULL);
     ~ModelCreator();
 
+    int loadElements(const QDir& aDir);
     void clearModel();
 
     int addElement(const QString &aName);

@@ -18,10 +18,13 @@ using namespace media;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     mUi(new Ui::MainWindow),
-    mCreator(new ModelCreator(QDir(INSTALL_PLUGINS), this))
+    mCreator(new ModelCreator(this))
     {
     mUi->setupUi(this);
-
+    mCreator->loadElements(QDir(INSTALL_PLUGINS));
+#ifndef QT_NO_DEBUG
+    mCreator->loadElements(qApp->applicationDirPath());
+#endif
     QString modelPath = QSettings(QApplication::organizationName(), QApplication::applicationName()).value(QString("model/last")).toString();
     if (!modelPath.isEmpty())
         {
