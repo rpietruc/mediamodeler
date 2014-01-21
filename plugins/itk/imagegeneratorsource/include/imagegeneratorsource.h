@@ -40,7 +40,6 @@ private:
 private:
     ColorImageFrame mImageFrame;
     ColorImageFrame::ImageType::SizeType mSize;
-    const QVector<QString> mDescriptions;
     };
 
 class IMAGEGENERATORSHARED_EXPORT ImageGeneratorSourceFactory : public ElementFactory

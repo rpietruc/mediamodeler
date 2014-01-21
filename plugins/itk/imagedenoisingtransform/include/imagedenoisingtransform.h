@@ -39,7 +39,6 @@ private:
     GrayImageFrame mImageFrame;
     int mIterations;
     double mTimeStep;
-    const QVector<QString> mDescriptions;
     };
 
 class IMAGEDENOISINGSHARED_EXPORT ImageDenoisingTransformFactory : public ElementFactory

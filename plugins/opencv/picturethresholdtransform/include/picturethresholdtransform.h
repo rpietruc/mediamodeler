@@ -41,7 +41,6 @@ private:
     double mThreshold;
     double mMaxValue;
     int mType;
-    const QVector<QString> mDescriptions;
     };
 
 class PICTURETHRESHOLDSHARED_EXPORT PictureThresholdTransformFactory : public ElementFactory

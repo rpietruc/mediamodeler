@@ -36,7 +36,6 @@ private:
     ColorImageFrame mImageFrame;
 
     itk::FixedArray<float, 2> mScale;
-    const QVector<QString> mDescriptions;
     };
 
 class IMAGESCALESHARED_EXPORT ImageScaleTransformFactory : public ElementFactory

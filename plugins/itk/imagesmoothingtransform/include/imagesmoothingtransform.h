@@ -40,7 +40,6 @@ private:
 
     double mRangeSigma;
     double mDomainSigma;
-    const QVector<QString> mDescriptions;
     };
 
 class IMAGESMOOTHINGSHARED_EXPORT ImageSmoothingTransformFactory : public ElementFactory
