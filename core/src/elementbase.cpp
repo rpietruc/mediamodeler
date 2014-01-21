@@ -80,7 +80,7 @@ void ElementFactoryContainer::load(const QDir& aDir)
 #ifndef QT_NO_DEBUG
     filters << "*source_debug.so" << "*transform_debug.so" << "*destination_debug.so";
 #else
-    filters << "*destination.so" << "*transform.so" << "*destination.so";
+    filters << "*source.so" << "*transform.so" << "*destination.so";
 #endif
     dir.setNameFilters(filters);
 

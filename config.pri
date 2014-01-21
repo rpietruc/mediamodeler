@@ -1,13 +1,11 @@
 # Install paths
 
-QMM_INSTALL_PREFIX = $$[QT_INSTALL_PREFIX]
-
 unix {
-    QMM_INSTALL_PREFIX    = /usr/local
+    QMM_INSTALL_PREFIX = /usr/local
 }
 
 win32 {
-    QMM_INSTALL_PREFIX    = C:/qmediamodeler
+    QMM_INSTALL_PREFIX = C:/qmediamodeler
 }
 
 QMM_INSTALL_BIN     = $${QMM_INSTALL_PREFIX}/bin
