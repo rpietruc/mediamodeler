@@ -16,18 +16,19 @@ This software is distributed under license:
 Main authors:
 
 * Rafal Pietruch
-  
+
     
 Build instructions
 ------------------
 
 Project was successfully built by the authors on Archlinux OS.
-Prerequirements: qt5-base, qt5-multimedia, insight-toolkit, opencv, alsa-lib, libsndfile, qcustomplot-qt5, ffmpeg
-Build project using qmake (from the main directory, output files will be put into the 'bin' subdirectory)
+Prerequirements: qt5-base, qt5-multimedia, qwt-qt5, insight-toolkit, opencv, alsa-lib, libsndfile, qcustomplot-qt5, ffmpeg.
+
+Build project using qmake (from the main directory, output files will be put into the 'bin' directory)
 Create makefiles and compile:
 
-    qmake qmediamodeler.pro -r INCLUDEPATH+=/usr/include/ITK-4.3
-    make -j10
+    qmake-qt5 qmediamodeler.pro -r INCLUDEPATH+=/usr/include/ITK-4.3
+    make
 
 Install (default prefix: /usr/local, defined in config.pri)
 
@@ -38,4 +39,3 @@ Run application:
     LD_LIBRARY_PATH=/usr/local/lib qmediamodeler
 
 Open some ini file from 'ini' directory to build processing graph...
-
