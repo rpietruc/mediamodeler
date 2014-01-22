@@ -5,10 +5,10 @@
 #include "elementbase.h"
 #include <QtCore/qglobal.h>
 
-#if defined(IMAGEADD_LIBRARY)
-#  define IMAGEADDSHARED_EXPORT Q_DECL_EXPORT
+#if defined(IMAGEADDTRANSFORM_LIBRARY)
+#  define IMAGEADDTRANSFORMSHARED_EXPORT Q_DECL_EXPORT
 #else
-#  define IMAGEADDSHARED_EXPORT Q_DECL_IMPORT
+#  define IMAGEADDTRANSFORMSHARED_EXPORT Q_DECL_IMPORT
 #endif
 
 namespace media {
@@ -16,7 +16,7 @@ namespace media {
 /*! Curvature flow image filter for producing homogeneous regions
  */
 
-class IMAGEADDSHARED_EXPORT ImageAddTransform : public ElementBase
+class IMAGEADDTRANSFORMSHARED_EXPORT ImageAddTransform : public ElementBase
     {
     Q_OBJECT
 
@@ -34,7 +34,7 @@ private:
     GrayImageFrame mImageFrame;
     };
 
-class IMAGEADDSHARED_EXPORT ImageAddTransformFactory : public ElementFactory
+class IMAGEADDTRANSFORMSHARED_EXPORT ImageAddTransformFactory : public ElementFactory
     {
     Q_OBJECT
     Q_INTERFACES(media::ElementFactory)
