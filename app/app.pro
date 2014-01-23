@@ -36,6 +36,7 @@ FORMS += \
 
 #DESTDIR = ../bin
 
+#TODO: move project to CMake to get rid of this strange code
 DEFINES += INSTALL_PLUGINS=\\\"$${QMM_INSTALL_PLUGINS}\\\"
 DEFINES += INSTALL_INI=\\\"$${QMM_INSTALL_INI}\\\"
 target.path = $${QMM_INSTALL_BIN}
