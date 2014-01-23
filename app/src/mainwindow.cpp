@@ -22,16 +22,19 @@ MainWindow::MainWindow(QWidget *parent) :
     {
     mUi->setupUi(this);
     mCreator->loadElements(QDir(INSTALL_PLUGINS));
+    QString modelDir = INSTALL_INI;
 #ifndef QT_NO_DEBUG
     mCreator->loadElements(qApp->applicationDirPath());
+    modelDir = qApp->applicationDirPath() + "/app/ini";
 #endif
     QString modelPath = QSettings(QApplication::organizationName(), QApplication::applicationName()).value(QString("model/last")).toString();
     if (!modelPath.isEmpty())
         {
         mUi->groupBox->setTitle(modelPath);
         loadModel(modelPath);
+        modelDir = QDir().absoluteFilePath(modelPath);
         }
-    QFileDialog *fileDialog = new QFileDialog(this, "Choose Model", QDir().absoluteFilePath(modelPath), "*.ini");
+    QFileDialog *fileDialog = new QFileDialog(this, "Choose Model", modelDir, "*.ini");
     QObject::connect(mUi->actionOpen, SIGNAL(triggered()), fileDialog, SLOT(show()));
     QObject::connect(fileDialog, SIGNAL(fileSelected(QString)), this, SLOT(loadModel(QString)));
 //    QObject::connect(mUi->actionRun, SIGNAL(toggled(bool)), mUi->actionRun, SLOT(setDisabled(bool)), Qt::QueuedConnection);
