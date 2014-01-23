@@ -2,7 +2,7 @@ include(../../../config.pri)
 TEMPLATE = lib
 CONFIG += staticlib
 CONFIG += debug_and_release
-CONFIG(debug, debug|release):TARGET = $$join(TARGET,,,_debug)
+#CONFIG(debug, debug|release):TARGET = $$join(TARGET,,,_debug)
 
 SOURCES += \
     src/imageframes.cpp
@@ -13,12 +13,11 @@ HEADERS += \
 DEPENDPATH = include
 DEPENDPATH += ../../../core/include
 INCLUDEPATH += $$DEPENDPATH
-#INCLUDEPATH += /usr/include/ITK-4.3
 
 LIBS += -lITKCommon-4.3 \
     -litkvnl-4.3
 
-DESTDIR = ../../../bin
+#DESTDIR = ../../../bin
 
 target.path = $${QMM_INSTALL_LIBS}
 INSTALLS = target

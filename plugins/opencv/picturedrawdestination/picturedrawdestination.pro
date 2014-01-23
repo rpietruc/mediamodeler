@@ -3,7 +3,7 @@ QT += widgets
 TEMPLATE = lib
 CONFIG += plugin
 CONFIG += debug_and_release
-CONFIG(debug, debug|release):TARGET = $$join(TARGET,,,_debug)
+#CONFIG(debug, debug|release):TARGET = $$join(TARGET,,,_debug)
 DEFINES += PLUGINTARGETNAME=$$TARGET
 DEFINES += PICTUDRAWDESTINATION_LIBRARY
 
@@ -23,7 +23,7 @@ INCLUDEPATH = $$DEPENDPATH
 FORMS += \
     forms/drawwidget.ui
 
-DESTDIR = ../../../bin
+#DESTDIR = ../../../bin
 
 target.path = $${QMM_INSTALL_PLUGINS}
 INSTALLS = target

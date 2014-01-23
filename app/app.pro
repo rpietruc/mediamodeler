@@ -3,7 +3,7 @@ QT += widgets
 TARGET = qmediamodeler
 CONFIG += console
 CONFIG += debug_and_release
-CONFIG(debug, debug|release):TARGET = $$join(TARGET,,,_debug)
+#CONFIG(debug, debug|release):TARGET = $$join(TARGET,,,_debug)
 CONFIG -= app_bundle
 TEMPLATE = app
 
@@ -11,9 +11,10 @@ DEPENDPATH = include
 DEPENDPATH += ../core/include
 INCLUDEPATH = $$DEPENDPATH
 
-CONFIG(debug, debug|release):unix:LIBS += -L../bin \
-    -lmodelcore_debug
-else:unix:LIBS += -L../bin \
+#CONFIG(debug, debug|release):unix:LIBS += -L../core \
+#    -lmodelcore_debug
+#else:unix:
+LIBS += -L../core \
     -lmodelcore
 
 SOURCES += \
@@ -33,7 +34,7 @@ FORMS += \
     forms/fileguielement.ui \
     forms/guielementlist.ui
 
-DESTDIR = ../bin
+#DESTDIR = ../bin
 
 DEFINES += INSTALL_PLUGINS=\\\"$${QMM_INSTALL_PLUGINS}\\\"
 DEFINES += INSTALL_INI=\\\"$${QMM_INSTALL_INI}\\\"

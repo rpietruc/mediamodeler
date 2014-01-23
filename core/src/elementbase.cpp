@@ -77,11 +77,7 @@ void ElementFactoryContainer::load(const QDir& aDir)
     QDir dir = aDir;
     //qDebug() << dir.absolutePath();
     QStringList filters;
-#ifndef QT_NO_DEBUG
-    filters << "*source_debug.so" << "*transform_debug.so" << "*destination_debug.so";
-#else
     filters << "*source.so" << "*transform.so" << "*destination.so";
-#endif
     dir.setNameFilters(filters);
 
     foreach (QString fileName, dir.entryList(QDir::Files))

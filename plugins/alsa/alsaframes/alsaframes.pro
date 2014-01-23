@@ -2,7 +2,7 @@ include(../../../config.pri)
 TEMPLATE = lib
 CONFIG += staticlib
 CONFIG += debug_and_release
-CONFIG(debug, debug|release):TARGET = $$join(TARGET,,,_debug)
+#CONFIG(debug, debug|release):TARGET = $$join(TARGET,,,_debug)
 
 DEPENDPATH = include
 DEPENDPATH += ../../../core/include
@@ -13,7 +13,7 @@ SOURCES += \
 HEADERS += \
     include/alsaframe.h
 
-DESTDIR = ../../../bin
+#DESTDIR = ../../../bin
 
 target.path = $${QMM_INSTALL_LIBS}
 INSTALLS = target

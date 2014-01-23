@@ -2,7 +2,7 @@ include(../config.pri)
 TARGET = modelcore
 TEMPLATE = lib
 CONFIG += debug_and_release
-CONFIG(debug, debug|release):TARGET = $$join(TARGET,,,_debug)
+#CONFIG(debug, debug|release):TARGET = $$join(TARGET,,,_debug)
 DEFINES += MEDIAMODEL_LIBRARY
 
 DEPENDPATH = include
@@ -20,7 +20,7 @@ HEADERS += \
     include/elementbase.h \
     include/framebase.h
 
-DESTDIR = ../bin
+#DESTDIR = ../bin
 
 target.path = $${QMM_INSTALL_LIBS}
 INSTALLS += target

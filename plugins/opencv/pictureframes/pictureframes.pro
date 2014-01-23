@@ -2,7 +2,7 @@ include(../../../config.pri)
 TEMPLATE = lib
 CONFIG += staticlib
 CONFIG += debug_and_release
-CONFIG(debug, debug|release):TARGET = $$join(TARGET,,,_debug)
+#CONFIG(debug, debug|release):TARGET = $$join(TARGET,,,_debug)
 
 SOURCES += \
     src/pictureframes.cpp
@@ -17,7 +17,7 @@ INCLUDEPATH = $$DEPENDPATH
 CONFIG += link_pkgconfig
 PKGCONFIG = opencv
 
-DESTDIR = ../../../bin
+#DESTDIR = ../../../bin
 
 target.path = $${QMM_INSTALL_LIBS}
 INSTALLS = target

@@ -2,7 +2,7 @@ include(../../../config.pri)
 TEMPLATE = lib
 CONFIG += staticlib
 CONFIG += debug_and_release
-CONFIG(debug, debug|release):TARGET = $$join(TARGET,,,_debug)
+#CONFIG(debug, debug|release):TARGET = $$join(TARGET,,,_debug)
 DEFINES += __STDC_CONSTANT_MACROS
 
 DEPENDPATH = include
@@ -22,7 +22,7 @@ LIBS += -lavutil \
     -lswscale \
     -lswresample
 
-DESTDIR = ../../../bin
+#DESTDIR = ../../../bin
 
 target.path = $${QMM_INSTALL_LIBS}
 INSTALLS = target

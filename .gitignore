@@ -4,7 +4,10 @@ Makefile
 Makefile.Debug
 Makefile.Release
 *.pro.user
-bin
+*.so
+*.so.*
+*.a
+qmediamodeler
 debug
 release
 *.o
