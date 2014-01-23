@@ -40,11 +40,29 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
     {
     delete mUi;
+    foreach (QThread* thread, mElemThreads)
+        {
+        thread->wait(1000);
+        thread->terminate();
+        delete thread;
+        }
+    mElemThreads.clear();
     }
 
 void MainWindow::closeEvent(QCloseEvent * /*event*/)
     {
     mCreator->clearModel();
+    }
+
+void MainWindow::releaseModel()
+    {
+    QLayoutItem *item;
+    while ((item = mUi->gridLayout->takeAt(0)) != 0)
+        delete item;
+    mCreator->clearModel();
+    foreach (QWidget* e, mGuiElements)
+        delete e;
+    mGuiElements.clear();
     }
 
 void MainWindow::loadModel(const QString& aFilePath)
@@ -54,13 +72,7 @@ void MainWindow::loadModel(const QString& aFilePath)
     mModelFile = fileInfo.fileName();
     QSettings settings(QApplication::organizationName(), mModelFile);
 
-    QLayoutItem *item;
-    while ((item = mUi->gridLayout->takeAt(0)) != 0)
-        delete item;
-    mCreator->clearModel();
-    foreach (QWidget* e, mGuiElements)
-        delete e;
-    mGuiElements.clear();
+    releaseModel();
 
     int index;
     for (index = 0;; ++index)
@@ -112,9 +124,13 @@ void MainWindow::loadModel(const QString& aFilePath)
         mGuiElements.push_back(group);
         sources.insert(i);
 
-        QThread *elemThread = new QThread(this);
-        elem->moveToThread(elemThread);
-        elemThread->start();
+        if (elem->parent()->thread() == this->thread())
+            {
+            QThread *elemThread = new QThread(this);
+            elem->parent()->moveToThread(elemThread);
+            elemThread->start();
+            mElemThreads.push_back(elemThread);
+            }
         }
 
     for (int i = 0;; ++i)

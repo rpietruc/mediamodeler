@@ -15,6 +15,8 @@ namespace media {
     class ModelCreator;
 }
 
+class QThread;
+
 class MainWindow : public QMainWindow
     {
     Q_OBJECT
@@ -24,6 +26,7 @@ public:
     ~MainWindow();
 
 public slots:
+    void releaseModel();
     void loadModel(const QString &aFilePath);
     void closeEvent(QCloseEvent * event);
     void handleSetting(const QString& aName, const QVariant& aValue);
@@ -32,6 +35,7 @@ private:
     Ui::MainWindow *mUi;
     media::ModelCreator *mCreator;
     QVector<QWidget*> mGuiElements;
+    QVector<QThread*> mElemThreads;
     QString mModelFile;
     };
 

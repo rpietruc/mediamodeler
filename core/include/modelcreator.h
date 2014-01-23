@@ -4,6 +4,8 @@
 #include "elementbase.h"
 #include <QSettings>
 
+class QThread;
+
 namespace media {
 
 class ModelCreator : public QObject
@@ -28,6 +30,7 @@ private:
 private:
     QVector<media::ElementBase*> mElements;
     QList<media::ElementFactory*> mFactoryList;
+    QVector<QThread*> mFactoryThreads;
     };
 
 } // namespace media
