@@ -12,7 +12,7 @@ PictureContourTransform::PictureContourTransform(ElementFactory *aFactory, const
     {
     }
 
-ElementBase::ParamList PictureContourTransform::getParams()
+ElementBase::ParamList PictureContourTransform::getParams() const
     {
     ParamList ret;
     ret["Method"] =  mMethod;

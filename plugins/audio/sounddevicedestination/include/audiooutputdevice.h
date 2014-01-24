@@ -19,6 +19,7 @@ public:
     qint64 writeData(const char *data, qint64 len);
     qint64 bytesAvailable() const;
 
+    const SoundFrame& getSoundFrame() const { return mSoundFrame; }
     SoundFrame& getSoundFrame() { return mSoundFrame; }
 
 signals:

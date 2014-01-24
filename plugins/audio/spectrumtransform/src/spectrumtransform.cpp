@@ -11,7 +11,7 @@ SpectrumTransform::SpectrumTransform(ElementFactory *aFactory, const QString &aO
     mSpectrumFrame.setResolution(512, M_PI);
     }
 
-ElementBase::ParamList SpectrumTransform::getParams()
+ElementBase::ParamList SpectrumTransform::getParams() const
     {
     ParamList ret;
     ret["Resolution"] = mSpectrumFrame.getResolution();

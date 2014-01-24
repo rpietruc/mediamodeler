@@ -15,7 +15,7 @@ SndFileSource::~SndFileSource()
         sf_close(mSoundFile);
     }
 
-ElementBase::ParamList SndFileSource::getParams()
+ElementBase::ParamList SndFileSource::getParams() const
     {
     ParamList ret;
     ret["Files"] =  mPathList;

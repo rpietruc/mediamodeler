@@ -15,7 +15,7 @@ PictureMorphologyTransform::~PictureMorphologyTransform()
     cvReleaseStructuringElement(&mStructuringElement);
     }
 
-ElementBase::ParamList PictureMorphologyTransform::getParams()
+ElementBase::ParamList PictureMorphologyTransform::getParams() const
     {
     ParamList ret;
     ret["Morphology Size"] = mMorphologySize;

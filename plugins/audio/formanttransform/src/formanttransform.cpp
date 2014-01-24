@@ -10,7 +10,7 @@ FormantTransform::FormantTransform(ElementFactory *aFactory, const QString &aObj
     mFormantFrame.setFormantsNo(10);
     }
 
-ElementBase::ParamList FormantTransform::getParams()
+ElementBase::ParamList FormantTransform::getParams() const
     {
     ParamList ret;
     ret["Max Formants"] = mFormantFrame.getDimension(FormantFrame::Formants).mResolution;

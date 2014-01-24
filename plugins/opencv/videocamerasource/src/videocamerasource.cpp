@@ -23,7 +23,7 @@ VideoCameraSource::~VideoCameraSource()
     if (mCapture)
         cvReleaseCapture(&mCapture);
     }
-ElementBase::ParamList VideoCameraSource::getParams()
+ElementBase::ParamList VideoCameraSource::getParams() const
     {
     ParamList ret;
     ret["File"] = mPictureFrame.getSourceName();

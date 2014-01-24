@@ -7,7 +7,7 @@ PictureRegionDetectionTransform::PictureRegionDetectionTransform(ElementFactory 
     {
     }
 
-ElementBase::ParamList PictureRegionDetectionTransform::getParams()
+ElementBase::ParamList PictureRegionDetectionTransform::getParams() const
     {
     ParamList ret;
     ret["File"] =  mPictureFrame.getSourceName();

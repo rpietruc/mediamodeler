@@ -18,7 +18,7 @@ PictureRenderDestination::~PictureRenderDestination()
     cvDestroyWindow(qPrintable(mPictureFrame.getSourceName()));
     }
 
-ElementBase::ParamList PictureRenderDestination::getParams()
+ElementBase::ParamList PictureRenderDestination::getParams() const
     {
     ParamList ret;
     ret["Delay time [ms]"] = QVariant(mTimer->interval());

@@ -16,12 +16,10 @@ public:
     ModelCreator(QObject *aParent = NULL);
     ~ModelCreator();
 
-    int loadElements(const QDir& aDir);
-    void clearModel();
-
-    int addElement(const QString &aName);
-
+    int loadFactories(const QDir& aDir);
+    int createElement(const QString &aName);
     ElementBase* getElement(int aIndex);
+    void deleteAllElements();
     void connectElements(int aSrcIdx, int aDstIdx);
 
 private:

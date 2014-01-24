@@ -10,10 +10,10 @@ ModelCreator::ModelCreator(QObject *aParent) :
 
 ModelCreator::~ModelCreator()
     {
-    clearModel();
+    deleteAllElements();
     }
 
-int ModelCreator::loadElements(const QDir& aDir)
+int ModelCreator::loadFactories(const QDir& aDir)
     {
     int size = mFactoryList.size();
     ElementFactoryContainer *factoryContainer = new ElementFactoryContainer(this);
@@ -22,14 +22,7 @@ int ModelCreator::loadElements(const QDir& aDir)
     return mFactoryList.size() - size; //new elements no
     }
 
-void ModelCreator::clearModel()
-    {
-    foreach (ElementBase* e, mElements)
-        delete e;
-    mElements.clear();
-    }
-
-int ModelCreator::addElement(const QString &aName)
+int ModelCreator::createElement(const QString &aName)
     {
     int index = -1;
     foreach (ElementFactory* factory, mFactoryList)
@@ -49,6 +42,13 @@ ElementBase* ModelCreator::getElement(int aIndex)
         return mElements[aIndex];
     //else
     return NULL;
+    }
+
+void ModelCreator::deleteAllElements()
+    {
+    foreach (ElementBase* e, mElements)
+        delete e;
+    mElements.clear();
     }
 
 void ModelCreator::connectElements(int aSrcIdx, int aDstIdx)

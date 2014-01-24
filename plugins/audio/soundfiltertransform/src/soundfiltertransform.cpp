@@ -15,7 +15,7 @@ SoundFilterTransform::SoundFilterTransform(ElementFactory *aFactory, const QStri
     mTail << 0 << 0;
     }
 
-ElementBase::ParamList SoundFilterTransform::getParams()
+ElementBase::ParamList SoundFilterTransform::getParams() const
     {
     ParamList ret;
     ret["a0"] = mFilter.at(0);

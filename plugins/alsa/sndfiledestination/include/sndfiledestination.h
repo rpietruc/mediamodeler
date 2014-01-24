@@ -23,7 +23,7 @@ public:
     explicit SndFileDestination(ElementFactory *aFactory, const QString &aObjectName);
     ~SndFileDestination();
 
-    ParamList getParams();
+    ParamList getParams() const;
 
 public slots:
     void setParamValue(const QString& aName, const QVariant& aValue);

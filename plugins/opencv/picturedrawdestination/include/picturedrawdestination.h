@@ -25,7 +25,7 @@ public:
     explicit PictureDrawDestination(ElementFactory *aFactory, const QString &aObjectName);
     ~PictureDrawDestination();
 
-    ParamList getParams();
+    ParamList getParams() const;
 
 protected slots:
     void setParamValue(const QString& aName, const QVariant& aValue);

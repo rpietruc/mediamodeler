@@ -12,7 +12,7 @@ ImageDenoisingTransform::ImageDenoisingTransform(ElementFactory *aFactory, const
     {
     }
 
-ElementBase::ParamList ImageDenoisingTransform::getParams()
+ElementBase::ParamList ImageDenoisingTransform::getParams() const
     {
     ParamList ret;
     ret["Iterations"] =  mIterations;

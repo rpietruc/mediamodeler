@@ -13,7 +13,7 @@ ImageScaleTransform::ImageScaleTransform(ElementFactory *aFactory, const QString
     mScale[1] = 1.5;
     }
 
-ElementBase::ParamList ImageScaleTransform::getParams()
+ElementBase::ParamList ImageScaleTransform::getParams() const
     {
     ParamList ret;
     ret["Width Scale"] =  mScale[0];

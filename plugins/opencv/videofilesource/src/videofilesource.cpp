@@ -14,7 +14,7 @@ VideoFileSource::~VideoFileSource()
         cvReleaseCapture(&mCapture);
     }
 
-ElementBase::ParamList VideoFileSource::getParams()
+ElementBase::ParamList VideoFileSource::getParams() const
     {
     ParamList ret;
     ret["File"] = mPictureFrame.getSourceName();

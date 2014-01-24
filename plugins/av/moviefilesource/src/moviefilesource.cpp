@@ -44,7 +44,7 @@ MovieFileSource::~MovieFileSource()
         av_free(mFrame);
     }
 
-ElementBase::ParamList MovieFileSource::getParams()
+ElementBase::ParamList MovieFileSource::getParams() const
     {
     ParamList ret;
     if (mVideoFrame.getSourceName().isEmpty())

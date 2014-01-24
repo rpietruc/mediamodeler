@@ -21,13 +21,15 @@ SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
     src/fileguielement.cpp \
-    src/guielementlist.cpp
+    src/guielementlist.cpp \
+    src/elementbox.cpp
 
 HEADERS += \
     include/mainwindow.h \
     include/fileguielement.h \
     include/guielementbase.h \
-    include/guielementlist.h
+    include/guielementlist.h \
+    include/elementbox.h
 
 FORMS += \
     forms/mainwindow.ui \

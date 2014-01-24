@@ -22,7 +22,7 @@ public:
     explicit SoundAlsaDestination(ElementFactory *aFactory, const QString &aObjectName);
     ~SoundAlsaDestination();
 
-    ParamList getParams();
+    ParamList getParams() const;
 
 public slots:
     void setParamValue(const QString& aName, const QVariant& aValue);

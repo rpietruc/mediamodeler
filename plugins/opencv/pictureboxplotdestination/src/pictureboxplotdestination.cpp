@@ -22,7 +22,7 @@ PictureBoxPlotDestination::~PictureBoxPlotDestination()
     delete mBoxPlot;
     }
 
-ElementBase::ParamList PictureBoxPlotDestination::getParams()
+ElementBase::ParamList PictureBoxPlotDestination::getParams() const
     {
     ParamList ret;
     ret["Max"] =  mBoxPlot->maxValue();

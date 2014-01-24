@@ -23,7 +23,7 @@ public:
     explicit PictureBoxPlotDestination(ElementFactory *aFactory, const QString &aObjectName);
     ~PictureBoxPlotDestination();
 
-    ParamList getParams();
+    ParamList getParams() const;
 
 protected slots:
     void setParamValue(const QString& aName, const QVariant& aValue);

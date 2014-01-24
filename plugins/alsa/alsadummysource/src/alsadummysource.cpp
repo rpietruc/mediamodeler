@@ -39,7 +39,7 @@ AlsaDummySource::AlsaDummySource(ElementFactory *aFactory, const QString &aObjec
 #endif
     }
 
-ElementBase::ParamList AlsaDummySource::getParams()
+ElementBase::ParamList AlsaDummySource::getParams() const
     {
     ParamList ret;
     ret["Frequency"] = mSignal->mFrequency;

@@ -12,7 +12,7 @@ SoundLinearPredictionTransform::SoundLinearPredictionTransform(ElementFactory *a
     setTaps(10);
     }
 
-ElementBase::ParamList SoundLinearPredictionTransform::getParams()
+ElementBase::ParamList SoundLinearPredictionTransform::getParams() const
     {
     ParamList ret;
     ret["Taps No"] = mCoefficients.size();

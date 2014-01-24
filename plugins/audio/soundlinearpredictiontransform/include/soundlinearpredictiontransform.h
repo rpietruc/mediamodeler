@@ -35,7 +35,7 @@ public:
             return &mFilterFrame;
         }
 
-    ParamList getParams();
+    ParamList getParams() const;
 
 public slots:
     void setParamValue(const QString& aName, const QVariant& aValue);

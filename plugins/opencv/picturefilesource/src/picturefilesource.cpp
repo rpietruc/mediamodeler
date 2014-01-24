@@ -8,7 +8,7 @@ PictureFileSource::PictureFileSource(ElementFactory *aFactory, const QString &aO
     {
     }
 
-ElementBase::ParamList PictureFileSource::getParams()
+ElementBase::ParamList PictureFileSource::getParams() const
     {
     ParamList ret;
     ret["Files"] =  mPathList;

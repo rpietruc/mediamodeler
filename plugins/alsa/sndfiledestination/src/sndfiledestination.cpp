@@ -15,7 +15,7 @@ SndFileDestination::~SndFileDestination()
     close();
     }
 
-ElementBase::ParamList SndFileDestination::getParams()
+ElementBase::ParamList SndFileDestination::getParams() const
     {
     ParamList ret;
     ret["File"] = mFileName;

@@ -27,7 +27,7 @@ SoundAlsaDestination::~SoundAlsaDestination()
     snd_pcm_hw_params_free(mHwParams);
     }
 
-ElementBase::ParamList SoundAlsaDestination::getParams()
+ElementBase::ParamList SoundAlsaDestination::getParams() const
     {
     ParamList ret;
     ret["Alsa Device"] =  mAlsaFrame.getSourceName();

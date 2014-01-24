@@ -22,7 +22,7 @@ AlsaSource::~AlsaSource()
     close();
     }
 
-ElementBase::ParamList AlsaSource::getParams()
+ElementBase::ParamList AlsaSource::getParams() const
     {
     Q_ASSERT(mAlsaFrame.getDimension(AlsaFrame::Time).mDelta);
     ParamList ret;

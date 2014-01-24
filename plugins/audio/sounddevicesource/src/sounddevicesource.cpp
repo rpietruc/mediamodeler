@@ -54,7 +54,7 @@ void SoundDeviceSource::process()
     qDebug() << "frame prepared";
     }
 
-ElementBase::ParamList SoundDeviceSource::getParams()
+ElementBase::ParamList SoundDeviceSource::getParams() const
     {
     Q_ASSERT(mSoundFrame.getDimension(SoundFrame::Time).mDelta);
     ParamList ret;

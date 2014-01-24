@@ -12,7 +12,7 @@ ImageSmoothingTransform::ImageSmoothingTransform(ElementFactory *aFactory, const
     {
     }
 
-ElementBase::ParamList ImageSmoothingTransform::getParams()
+ElementBase::ParamList ImageSmoothingTransform::getParams() const
     {
     ParamList ret;
     ret["Range Sigma"] =  mRangeSigma;

@@ -42,7 +42,7 @@ public:
 
     void insertReceiver(QObject *aReceiver) { mConnectedReceiversSet.insert(aReceiver); }
 
-    virtual ParamList getParams() { return ParamList(); }
+    virtual ParamList getParams() const { return ParamList(); }
 
 signals:
     void framesProcessed();

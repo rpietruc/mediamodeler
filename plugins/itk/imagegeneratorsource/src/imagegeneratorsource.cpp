@@ -13,7 +13,7 @@ ImageGeneratorSource::ImageGeneratorSource(ElementFactory *aFactory, const QStri
     mImageFrame.setSourceName(objectName());
     }
 
-ElementBase::ParamList ImageGeneratorSource::getParams()
+ElementBase::ParamList ImageGeneratorSource::getParams() const
     {
     ParamList ret;
     ret["Width"] = (int)mSize[0];

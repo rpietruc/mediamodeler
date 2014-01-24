@@ -10,7 +10,7 @@ PictureClusterTransform::PictureClusterTransform(ElementFactory *aFactory, const
     {
     }
 
-ElementBase::ParamList PictureClusterTransform::getParams()
+ElementBase::ParamList PictureClusterTransform::getParams() const
     {
     ParamList ret;
     ret["Clusters No"] =  mClustersNo;

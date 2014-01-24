@@ -23,7 +23,7 @@ public:
     int getFramesNo() const { return 1; }
     const FrameBase *getFrame(int) const { return &mSpectrumFrame; }
 
-    ParamList getParams();
+    ParamList getParams() const;
 
 public slots:
     void setParamValue(const QString& aName, const QVariant& aValue);

@@ -12,7 +12,7 @@ PictureEdgeDetectionTransform::PictureEdgeDetectionTransform(ElementFactory *aFa
     {
     }
 
-ElementBase::ParamList PictureEdgeDetectionTransform::getParams()
+ElementBase::ParamList PictureEdgeDetectionTransform::getParams() const
     {
     ParamList ret;
     ret["Threshold 1"] =  mThreshold1;

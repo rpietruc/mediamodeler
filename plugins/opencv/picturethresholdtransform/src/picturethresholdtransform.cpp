@@ -12,7 +12,7 @@ PictureThresholdTransform::PictureThresholdTransform(ElementFactory *aFactory, c
     {
     }
 
-ElementBase::ParamList PictureThresholdTransform::getParams()
+ElementBase::ParamList PictureThresholdTransform::getParams() const
     {
     ParamList ret;
     ret["Threshold"] =  mThreshold;

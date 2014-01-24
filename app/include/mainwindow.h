@@ -3,15 +3,12 @@
 
 #include <QMainWindow>
 #include <QVector>
-#include "guielementlist.h"
 
 namespace Ui {
     class MainWindow;
 }
 
 namespace media {
-    class ElementBase;
-    class ElementFactory;
     class ModelCreator;
 }
 
@@ -29,12 +26,12 @@ public slots:
     void releaseModel();
     void loadModel(const QString &aFilePath);
     void closeEvent(QCloseEvent * event);
-    void handleSetting(const QString& aName, const QVariant& aValue);
+    void saveSetting(const QString& aSection, const QString& aName, const QVariant& aValue);
 
 private:
     Ui::MainWindow *mUi;
     media::ModelCreator *mCreator;
-    QVector<QWidget*> mGuiElements;
+    QVector<QWidget*> mElemBoxes;
     QVector<QThread*> mElemThreads;
     QString mModelFile;
     };

@@ -20,7 +20,7 @@ SoundDeviceDestination::~SoundDeviceDestination()
     close();
     }
 
-ElementBase::ParamList SoundDeviceDestination::getParams()
+ElementBase::ParamList SoundDeviceDestination::getParams() const
     {
     ParamList ret;
 //    mAudioDeviceInfo(QAudioDeviceInfo::defaultOutputDevice()),

@@ -9,7 +9,7 @@ PictureSmoothingTransform::PictureSmoothingTransform(ElementFactory *aFactory, c
     {
     }
 
-ElementBase::ParamList PictureSmoothingTransform::getParams()
+ElementBase::ParamList PictureSmoothingTransform::getParams() const
     {
     ParamList ret;
     ret["Spatial Radius"] = mSpatialRadius;

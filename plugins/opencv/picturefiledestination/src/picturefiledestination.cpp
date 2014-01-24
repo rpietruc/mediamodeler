@@ -9,7 +9,7 @@ PictureFileDestination::PictureFileDestination(ElementFactory *aFactory, const Q
     {
     }
 
-ElementBase::ParamList PictureFileDestination::getParams()
+ElementBase::ParamList PictureFileDestination::getParams() const
     {
     ParamList ret;
     ret["File"] =  mPictureFrame.getSourceName();

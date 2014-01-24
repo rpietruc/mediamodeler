@@ -29,7 +29,7 @@ PictureDrawDestination::~PictureDrawDestination()
     delete mWindow;
     }
 
-ElementBase::ParamList PictureDrawDestination::getParams()
+ElementBase::ParamList PictureDrawDestination::getParams() const
     {
     ParamList ret;
     ret["Delay time [ms]"] = QVariant(mTimer->interval());

@@ -1,16 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QDebug>
 #include <modelcreator.h>
-#include <elementbase.h>
-#include <QSettings>
-#include <QString>
-#include <QStringList>
 #include <QFileDialog>
 #include <QThread>
-#include <modelcreator.h>
-#include "guielementlist.h"
-#include "fileguielement.h"
+#include <QDebug>
+#include "elementbox.h"
 #include <QMessageBox>
 
 using namespace media;
@@ -21,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mCreator(new ModelCreator(this))
     {
     mUi->setupUi(this);
-    mCreator->loadElements(QDir(INSTALL_PLUGINS));
+    mCreator->loadFactories(QDir(INSTALL_PLUGINS));
     QString modelDir = INSTALL_INI;
     QString modelPath = QSettings(QApplication::organizationName(), QApplication::applicationName()).value(QString("model/last")).toString();
     if (!modelPath.isEmpty())
@@ -40,18 +34,17 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
     {
     delete mUi;
-    foreach (QThread* thread, mElemThreads)
-        {
-        thread->wait(1000);
-        thread->terminate();
-        delete thread;
-        }
-    mElemThreads.clear();
     }
 
 void MainWindow::closeEvent(QCloseEvent * /*event*/)
     {
-    mCreator->clearModel();
+    try {
+        releaseModel();
+    }
+    catch(...)
+    {
+    qDebug() << "releaseModel exception catched";
+    }
     }
 
 void MainWindow::releaseModel()
@@ -59,10 +52,16 @@ void MainWindow::releaseModel()
     QLayoutItem *item;
     while ((item = mUi->gridLayout->takeAt(0)) != 0)
         delete item;
-    mCreator->clearModel();
-    foreach (QWidget* e, mGuiElements)
+    mCreator->deleteAllElements();
+    foreach (QWidget* e, mElemBoxes)
         delete e;
-    mGuiElements.clear();
+    mElemBoxes.clear();
+    foreach (QThread* thread, mElemThreads)
+        thread->quit();
+    foreach (QThread* thread, mElemThreads)
+        thread->wait(1000);
+
+    mElemThreads.clear();
     }
 
 void MainWindow::loadModel(const QString& aFilePath)
@@ -81,7 +80,7 @@ void MainWindow::loadModel(const QString& aFilePath)
         if (pluginName.isEmpty())
             break;
 
-        if (index != mCreator->addElement(pluginName))
+        if (index != mCreator->createElement(pluginName))
             {
             QMessageBox::warning(this, "loadModel", QString("Cannot load %1").arg(pluginName));
             return;
@@ -98,39 +97,19 @@ void MainWindow::loadModel(const QString& aFilePath)
             elem->setParamValue(key, settings.value(key));
         settings.endGroup();
 
-        QGroupBox* group = new QGroupBox(elem->objectName(), mUi->groupBox);
-        ElementBase::ParamList list = elem->getParams();
-        if (!list.isEmpty())
-            {
-            GuiElementBase* gui = NULL;
-            if (list.size() == 1)
-                {
-                if (list.find("File") != list.end())
-                    gui = new FileGuiElement(mUi->groupBox);
-                else if (list.find("Files") != list.end())
-                    gui = new FilesGuiElement(mUi->groupBox);
-                }
-            if (!gui)
-                gui = new GuiElementList(group);
-
-            gui->init(list);
-            QObject::connect(gui, SIGNAL(paramChanged(QString, QVariant)), this, SLOT(handleSetting(QString, QVariant)));
-            QObject::connect(gui, SIGNAL(paramChanged(QString, QVariant)), elem, SLOT(setParamValue(QString, QVariant)));
-
-            QVBoxLayout *verticalLayout = new QVBoxLayout(group);
-            verticalLayout->addWidget(gui);
-            }
-        mUi->gridLayout->addWidget(group, i/3, i%3);
-        mGuiElements.push_back(group);
+        ElementBox* box = new ElementBox(elem, mUi->groupBox);
+        QObject::connect(box, SIGNAL(settingChanged(QString, QString, QVariant)), this, SLOT(saveSetting(QString, QString, QVariant)));
+        mUi->gridLayout->addWidget(box, i/3, i%3);
+        mElemBoxes.push_back(box);
         sources.insert(i);
 
-        if (elem->parent()->thread() == this->thread())
-            {
-            QThread *elemThread = new QThread(this);
-            elem->parent()->moveToThread(elemThread);
-            elemThread->start();
-            mElemThreads.push_back(elemThread);
-            }
+        QThread *elemThread = new QThread(this);
+        elem->setParent(NULL);
+        elem->moveToThread(elemThread);
+        elemThread->start();
+        QObject::connect(elemThread, SIGNAL(finished()), elem, SLOT(deleteLater()));
+        QObject::connect(elemThread, SIGNAL(finished()), elemThread, SLOT(deleteLater()));
+        mElemThreads.push_back(elemThread);
         }
 
     for (int i = 0;; ++i)
@@ -156,13 +135,7 @@ void MainWindow::loadModel(const QString& aFilePath)
 //    mUi->actionRun->setEnabled(true);
     }
 
-void MainWindow::handleSetting(const QString& aName, const QVariant& aValue)
+void MainWindow::saveSetting(const QString& aSection, const QString& aName, const QVariant& aValue)
     {
-    for (int i = 0; i < mGuiElements.size(); ++i)
-        if ((mGuiElements[i]->children().size() && (sender() == mGuiElements[i]->children().at(0))) ||
-            (mGuiElements[i]->children().size() && (sender() == mGuiElements[i]->children().at(1))))
-            {
-            QSettings(QApplication::organizationName(), mModelFile).setValue(mCreator->getElement(i)->objectName() + "/" + aName, aValue);
-            break;
-            }
+    QSettings(QApplication::organizationName(), mModelFile).setValue(aSection + "/" + aName, aValue);
     }
