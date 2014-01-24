@@ -38,13 +38,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent * /*event*/)
     {
-    try {
-        releaseModel();
-    }
-    catch(...)
-    {
-    qDebug() << "releaseModel exception catched";
-    }
+    try { releaseModel(); }
+    catch(...) { qDebug() << "releaseModel exception catched"; }
     }
 
 void MainWindow::releaseModel()
@@ -103,13 +98,12 @@ void MainWindow::loadModel(const QString& aFilePath)
         mElemBoxes.push_back(box);
         sources.insert(i);
 
-        QThread *elemThread = new QThread(this);
-        elem->setParent(NULL);
-        elem->moveToThread(elemThread);
-        elemThread->start();
-        QObject::connect(elemThread, SIGNAL(finished()), elem, SLOT(deleteLater()));
-        QObject::connect(elemThread, SIGNAL(finished()), elemThread, SLOT(deleteLater()));
-        mElemThreads.push_back(elemThread);
+//        QThread *elemThread = new QThread(this);
+//        elem->moveToThread(elemThread);
+//        elemThread->start();
+//        QObject::connect(elemThread, SIGNAL(finished()), elem, SLOT(deleteLater()));
+//        QObject::connect(elemThread, SIGNAL(finished()), elemThread, SLOT(deleteLater()));
+//        mElemThreads.push_back(elemThread);
         }
 
     for (int i = 0;; ++i)
