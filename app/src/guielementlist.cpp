@@ -17,37 +17,24 @@ GuiElementList::~GuiElementList()
     delete mUi;
     }
 
-void GuiElementList::init(const ElementBase::ParamList& aParams)
+void GuiElementList::addProperty(const QString &aName, const QVariant &aValue)
     {
-    const QList<QString> keys = aParams.keys();
-    int i = 0;
-    foreach (QString key, keys)
-        {
-        QLabel *label = new QLabel(this);
-        mUi->formLayout->setWidget(i, QFormLayout::LabelRole, label);
-        label->setText(key);
+    int index = mUi->formLayout->count();
+    QLabel *label = new QLabel(this);
+    mUi->formLayout->setWidget(index, QFormLayout::LabelRole, label);
+    label->setText(aName);
 
-        QLineEdit* value = new QLineEdit(this);
-        mUi->formLayout->setWidget(i, QFormLayout::FieldRole, value);
-        value->setText(aParams[key].toString());
-        QObject::connect(value, SIGNAL(textChanged(QString)), this, SLOT(notifySettingsChanged(QString)));
-
-        ++i;
-        }
+    QLineEdit* value = new QLineEdit(this);
+    mUi->formLayout->setWidget(index, QFormLayout::FieldRole, value);
+    Q_ASSERT(aValue.canConvert(QVariant::String));
+    value->setText(aValue.toString());
+    value->setObjectName(aName);
+    QObject::connect(value, SIGNAL(textChanged(QString)), this, SLOT(notifySettingsChanged(QString)));
     }
 
 void GuiElementList::notifySettingsChanged(const QString& aText)
     {
-    QWidget* widget = qobject_cast<QWidget*>(sender());
-    Q_ASSERT(widget);
-
-    for (int i = 0; i < mUi->formLayout->count(); ++i)
-        if (mUi->formLayout->itemAt(i, QFormLayout::FieldRole)->widget() == widget)
-            {
-            QLabel* label = qobject_cast<QLabel*>(mUi->formLayout->itemAt(i, QFormLayout::LabelRole)->widget());
-            emit paramChanged(label->text(), QVariant(aText));
-            break;
-            }
+    emit paramChanged(sender()->objectName(), QVariant(aText));
     }
 
 } // namespace media

@@ -10,18 +10,18 @@ PictureClusterTransform::PictureClusterTransform(ElementFactory *aFactory, const
     {
     }
 
-ElementBase::ParamList PictureClusterTransform::getParams() const
-    {
-    ParamList ret;
-    ret["Clusters No"] =  mClustersNo;
-    return ret;
-    }
+//ElementBase::ParamList PictureClusterTransform::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Clusters No"] =  mClustersNo;
+//    return ret;
+//    }
 
-void PictureClusterTransform::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    if (aName == "Clusters No")
-        mClustersNo = aValue.toInt();
-    }
+//void PictureClusterTransform::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    if (aName == "Clusters No")
+//        mClustersNo = aValue.toInt();
+//    }
 
 void PictureClusterTransform::process()
     {

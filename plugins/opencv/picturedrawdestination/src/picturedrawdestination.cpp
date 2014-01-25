@@ -29,22 +29,22 @@ PictureDrawDestination::~PictureDrawDestination()
     delete mWindow;
     }
 
-ElementBase::ParamList PictureDrawDestination::getParams() const
-    {
-    ParamList ret;
-    ret["Delay time [ms]"] = QVariant(mTimer->interval());
-    return ret;
-    }
+//ElementBase::ParamList PictureDrawDestination::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Delay time [ms]"] = QVariant(mTimer->interval());
+//    return ret;
+//    }
 
-void PictureDrawDestination::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    Q_UNUSED(aName);
-    if (mTimer->interval() != aValue.toInt())
-        {
-        mTimer->stop();
-        mTimer->setInterval(aValue.toInt());
-        }
-    }
+//void PictureDrawDestination::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    Q_UNUSED(aName);
+//    if (mTimer->interval() != aValue.toInt())
+//        {
+//        mTimer->stop();
+//        mTimer->setInterval(aValue.toInt());
+//        }
+//    }
 
 void PictureDrawDestination::showPicture()
     {

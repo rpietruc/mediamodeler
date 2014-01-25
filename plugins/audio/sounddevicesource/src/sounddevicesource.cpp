@@ -54,43 +54,43 @@ void SoundDeviceSource::process()
     qDebug() << "frame prepared";
     }
 
-ElementBase::ParamList SoundDeviceSource::getParams() const
-    {
-    Q_ASSERT(mSoundFrame.getDimension(SoundFrame::Time).mDelta);
-    ParamList ret;
-    ret["Audio Device"] = mSoundFrame.getSourceName();
-    ret["Sample Rate"] = 1.0/mSoundFrame.getDimension(SoundFrame::Time).mDelta;
-    ret["Channels No."] = mSoundFrame.getDimension(SoundFrame::Channels).mResolution;
-    return ret;
-    }
+//ElementBase::ParamList SoundDeviceSource::getParams() const
+//    {
+//    Q_ASSERT(mSoundFrame.getDimension(SoundFrame::Time).mDelta);
+//    ParamList ret;
+//    ret["Audio Device"] = mSoundFrame.getSourceName();
+//    ret["Sample Rate"] = 1.0/mSoundFrame.getDimension(SoundFrame::Time).mDelta;
+//    ret["Channels No."] = mSoundFrame.getDimension(SoundFrame::Channels).mResolution;
+//    return ret;
+//    }
 
-void SoundDeviceSource::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    if (aName == "Audio Device")
-        {
-        if (mSoundFrame.getSourceName() != aValue.toString())
-            {
-            mSoundFrame.setSourceName(aValue.toString());
-            close();
-            }
-        }
-    else if (aName == "Sample Rate")
-        {
-        if (aValue.toInt() && (mSoundFrame.getDimension(SoundFrame::Time).mDelta != 1.0/aValue.toInt()))
-            {
-            mSoundFrame.setSampleRate(aValue.toInt());
-            close();
-            }
-        }
-    else if (aName == "Channels No")
-        {
-        if (mSoundFrame.getDimension(SoundFrame::Channels).mResolution != aValue.toInt())
-            {
-            mSoundFrame.setChannelsNo(aValue.toInt());
-            close();
-            }
-        }
-    }
+//void SoundDeviceSource::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    if (aName == "Audio Device")
+//        {
+//        if (mSoundFrame.getSourceName() != aValue.toString())
+//            {
+//            mSoundFrame.setSourceName(aValue.toString());
+//            close();
+//            }
+//        }
+//    else if (aName == "Sample Rate")
+//        {
+//        if (aValue.toInt() && (mSoundFrame.getDimension(SoundFrame::Time).mDelta != 1.0/aValue.toInt()))
+//            {
+//            mSoundFrame.setSampleRate(aValue.toInt());
+//            close();
+//            }
+//        }
+//    else if (aName == "Channels No")
+//        {
+//        if (mSoundFrame.getDimension(SoundFrame::Channels).mResolution != aValue.toInt())
+//            {
+//            mSoundFrame.setChannelsNo(aValue.toInt());
+//            close();
+//            }
+//        }
+//    }
 
 void SoundDeviceSource::open()
     {

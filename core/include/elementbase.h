@@ -33,7 +33,7 @@ class MEDIAMODELSHARED_EXPORT ElementBase : public QObject
     Q_OBJECT
 
 public:
-    typedef QMap<QString, QVariant> ParamList;
+//    typedef QMap<QString, QVariant> ParamList;
 
     ElementBase(QObject *aFactory, const QString &aObjectName);
 
@@ -42,7 +42,7 @@ public:
 
     void insertReceiver(QObject *aReceiver) { mConnectedReceiversSet.insert(aReceiver); }
 
-    virtual ParamList getParams() const { return ParamList(); }
+//    virtual ParamList getParams() const { return ParamList(); }
 
 signals:
     void framesProcessed();
@@ -51,11 +51,11 @@ signals:
 
 public slots:
     void incrementSourceElementsNo() { ++mSourceElementsNo; }
-    virtual void setParamValue(const QString& aName, const QVariant& aValue)
-        {
-        Q_UNUSED(aName);
-        Q_UNUSED(aValue);
-        }
+//    virtual void setParamValue(const QString& aName, const QVariant& aValue)
+//        {
+//        Q_UNUSED(aName);
+//        Q_UNUSED(aValue);
+//        }
 
     virtual void processFrames();
     void setRunning(bool aEnable);

@@ -23,10 +23,10 @@ public:
     int getFramesNo() const { return 1; }
     const FrameBase *getFrame(int) const { return &mImageFrame; }
 
-    ParamList getParams() const;
+//    ParamList getParams() const;
 
 protected slots:
-    void setParamValue(const QString& aName, const QVariant& aValue);
+//    void setParamValue(const QString& aName, const QVariant& aValue);
 
 private:
     void process();

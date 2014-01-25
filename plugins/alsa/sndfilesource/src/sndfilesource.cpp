@@ -15,29 +15,29 @@ SndFileSource::~SndFileSource()
         sf_close(mSoundFile);
     }
 
-ElementBase::ParamList SndFileSource::getParams() const
-    {
-    ParamList ret;
-    ret["Files"] =  mPathList;
-    return ret;
-    }
+//ElementBase::ParamList SndFileSource::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Files"] =  mPathList;
+//    return ret;
+//    }
 
-void SndFileSource::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    Q_UNUSED(aName);
-    QStringList pathList = aValue.toStringList();
-    if (mSoundFile != 0)
-        {
-        sf_close(mSoundFile);
-        mSoundFile = 0;
-        }
-    mPathList.clear();
-    foreach (QString path, pathList)
-        {
-        QFileInfo fileInfo(path);
-        mPathList.append(fileInfo.filePath());
-        }
-    }
+//void SndFileSource::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    Q_UNUSED(aName);
+//    QStringList pathList = aValue.toStringList();
+//    if (mSoundFile != 0)
+//        {
+//        sf_close(mSoundFile);
+//        mSoundFile = 0;
+//        }
+//    mPathList.clear();
+//    foreach (QString path, pathList)
+//        {
+//        QFileInfo fileInfo(path);
+//        mPathList.append(fileInfo.filePath());
+//        }
+//    }
 
 bool SndFileSource::openNextFile()
     {

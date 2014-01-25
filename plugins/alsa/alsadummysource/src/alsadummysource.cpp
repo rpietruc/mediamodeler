@@ -39,24 +39,24 @@ AlsaDummySource::AlsaDummySource(ElementFactory *aFactory, const QString &aObjec
 #endif
     }
 
-ElementBase::ParamList AlsaDummySource::getParams() const
-    {
-    ParamList ret;
-    ret["Frequency"] = mSignal->mFrequency;
-    ret["Amplitude"] = mSignal->mAmplitude;
-    ret["Phase"] = mSignal->mPhase;
-    return ret;
-    }
+//ElementBase::ParamList AlsaDummySource::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Frequency"] = mSignal->mFrequency;
+//    ret["Amplitude"] = mSignal->mAmplitude;
+//    ret["Phase"] = mSignal->mPhase;
+//    return ret;
+//    }
 
-void AlsaDummySource::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    if (aName == "Frequency")
-        mSignal->mFrequency = aValue.toDouble();
-    else if (aName == "Amplitude")
-        mSignal->mAmplitude = aValue.toDouble();
-    else if (aName == "Phase")
-        mSignal->mPhase = aValue.toDouble();
-    }
+//void AlsaDummySource::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    if (aName == "Frequency")
+//        mSignal->mFrequency = aValue.toDouble();
+//    else if (aName == "Amplitude")
+//        mSignal->mAmplitude = aValue.toDouble();
+//    else if (aName == "Phase")
+//        mSignal->mPhase = aValue.toDouble();
+//    }
 
 void AlsaDummySource::process()
     {

@@ -7,18 +7,18 @@ PictureRegionDetectionTransform::PictureRegionDetectionTransform(ElementFactory 
     {
     }
 
-ElementBase::ParamList PictureRegionDetectionTransform::getParams() const
-    {
-    ParamList ret;
-    ret["File"] =  mPictureFrame.getSourceName();
-    return ret;
-    }
+//ElementBase::ParamList PictureRegionDetectionTransform::getParams() const
+//    {
+//    ParamList ret;
+//    ret["File"] =  mPictureFrame.getSourceName();
+//    return ret;
+//    }
 
-void PictureRegionDetectionTransform::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    Q_UNUSED(aName);
-    mCascadeClassifier.load(std::string(qPrintable(aValue.toString())));
-    }
+//void PictureRegionDetectionTransform::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    Q_UNUSED(aName);
+//    mCascadeClassifier.load(std::string(qPrintable(aValue.toString())));
+//    }
 
 void PictureRegionDetectionTransform::process()
     {

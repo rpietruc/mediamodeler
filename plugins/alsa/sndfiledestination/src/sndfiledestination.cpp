@@ -15,22 +15,22 @@ SndFileDestination::~SndFileDestination()
     close();
     }
 
-ElementBase::ParamList SndFileDestination::getParams() const
-    {
-    ParamList ret;
-    ret["File"] = mFileName;
-    return ret;
-    }
+//ElementBase::ParamList SndFileDestination::getParams() const
+//    {
+//    ParamList ret;
+//    ret["File"] = mFileName;
+//    return ret;
+//    }
 
-void SndFileDestination::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    Q_UNUSED(aName);
-    if (mFileName != aValue.toString())
-        {
-        close();
-        mFileName = aValue.toString();
-        }
-    }
+//void SndFileDestination::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    Q_UNUSED(aName);
+//    if (mFileName != aValue.toString())
+//        {
+//        close();
+//        mFileName = aValue.toString();
+//        }
+//    }
 
 bool SndFileDestination::open(SF_INFO &aFileInfo)
     {

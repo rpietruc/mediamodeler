@@ -12,24 +12,24 @@ PictureThresholdTransform::PictureThresholdTransform(ElementFactory *aFactory, c
     {
     }
 
-ElementBase::ParamList PictureThresholdTransform::getParams() const
-    {
-    ParamList ret;
-    ret["Threshold"] =  mThreshold;
-    ret["Max Value"] = mMaxValue;
-    ret["Type"] = mType;
-    return ret;
-    }
+//ElementBase::ParamList PictureThresholdTransform::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Threshold"] =  mThreshold;
+//    ret["Max Value"] = mMaxValue;
+//    ret["Type"] = mType;
+//    return ret;
+//    }
 
-void PictureThresholdTransform::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    if (aName == "Threshold")
-        mThreshold = aValue.toDouble();
-    else if (aName == "Max Value")
-        mMaxValue = aValue.toDouble();
-    else if (aName == "Type")
-        mType = aValue.toInt();
-    }
+//void PictureThresholdTransform::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    if (aName == "Threshold")
+//        mThreshold = aValue.toDouble();
+//    else if (aName == "Max Value")
+//        mMaxValue = aValue.toDouble();
+//    else if (aName == "Type")
+//        mType = aValue.toInt();
+//    }
 
 void PictureThresholdTransform::process()
     {

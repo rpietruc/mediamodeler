@@ -18,18 +18,18 @@ PictureRenderDestination::~PictureRenderDestination()
     cvDestroyWindow(qPrintable(mPictureFrame.getSourceName()));
     }
 
-ElementBase::ParamList PictureRenderDestination::getParams() const
-    {
-    ParamList ret;
-    ret["Delay time [ms]"] = QVariant(mTimer->interval());
-    return ret;
-    }
+//ElementBase::ParamList PictureRenderDestination::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Delay time [ms]"] = QVariant(mTimer->interval());
+//    return ret;
+//    }
 
-void PictureRenderDestination::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    Q_UNUSED(aName);
-    mTimer->start(aValue.toInt());
-    }
+//void PictureRenderDestination::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    Q_UNUSED(aName);
+//    mTimer->start(aValue.toInt());
+//    }
 
 void PictureRenderDestination::showPicture()
     {

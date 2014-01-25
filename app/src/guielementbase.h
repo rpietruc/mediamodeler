@@ -1,20 +1,20 @@
 #ifndef GUIELEMENTBASE_H
 #define GUIELEMENTBASE_H
 
-#include <elementbase.h>
 #include <QWidget>
 
 namespace media {
 
-class MEDIAMODELSHARED_EXPORT GuiElementBase : public QWidget
+class GuiElementBase : public QWidget
     {
     Q_OBJECT
 
 public:
     GuiElementBase(QWidget *aParent) : QWidget(aParent) {}
-    virtual void init(const ElementBase::ParamList& aParams)
+    virtual void addProperty(const QString &aName, const QVariant &aValue)
         {
-        Q_UNUSED(aParams);
+        Q_UNUSED(aName);
+        Q_UNUSED(aValue);
         }
 
 signals:

@@ -27,13 +27,13 @@ set(${PROJECT_NAME}_SRC
     src/mainwindow.cpp
     src/fileguielement.cpp
     src/guielementlist.cpp
-    src/elementbox.cpp)
+    src/propertiesbox.cpp)
 set(${PROJECT_NAME}_INCLUDE
     src/mainwindow.h
     src/fileguielement.h
     src/guielementbase.h
     src/guielementlist.h
-    src/elementbox.h)
+    src/propertiesbox.h)
 set(${PROJECT_NAME}_FORMS
     forms/mainwindow.ui
     forms/fileguielement.ui
@@ -85,6 +85,7 @@ qt5_wrap_cpp(SOURCES_MOC ${${PROJECT_NAME}_INCLUDE})
 add_executable(${PROJECT_NAME}
     ${${PROJECT_NAME}_SRC}
     ${${PROJECT_NAME}_INI}
+    ${${PROJECT_NAME}_INCLUDE}
     ${SOURCES_FORMS_H}
     ${SOURCES_MOC})
 

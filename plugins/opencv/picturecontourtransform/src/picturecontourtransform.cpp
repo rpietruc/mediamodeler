@@ -12,18 +12,18 @@ PictureContourTransform::PictureContourTransform(ElementFactory *aFactory, const
     {
     }
 
-ElementBase::ParamList PictureContourTransform::getParams() const
-    {
-    ParamList ret;
-    ret["Method"] =  mMethod;
-    return ret;
-    }
+//ElementBase::ParamList PictureContourTransform::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Method"] =  mMethod;
+//    return ret;
+//    }
 
-void PictureContourTransform::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    Q_UNUSED(aName);
-    mMethod = aValue.toInt();
-    }
+//void PictureContourTransform::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    Q_UNUSED(aName);
+//    mMethod = aValue.toInt();
+//    }
 
 void PictureContourTransform::process()
     {

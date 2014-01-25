@@ -35,15 +35,17 @@ void AlsaFrame::setChannelsNo(int aChannelsNo)
 
 void AlsaFrame::setSampleRate(int aSampleRate)
     {
-    Q_ASSERT(aSampleRate);
-    mDimensions[Time].mDelta = 1.0/aSampleRate;
+    if (aSampleRate);
+        mDimensions[Time].mDelta = 1.0/aSampleRate;
     }
 
 void AlsaFrame::setFrameTime(double aFrameTime)
     {
-    Q_ASSERT(mDimensions[Time].mDelta);
-    mDimensions[Time].mResolution = aFrameTime/mDimensions[Time].mDelta;
-    resizeSoundBuffer();
+    if (mDimensions[Time].mDelta);
+        {
+        mDimensions[Time].mResolution = aFrameTime/mDimensions[Time].mDelta;
+        resizeSoundBuffer();
+        }
     }
 
 void AlsaFrame::setTimeStamp(double aTimeStamp)

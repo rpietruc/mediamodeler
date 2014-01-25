@@ -4,7 +4,7 @@
 #include <QFileDialog>
 #include <QThread>
 #include <QDebug>
-#include "elementbox.h"
+#include "propertiesbox.h"
 #include <QMessageBox>
 
 using namespace media;
@@ -88,15 +88,16 @@ void MainWindow::loadModel(const QString& aFilePath)
         settings.beginGroup(elem->objectName());
         QStringList keys = settings.childKeys();
         foreach (QString key, keys)
-            elem->setParamValue(key, settings.value(key));
+            elem->setProperty(qPrintable(key), settings.value(key));
         settings.endGroup();
 
-        ElementBox* box = new ElementBox(elem, mUi->groupBox);
+        PropertiesBox* box = new PropertiesBox(elem, mUi->groupBox);
         QObject::connect(box, SIGNAL(settingChanged(QString, QString, QVariant)), this, SLOT(saveSetting(QString, QString, QVariant)));
         mUi->gridLayout->addWidget(box, i/3, i%3);
         mElemBoxes.push_back(box);
 
         QObject::connect(mUi->actionRun, SIGNAL(toggled(bool)), elem, SLOT(setRunning(bool)), Qt::QueuedConnection);
+        QObject::connect(mUi->actionRun, SIGNAL(toggled(bool)), mUi->groupBox, SLOT(setDisabled(bool)), Qt::QueuedConnection);
         //TODO: processing should be completed when all sources finish
         QObject::connect(elem, SIGNAL(processingCompleted(bool)), mUi->actionRun, SLOT(setDisabled(bool)), Qt::QueuedConnection);
         QObject::connect(elem, SIGNAL(processingCompleted(bool)), mUi->actionRun, SLOT(setChecked(bool)), Qt::QueuedConnection);

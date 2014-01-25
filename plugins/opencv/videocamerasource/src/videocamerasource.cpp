@@ -23,19 +23,19 @@ VideoCameraSource::~VideoCameraSource()
     if (mCapture)
         cvReleaseCapture(&mCapture);
     }
-ElementBase::ParamList VideoCameraSource::getParams() const
-    {
-    ParamList ret;
-    ret["File"] = mPictureFrame.getSourceName();
-    return ret;
-    }
+//ElementBase::ParamList VideoCameraSource::getParams() const
+//    {
+//    ParamList ret;
+//    ret["File"] = mPictureFrame.getSourceName();
+//    return ret;
+//    }
 
-void VideoCameraSource::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    Q_UNUSED(aName);
-    if (mPictureFrame.getSourceName() != aValue.toString())
-        open(aValue.toString());
-    }
+//void VideoCameraSource::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    Q_UNUSED(aName);
+//    if (mPictureFrame.getSourceName() != aValue.toString())
+//        open(aValue.toString());
+//    }
 
 void VideoCameraSource::open(const QString &aFileName)
     {

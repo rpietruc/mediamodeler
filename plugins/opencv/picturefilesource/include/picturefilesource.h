@@ -17,6 +17,10 @@ namespace media {
 class PICTUREFILESOURCESHARED_EXPORT PictureFileSource : public ElementBase
     {
     Q_OBJECT
+    Q_PROPERTY(QStringList fileList
+               READ getFileList
+               WRITE setFileList
+               NOTIFY fileListChanged)
 
 public:
     explicit PictureFileSource(ElementFactory *aFactory, const QString &aObjectName);
@@ -24,14 +28,16 @@ public:
     int getFramesNo() const { return 1; }
     const FrameBase *getFrame(int) const { return &mPictureFrame; }
 
-    ParamList getParams() const;
-
-public slots:
-    void setParamValue(const QString& aName, const QVariant& aValue);
+signals:
+    void fileListChanged();
 
 private:
     void process();
 
+    QStringList getFileList() const { return mPathList; }
+    void setFileList(QStringList aFileList);
+
+private:
     IplImageFrame mPictureFrame;
     QStringList mPathList;
     int mNextFileIndex;

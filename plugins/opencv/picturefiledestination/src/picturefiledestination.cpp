@@ -9,19 +9,19 @@ PictureFileDestination::PictureFileDestination(ElementFactory *aFactory, const Q
     {
     }
 
-ElementBase::ParamList PictureFileDestination::getParams() const
-    {
-    ParamList ret;
-    ret["File"] =  mPictureFrame.getSourceName();
-    return ret;
-    }
+//ElementBase::ParamList PictureFileDestination::getParams() const
+//    {
+//    ParamList ret;
+//    ret["File"] =  mPictureFrame.getSourceName();
+//    return ret;
+//    }
 
-void PictureFileDestination::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    Q_UNUSED(aName);
-    mPictureFrame.setSourceName(aValue.toString());
-    mFileIndex = 0;
-    }
+//void PictureFileDestination::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    Q_UNUSED(aName);
+//    mPictureFrame.setSourceName(aValue.toString());
+//    mFileIndex = 0;
+//    }
 
 void PictureFileDestination::process()
     {

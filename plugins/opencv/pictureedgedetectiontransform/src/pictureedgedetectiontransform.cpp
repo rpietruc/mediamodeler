@@ -12,24 +12,24 @@ PictureEdgeDetectionTransform::PictureEdgeDetectionTransform(ElementFactory *aFa
     {
     }
 
-ElementBase::ParamList PictureEdgeDetectionTransform::getParams() const
-    {
-    ParamList ret;
-    ret["Threshold 1"] =  mThreshold1;
-    ret["Threshold 2"] =  mThreshold2;
-    ret["Aperture Size"] = mApertureSize;
-    return ret;
-    }
+//ElementBase::ParamList PictureEdgeDetectionTransform::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Threshold 1"] =  mThreshold1;
+//    ret["Threshold 2"] =  mThreshold2;
+//    ret["Aperture Size"] = mApertureSize;
+//    return ret;
+//    }
 
-void PictureEdgeDetectionTransform::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    if (aName == "Threshold 1")
-        mThreshold1 = aValue.toDouble();
-    else if (aName == "Threshold 2")
-        mThreshold2 = aValue.toDouble();
-    else if (aName == "Aperture Size")
-        mApertureSize = aValue.toInt();
-    }
+//void PictureEdgeDetectionTransform::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    if (aName == "Threshold 1")
+//        mThreshold1 = aValue.toDouble();
+//    else if (aName == "Threshold 2")
+//        mThreshold2 = aValue.toDouble();
+//    else if (aName == "Aperture Size")
+//        mApertureSize = aValue.toInt();
+//    }
 
 void PictureEdgeDetectionTransform::process()
     {

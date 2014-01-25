@@ -12,21 +12,21 @@ ImageDenoisingTransform::ImageDenoisingTransform(ElementFactory *aFactory, const
     {
     }
 
-ElementBase::ParamList ImageDenoisingTransform::getParams() const
-    {
-    ParamList ret;
-    ret["Iterations"] =  mIterations;
-    ret["Time Step"] = mTimeStep;
-    return ret;
-    }
+//ElementBase::ParamList ImageDenoisingTransform::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Iterations"] =  mIterations;
+//    ret["Time Step"] = mTimeStep;
+//    return ret;
+//    }
 
-void ImageDenoisingTransform::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    if (aName == "Iterations")
-        mIterations = aValue.toInt();
-    else if (aName == "Time Step")
-        mTimeStep = aValue.toDouble();
-    }
+//void ImageDenoisingTransform::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    if (aName == "Iterations")
+//        mIterations = aValue.toInt();
+//    else if (aName == "Time Step")
+//        mTimeStep = aValue.toDouble();
+//    }
 
 void ImageDenoisingTransform::process()
     {

@@ -8,25 +8,6 @@ PictureFileSource::PictureFileSource(ElementFactory *aFactory, const QString &aO
     {
     }
 
-ElementBase::ParamList PictureFileSource::getParams() const
-    {
-    ParamList ret;
-    ret["Files"] =  mPathList;
-    return ret;
-    }
-
-void PictureFileSource::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    Q_UNUSED(aName);
-    QStringList pathList = aValue.toStringList();
-    mPathList.clear();
-    foreach (QString path, pathList)
-        {
-        QFileInfo fileInfo(path);
-        mPathList.append(fileInfo.filePath());
-        }
-    }
-
 void PictureFileSource::process()
     {
     //if (mNextFileIndex >= mPathList.size())
@@ -51,4 +32,14 @@ void PictureFileSource::process()
         }
     }
 
+void PictureFileSource::setFileList(QStringList aFileList)
+    {
+    mPathList.clear();
+    foreach (QString path, aFileList)
+        {
+        QFileInfo fileInfo(path);
+        mPathList.append(fileInfo.filePath());
+        }
+    emit fileListChanged();
+    }
 } // namespace media

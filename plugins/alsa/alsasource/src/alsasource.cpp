@@ -11,10 +11,13 @@ AlsaSource::AlsaSource(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName),
     mPcmHandle(NULL)
     {
-    mAlsaFrame.setSourceName("default");
-    mAlsaFrame.setSampleRate(8000);
-    mAlsaFrame.setChannelsNo(2);
-    open();
+    setDeviceName("default");
+    setSampleRate(8000);
+    setChannelsNo(2);
+
+    QObject::connect(this, SIGNAL(deviceNameChanged()), this, SLOT(close()), Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(sampleRateChanged()), this, SLOT(close()), Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(channelsNoChanged()), this, SLOT(close()), Qt::QueuedConnection);
     }
 
 AlsaSource::~AlsaSource()
@@ -22,62 +25,27 @@ AlsaSource::~AlsaSource()
     close();
     }
 
-ElementBase::ParamList AlsaSource::getParams() const
-    {
-    Q_ASSERT(mAlsaFrame.getDimension(AlsaFrame::Time).mDelta);
-    ParamList ret;
-    ret["Alsa Device"] = mAlsaFrame.getSourceName();
-    ret["Sample Rate"] = 1.0/mAlsaFrame.getDimension(AlsaFrame::Time).mDelta;
-    ret["Channels No"] = mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution;
-    return ret;
-    }
-
-void AlsaSource::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    if (aName == "Alsa Device")
-        {
-        if (mAlsaFrame.getSourceName() != aValue.toString())
-            {
-            mAlsaFrame.setSourceName(aValue.toString());
-            close();
-            }
-        }
-    else if (aName == "Sample Rate")
-        {
-        if (aValue.toInt() && (mAlsaFrame.getDimension(AlsaFrame::Time).mDelta != 1.0/aValue.toInt()))
-            {
-            mAlsaFrame.setSampleRate(aValue.toInt());
-            close();
-            }
-        }
-    else if (aName == "Channels No")
-        {
-        if (mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution != aValue.toInt())
-            {
-            mAlsaFrame.setChannelsNo(aValue.toInt());
-            close();
-            }
-        }
-    }
-
 void AlsaSource::process()
     {
+    snd_pcm_sframes_t ret = 0;
     if (!mPcmHandle)
         open();
 
-    snd_pcm_sframes_t ret = snd_pcm_readi(mPcmHandle, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimension(AlsaFrame::Time).mResolution);
-    if (ret == -EPIPE)
+    if (mPcmHandle)
         {
-        /* EPIPE means xrun (overrun for capture)
-           The overrun can happen when an application does not take new captured samples in time from alsa-lib. */
-        snd_pcm_prepare(mPcmHandle);
         ret = snd_pcm_readi(mPcmHandle, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimension(AlsaFrame::Time).mResolution);
+        if (ret <= 0)
+            qWarning() << "snd_pcm_readi returned " << ret;
+        if (ret == -EPIPE)
+            {
+            /* EPIPE means xrun (overrun for capture)
+               The overrun can happen when an application does not take new captured samples in time from alsa-lib. */
+            snd_pcm_prepare(mPcmHandle);
+            ret = snd_pcm_readi(mPcmHandle, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimension(AlsaFrame::Time).mResolution);
+            }
+        if (ret > 0)
+            mAlsaFrame.setTimeStamp(QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0);
         }
-    if (ret > 0)
-        mAlsaFrame.setTimeStamp(QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0);
-
-    if (ret <= 0)
-        qWarning() << "snd_pcm_readi returned " << ret;
 
     if (ret > 0)
         emit framesReady();
@@ -87,10 +55,14 @@ void AlsaSource::process()
 
 void AlsaSource::open()
     {
-    if (mPcmHandle)
-        close();
+    Q_ASSERT(!mPcmHandle);
 
     int res = 0;
+
+    // Allocate a hardware parameters object
+    snd_pcm_hw_params_t *hw_params;
+    snd_pcm_hw_params_alloca(&hw_params);
+
     do
         {
         // Open PCM device
@@ -100,10 +72,6 @@ void AlsaSource::open()
             mPcmHandle = NULL;
             break;
             }
-
-        // Allocate a hardware parameters object
-        snd_pcm_hw_params_t *hw_params;
-        snd_pcm_hw_params_alloca(&hw_params);
 
         // Fill it in with default values
         res = snd_pcm_hw_params_any(mPcmHandle, hw_params);
@@ -153,6 +121,7 @@ void AlsaSource::open()
         snd_pcm_close(mPcmHandle);
         mPcmHandle = NULL;
         }
+//    snd_pcm_hw_params_free(hw_params);
     }
 
 void AlsaSource::close()
@@ -163,6 +132,32 @@ void AlsaSource::close()
         snd_pcm_close(mPcmHandle);
         }
     mPcmHandle = NULL;
+    }
+
+int AlsaSource::getSampleRate() const
+    {
+    if (mAlsaFrame.getDimension(AlsaFrame::Time).mDelta)
+        return 1/mAlsaFrame.getDimension(AlsaFrame::Time).mDelta;
+    //else
+        return 0;
+    }
+
+void AlsaSource::setDeviceName(QString aDeviceName)
+    {
+    mAlsaFrame.setSourceName(aDeviceName);
+    emit deviceNameChanged();
+    }
+
+void AlsaSource::setSampleRate(int aSampleRate)
+    {
+    mAlsaFrame.setSampleRate(aSampleRate);
+    emit sampleRateChanged();
+    }
+
+void AlsaSource::setChannelsNo(int aChannelsNo)
+    {
+    mAlsaFrame.setChannelsNo(aChannelsNo);
+    emit channelsNoChanged();
     }
 
 } // namespace media

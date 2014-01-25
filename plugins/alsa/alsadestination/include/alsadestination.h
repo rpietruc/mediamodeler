@@ -14,30 +14,34 @@
 
 namespace media {
 
-class ALSADESTINATIONSHARED_EXPORT SoundAlsaDestination : public ElementBase
+class ALSADESTINATIONSHARED_EXPORT AlsaDestination : public ElementBase
     {
     Q_OBJECT
+    Q_PROPERTY(QString deviceName
+               READ getDeviceName
+               WRITE setDeviceName
+               NOTIFY deviceNameChanged)
 
 public:
-    explicit SoundAlsaDestination(ElementFactory *aFactory, const QString &aObjectName);
-    ~SoundAlsaDestination();
+    explicit AlsaDestination(ElementFactory *aFactory, const QString &aObjectName);
+    ~AlsaDestination();
 
-    ParamList getParams() const;
-
-public slots:
-    void setParamValue(const QString& aName, const QVariant& aValue);
+signals:
+    void deviceNameChanged();
 
 private slots:
     void open();
     void close();
     void write();
-    bool isOpened() const { return mPcmHandle != NULL; }
 
 private:
     void process();
 
+    QString getDeviceName() const { return mAlsaFrame.getSourceName(); }
+    void setDeviceName(QString aDeviceName);
+
+private:
     snd_pcm_t *mPcmHandle;
-    snd_pcm_hw_params_t *mHwParams;
     AlsaFrame mAlsaFrame;
     };
 
@@ -49,7 +53,7 @@ class SoundAlsaDestinationFactory : public ElementFactory
 
 protected:
     const char* getElementName() const { return "AlsaDestination"; }
-    ElementBase* createElement(const QString &aObjectName) { return new SoundAlsaDestination(this, aObjectName); }
+    ElementBase* createElement(const QString &aObjectName) { return new AlsaDestination(this, aObjectName); }
     };
 
 } // namespace media

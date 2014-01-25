@@ -9,21 +9,21 @@ PictureSmoothingTransform::PictureSmoothingTransform(ElementFactory *aFactory, c
     {
     }
 
-ElementBase::ParamList PictureSmoothingTransform::getParams() const
-    {
-    ParamList ret;
-    ret["Spatial Radius"] = mSpatialRadius;
-    ret["Color Radius"] = mColorRadius;
-    return ret;
-    }
+//ElementBase::ParamList PictureSmoothingTransform::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Spatial Radius"] = mSpatialRadius;
+//    ret["Color Radius"] = mColorRadius;
+//    return ret;
+//    }
 
-void PictureSmoothingTransform::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    if (aName == "Spatial Radius")
-        mSpatialRadius = aValue.toDouble();
-    else if (aName == "Color Radius")
-        mColorRadius = aValue.toDouble();
-    }
+//void PictureSmoothingTransform::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    if (aName == "Spatial Radius")
+//        mSpatialRadius = aValue.toDouble();
+//    else if (aName == "Color Radius")
+//        mColorRadius = aValue.toDouble();
+//    }
 
 void PictureSmoothingTransform::process()
     {

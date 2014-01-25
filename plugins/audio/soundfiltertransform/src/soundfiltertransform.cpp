@@ -15,21 +15,21 @@ SoundFilterTransform::SoundFilterTransform(ElementFactory *aFactory, const QStri
     mTail << 0 << 0;
     }
 
-ElementBase::ParamList SoundFilterTransform::getParams() const
-    {
-    ParamList ret;
-    ret["a0"] = mFilter.at(0);
-    ret["a1"] = mFilter.at(1);
-    return ret;
-    }
+//ElementBase::ParamList SoundFilterTransform::getParams() const
+//    {
+//    ParamList ret;
+//    ret["a0"] = mFilter.at(0);
+//    ret["a1"] = mFilter.at(1);
+//    return ret;
+//    }
 
-void SoundFilterTransform::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    if (aName == "a0")
-        mFilter[0] = aValue.toDouble();
-    else if (aName == "a1")
-        mFilter[1] = aValue.toDouble();
-    }
+//void SoundFilterTransform::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    if (aName == "a0")
+//        mFilter[0] = aValue.toDouble();
+//    else if (aName == "a1")
+//        mFilter[1] = aValue.toDouble();
+//    }
 
 void SoundFilterTransform::process()
     {

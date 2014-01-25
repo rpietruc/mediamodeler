@@ -24,10 +24,10 @@ public:
     int getFramesNo() const { return mPointsFrameSet.size(); }
     const FrameBase *getFrame(int aIndex) const { return &mPointsFrameSet.at(aIndex); }
 
-    ParamList getParams() const;
+//    ParamList getParams() const;
 
 protected slots:
-    void setParamValue(const QString& aName, const QVariant& aValue);
+//    void setParamValue(const QString& aName, const QVariant& aValue);
 
 private:
     void process();

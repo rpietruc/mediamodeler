@@ -10,19 +10,19 @@ FormantTransform::FormantTransform(ElementFactory *aFactory, const QString &aObj
     mFormantFrame.setFormantsNo(10);
     }
 
-ElementBase::ParamList FormantTransform::getParams() const
-    {
-    ParamList ret;
-    ret["Max Formants"] = mFormantFrame.getDimension(FormantFrame::Formants).mResolution;
-    return ret;
-    }
+//ElementBase::ParamList FormantTransform::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Max Formants"] = mFormantFrame.getDimension(FormantFrame::Formants).mResolution;
+//    return ret;
+//    }
 
-void FormantTransform::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    Q_UNUSED(aName);
-    if (mFormantFrame.getDimension(FormantFrame::Formants).mResolution != aValue.toInt())
-        mFormantFrame.setFormantsNo(aValue.toInt());
-    }
+//void FormantTransform::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    Q_UNUSED(aName);
+//    if (mFormantFrame.getDimension(FormantFrame::Formants).mResolution != aValue.toInt())
+//        mFormantFrame.setFormantsNo(aValue.toInt());
+//    }
 
 void FormantTransform::process()
     {

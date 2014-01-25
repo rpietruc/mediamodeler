@@ -18,7 +18,7 @@ public:
     explicit GuiElementList(QWidget *aParent = 0);
     ~GuiElementList();
 
-    void init(const ElementBase::ParamList& aParams);
+    void addProperty(const QString &aName, const QVariant &aValue);
 
 private slots:
     void notifySettingsChanged(const QString& aText);

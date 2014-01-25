@@ -14,32 +14,32 @@ VideoFileSource::~VideoFileSource()
         cvReleaseCapture(&mCapture);
     }
 
-ElementBase::ParamList VideoFileSource::getParams() const
-    {
-    ParamList ret;
-    ret["File"] = mPictureFrame.getSourceName();
-    return ret;
-    }
+//ElementBase::ParamList VideoFileSource::getParams() const
+//    {
+//    ParamList ret;
+//    ret["File"] = mPictureFrame.getSourceName();
+//    return ret;
+//    }
 
-void VideoFileSource::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    Q_UNUSED(aName);
-    if (mPictureFrame.getSourceName() != aValue.toString())
-        {
-        if (mCapture && mPictureFrame.getSourceName() != aValue.toString())
-            {
-            cvReleaseCapture(&mCapture);
-            mCapture = NULL;
-            }
+//void VideoFileSource::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    Q_UNUSED(aName);
+//    if (mPictureFrame.getSourceName() != aValue.toString())
+//        {
+//        if (mCapture && mPictureFrame.getSourceName() != aValue.toString())
+//            {
+//            cvReleaseCapture(&mCapture);
+//            mCapture = NULL;
+//            }
 
-        if (!mCapture)
-            {
-            mCapture = cvCaptureFromAVI(qPrintable(aValue.toString()));
-            if (mCapture)
-                mPictureFrame.setSourceName(aValue.toString());
-            }
-        }
-    }
+//        if (!mCapture)
+//            {
+//            mCapture = cvCaptureFromAVI(qPrintable(aValue.toString()));
+//            if (mCapture)
+//                mPictureFrame.setSourceName(aValue.toString());
+//            }
+//        }
+//    }
 
 void VideoFileSource::process()
     {

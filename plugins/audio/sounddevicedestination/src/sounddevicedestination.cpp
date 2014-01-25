@@ -20,24 +20,24 @@ SoundDeviceDestination::~SoundDeviceDestination()
     close();
     }
 
-ElementBase::ParamList SoundDeviceDestination::getParams() const
-    {
-    ParamList ret;
-//    mAudioDeviceInfo(QAudioDeviceInfo::defaultOutputDevice()),
-//    ret["Audio Device"] = mAudioDeviceInfo.deviceName();
-    ret["Audio Device"] = mAudioOutputDevice.getSoundFrame().getSourceName();
-    return ret;
-    }
+//ElementBase::ParamList SoundDeviceDestination::getParams() const
+//    {
+//    ParamList ret;
+////    mAudioDeviceInfo(QAudioDeviceInfo::defaultOutputDevice()),
+////    ret["Audio Device"] = mAudioDeviceInfo.deviceName();
+//    ret["Audio Device"] = mAudioOutputDevice.getSoundFrame().getSourceName();
+//    return ret;
+//    }
 
-void SoundDeviceDestination::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    Q_UNUSED(aName);
-    if (mAudioOutputDevice.getSoundFrame().getSourceName() != aValue.toString())
-        {
-        close();
-        mAudioOutputDevice.getSoundFrame().setSourceName(aValue.toString());
-        }
-    }
+//void SoundDeviceDestination::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    Q_UNUSED(aName);
+//    if (mAudioOutputDevice.getSoundFrame().getSourceName() != aValue.toString())
+//        {
+//        close();
+//        mAudioOutputDevice.getSoundFrame().setSourceName(aValue.toString());
+//        }
+//    }
 
 void SoundDeviceDestination::open()
     {

@@ -12,21 +12,21 @@ ImageSmoothingTransform::ImageSmoothingTransform(ElementFactory *aFactory, const
     {
     }
 
-ElementBase::ParamList ImageSmoothingTransform::getParams() const
-    {
-    ParamList ret;
-    ret["Range Sigma"] =  mRangeSigma;
-    ret["Domain Sigma"] = mDomainSigma;
-    return ret;
-    }
+//ElementBase::ParamList ImageSmoothingTransform::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Range Sigma"] =  mRangeSigma;
+//    ret["Domain Sigma"] = mDomainSigma;
+//    return ret;
+//    }
 
-void ImageSmoothingTransform::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    if (aName == "Range Sigma")
-        mRangeSigma = aValue.toDouble();
-    else if (aName == "Domain Sigma")
-        mDomainSigma = aValue.toDouble();
-    }
+//void ImageSmoothingTransform::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    if (aName == "Range Sigma")
+//        mRangeSigma = aValue.toDouble();
+//    else if (aName == "Domain Sigma")
+//        mDomainSigma = aValue.toDouble();
+//    }
 
 void ImageSmoothingTransform::process()
     {

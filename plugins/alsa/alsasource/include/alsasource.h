@@ -17,6 +17,18 @@ namespace media {
 class ALSASOURCESHARED_EXPORT AlsaSource : public ElementBase
     {
     Q_OBJECT
+    Q_PROPERTY(QString deviceName
+               READ getDeviceName
+               WRITE setDeviceName
+               NOTIFY deviceNameChanged)
+    Q_PROPERTY(int sampleRate
+               READ getSampleRate
+               WRITE setSampleRate
+               NOTIFY sampleRateChanged)
+    Q_PROPERTY(int channelsNo
+               READ getChannelsNo
+               WRITE setChannelsNo
+               NOTIFY channelsNoChanged)
 
 public:
     explicit AlsaSource(ElementFactory *aFactory, const QString &aObjectName);
@@ -25,15 +37,25 @@ public:
     int getFramesNo() const { return 1; }
     const FrameBase *getFrame(int) const { return &mAlsaFrame; }
 
-    ParamList getParams() const;
+signals:
+    void deviceNameChanged();
+    void sampleRateChanged();
+    void channelsNoChanged();
 
-public slots:
-    void setParamValue(const QString& aName, const QVariant& aValue);
+private slots:
+    void open();
+    void close();
 
 private:
     void process();
-    void open();
-    void close();
+
+    QString getDeviceName() const { return mAlsaFrame.getSourceName(); }
+    int getSampleRate() const;
+    int getChannelsNo() const { return mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution; }
+
+    void setDeviceName(QString aDeviceName);
+    void setSampleRate(int aSampleRate);
+    void setChannelsNo(int aChannelsNo);
 
 private:
     snd_pcm_t *mPcmHandle;

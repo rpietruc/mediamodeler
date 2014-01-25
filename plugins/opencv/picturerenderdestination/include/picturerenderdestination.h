@@ -26,10 +26,10 @@ public:
     explicit PictureRenderDestination(ElementFactory *aFactory, const QString &aObjectName);
     ~PictureRenderDestination();
 
-    ParamList getParams() const;
+//    ParamList getParams() const;
 
 protected slots:
-    void setParamValue(const QString& aName, const QVariant& aValue);
+//    void setParamValue(const QString& aName, const QVariant& aValue);
 
 private slots:
     void showPicture();

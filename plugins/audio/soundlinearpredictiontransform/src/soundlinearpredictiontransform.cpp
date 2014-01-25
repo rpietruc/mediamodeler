@@ -12,19 +12,19 @@ SoundLinearPredictionTransform::SoundLinearPredictionTransform(ElementFactory *a
     setTaps(10);
     }
 
-ElementBase::ParamList SoundLinearPredictionTransform::getParams() const
-    {
-    ParamList ret;
-    ret["Taps No"] = mCoefficients.size();
-    return ret;
-    }
+//ElementBase::ParamList SoundLinearPredictionTransform::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Taps No"] = mCoefficients.size();
+//    return ret;
+//    }
 
-void SoundLinearPredictionTransform::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    Q_UNUSED(aName);
-    if (mCoefficients.size() != aValue.toInt())
-        setTaps(aValue.toInt());
-    }
+//void SoundLinearPredictionTransform::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    Q_UNUSED(aName);
+//    if (mCoefficients.size() != aValue.toInt())
+//        setTaps(aValue.toInt());
+//    }
 
 void SoundLinearPredictionTransform::setTaps(int aTaps)
     {

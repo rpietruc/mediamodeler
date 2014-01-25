@@ -21,10 +21,10 @@ class PICTUREFILEDESTINATIONSHARED_EXPORT PictureFileDestination : public Elemen
 public:
     explicit PictureFileDestination(ElementFactory *aFactory, const QString &aObjectName);
 
-    ParamList getParams() const;
+//    ParamList getParams() const;
 
 public slots:
-    void setParamValue(const QString& aName, const QVariant& aValue);
+//    void setParamValue(const QString& aName, const QVariant& aValue);
 
 private:
     void process();

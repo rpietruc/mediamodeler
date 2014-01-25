@@ -44,60 +44,60 @@ MovieFileSource::~MovieFileSource()
         av_free(mFrame);
     }
 
-ElementBase::ParamList MovieFileSource::getParams() const
-    {
-    ParamList ret;
-    if (mVideoFrame.getSourceName().isEmpty())
-        ret["File"] = mAudioFrame.getSourceName();
-    else
-        ret["File"] = mVideoFrame.getSourceName();
-    return ret;
-    }
+//ElementBase::ParamList MovieFileSource::getParams() const
+//    {
+//    ParamList ret;
+//    if (mVideoFrame.getSourceName().isEmpty())
+//        ret["File"] = mAudioFrame.getSourceName();
+//    else
+//        ret["File"] = mVideoFrame.getSourceName();
+//    return ret;
+//    }
 
-void MovieFileSource::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    Q_UNUSED(aName);
+//void MovieFileSource::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    Q_UNUSED(aName);
 
-    if (mVideoDecoderContext)
-        avcodec_close(mVideoDecoderContext);
-    if (mAudioDecoderContext)
-        avcodec_close(mAudioDecoderContext);
-    if (mFormatContext)
-        avformat_close_input(&mFormatContext);
+//    if (mVideoDecoderContext)
+//        avcodec_close(mVideoDecoderContext);
+//    if (mAudioDecoderContext)
+//        avcodec_close(mAudioDecoderContext);
+//    if (mFormatContext)
+//        avformat_close_input(&mFormatContext);
 
-    // open input file, and allocate format context
-    if (avformat_open_input(&mFormatContext, qPrintable(aValue.toString()), NULL, NULL) >= 0)
-        {
-        // retrieve stream information
-        if (avformat_find_stream_info(mFormatContext, NULL) >= 0)
-            {
-            if (openCodecContext(&mVideoStreamIdx, mFormatContext, AVMEDIA_TYPE_VIDEO) >= 0)
-                {
-                mVideoStream = mFormatContext->streams[mVideoStreamIdx];
-                mVideoFrame.allocateData(*mVideoStream->codec);
-                mVideoDecoderContext = mVideoStream->codec;
-                mVideoFrame.setSourceName(aValue.toString());
-                }
-            if (openCodecContext(&mAudioStreamIdx, mFormatContext, AVMEDIA_TYPE_AUDIO) >= 0)
-                {
-                mAudioStream = mFormatContext->streams[mAudioStreamIdx];
-                mAudioFrame.allocateData(*mAudioStream->codec);
-                mAudioDecoderContext = mAudioStream->codec;
-                mAudioFrame.setSourceName(aValue.toString());
-                }
-            // if any of stream opened
-            if (mAudioDecoderContext || mVideoDecoderContext)
-                {
-                // dump input information to stderr
-                av_dump_format(mFormatContext, 0, qPrintable(aValue.toString()), 0);
-                }
-            }
-        else
-            qWarning() << "Could not find stream information " << aValue.toString();
-        }
-    else
-        qWarning() << "Could not open source file " << aValue.toString();
-    }
+//    // open input file, and allocate format context
+//    if (avformat_open_input(&mFormatContext, qPrintable(aValue.toString()), NULL, NULL) >= 0)
+//        {
+//        // retrieve stream information
+//        if (avformat_find_stream_info(mFormatContext, NULL) >= 0)
+//            {
+//            if (openCodecContext(&mVideoStreamIdx, mFormatContext, AVMEDIA_TYPE_VIDEO) >= 0)
+//                {
+//                mVideoStream = mFormatContext->streams[mVideoStreamIdx];
+//                mVideoFrame.allocateData(*mVideoStream->codec);
+//                mVideoDecoderContext = mVideoStream->codec;
+//                mVideoFrame.setSourceName(aValue.toString());
+//                }
+//            if (openCodecContext(&mAudioStreamIdx, mFormatContext, AVMEDIA_TYPE_AUDIO) >= 0)
+//                {
+//                mAudioStream = mFormatContext->streams[mAudioStreamIdx];
+//                mAudioFrame.allocateData(*mAudioStream->codec);
+//                mAudioDecoderContext = mAudioStream->codec;
+//                mAudioFrame.setSourceName(aValue.toString());
+//                }
+//            // if any of stream opened
+//            if (mAudioDecoderContext || mVideoDecoderContext)
+//                {
+//                // dump input information to stderr
+//                av_dump_format(mFormatContext, 0, qPrintable(aValue.toString()), 0);
+//                }
+//            }
+//        else
+//            qWarning() << "Could not find stream information " << aValue.toString();
+//        }
+//    else
+//        qWarning() << "Could not open source file " << aValue.toString();
+//    }
 
 int MovieFileSource::openCodecContext(int *aStreamIdx, AVFormatContext *aFormatContext, enum AVMediaType aMediaType)
     {

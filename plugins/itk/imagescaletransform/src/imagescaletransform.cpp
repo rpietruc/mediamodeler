@@ -13,21 +13,21 @@ ImageScaleTransform::ImageScaleTransform(ElementFactory *aFactory, const QString
     mScale[1] = 1.5;
     }
 
-ElementBase::ParamList ImageScaleTransform::getParams() const
-    {
-    ParamList ret;
-    ret["Width Scale"] =  mScale[0];
-    ret["Height Scale"] = mScale[1];
-    return ret;
-    }
+//ElementBase::ParamList ImageScaleTransform::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Width Scale"] =  mScale[0];
+//    ret["Height Scale"] = mScale[1];
+//    return ret;
+//    }
 
-void ImageScaleTransform::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    if (aName == "Width Scale")
-        mScale[0] = aValue.toDouble();
-    else if (aName == "Height Scale")
-        mScale[1] = aValue.toDouble();
-    }
+//void ImageScaleTransform::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    if (aName == "Width Scale")
+//        mScale[0] = aValue.toDouble();
+//    else if (aName == "Height Scale")
+//        mScale[1] = aValue.toDouble();
+//    }
 
 void ImageScaleTransform::process()
     {

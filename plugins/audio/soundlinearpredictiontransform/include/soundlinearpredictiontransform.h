@@ -35,10 +35,10 @@ public:
             return &mFilterFrame;
         }
 
-    ParamList getParams() const;
+//    ParamList getParams() const;
 
 public slots:
-    void setParamValue(const QString& aName, const QVariant& aValue);
+//    void setParamValue(const QString& aName, const QVariant& aValue);
 
 private:
     void setTaps(int aTaps);

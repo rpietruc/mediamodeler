@@ -22,18 +22,18 @@ PictureBoxPlotDestination::~PictureBoxPlotDestination()
     delete mBoxPlot;
     }
 
-ElementBase::ParamList PictureBoxPlotDestination::getParams() const
-    {
-    ParamList ret;
-    ret["Max"] =  mBoxPlot->maxValue();
-    return ret;
-    }
+//ElementBase::ParamList PictureBoxPlotDestination::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Max"] =  mBoxPlot->maxValue();
+//    return ret;
+//    }
 
-void PictureBoxPlotDestination::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    Q_UNUSED(aName);
-    mBoxPlot->setMaxValue(aValue.toDouble());
-    }
+//void PictureBoxPlotDestination::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    Q_UNUSED(aName);
+//    mBoxPlot->setMaxValue(aValue.toDouble());
+//    }
 
 void PictureBoxPlotDestination::process()
     {

@@ -10,14 +10,15 @@ namespace Ui {
 
 namespace media {
 
-class MEDIAMODELSHARED_EXPORT FileGuiElement : public GuiElementBase
+class FileGuiElement : public GuiElementBase
     {
     Q_OBJECT
 
 public:
     explicit FileGuiElement(QWidget *aParent = 0);
     ~FileGuiElement();
-    void init(const ElementBase::ParamList& aParams);
+
+    void addProperty(const QString &aName, const QVariant &aValue);
 
 private slots:
     void fileOpen(const QString &aPath);
@@ -29,14 +30,15 @@ private:
     Ui::FileGuiElement *mUi;
     };
 
-class MEDIAMODELSHARED_EXPORT FilesGuiElement : public GuiElementBase
+class FilesGuiElement : public GuiElementBase
     {
     Q_OBJECT
 
 public:
     explicit FilesGuiElement(QWidget *aParent = 0);
     ~FilesGuiElement();
-    void init(const ElementBase::ParamList& aParams);
+
+    void addProperty(const QString &aName, const QVariant &aValue);
 
 private slots:
     void filesOpen(const QStringList &aPathList);

@@ -21,15 +21,17 @@ FileGuiElement::~FileGuiElement()
     delete mUi;
     }
 
-void FileGuiElement::init(const ElementBase::ParamList& aParams)
+void FileGuiElement::addProperty(const QString &aName, const QVariant &aValue)
     {
-    mUi->label->setText(aParams["File"].toString());
+    Q_ASSERT(aName == "fileName");
+    Q_ASSERT(aValue.canConvert(QVariant::String));
+    mUi->label->setText(aValue.toString());
     }
 
 void FileGuiElement::fileOpen(const QString &aPath)
     {
     mUi->label->setText(aPath);
-    emit paramChanged("File", aPath);
+    emit paramChanged("fileName", aPath);
     }
 
 FilesGuiElement::FilesGuiElement(QWidget *aParent) :
@@ -49,15 +51,17 @@ FilesGuiElement::~FilesGuiElement()
     delete mUi;
     }
 
-void FilesGuiElement::init(const ElementBase::ParamList& aParams)
+void FilesGuiElement::addProperty(const QString &aName, const QVariant &aValue)
     {
-    mUi->label->setText(aParams["Files"].toStringList().join("; "));
+    Q_ASSERT(aName == "fileList");
+    Q_ASSERT(aValue.canConvert(QVariant::StringList));
+    mUi->label->setText(aValue.toStringList().join("; "));
     }
 
 void FilesGuiElement::filesOpen(const QStringList &aPathList)
     {
     mUi->label->setText(aPathList.join("; "));
-    emit paramChanged("Files", QVariant(aPathList));
+    emit paramChanged("fileList", QVariant(aPathList));
     }
 
 } // namespace media

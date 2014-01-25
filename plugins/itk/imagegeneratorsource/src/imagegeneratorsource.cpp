@@ -13,33 +13,33 @@ ImageGeneratorSource::ImageGeneratorSource(ElementFactory *aFactory, const QStri
     mImageFrame.setSourceName(objectName());
     }
 
-ElementBase::ParamList ImageGeneratorSource::getParams() const
-    {
-    ParamList ret;
-    ret["Width"] = (int)mSize[0];
-    ret["Height"] = (int)mSize[1];
-    return ret;
-    }
+//ElementBase::ParamList ImageGeneratorSource::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Width"] = (int)mSize[0];
+//    ret["Height"] = (int)mSize[1];
+//    return ret;
+//    }
 
-void ImageGeneratorSource::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    if (aName == "Width")
-        {
-        if (mSize[0] != aValue.toInt())
-            {
-            mImageFrame.release();
-            mSize[0] = aValue.toInt();
-            }
-        }
-    else if (aName == "Height")
-        {
-        if (mSize[1] != aValue.toInt())
-            {
-            mImageFrame.release();
-            mSize[1] = aValue.toInt();
-            }
-        }
-    }
+//void ImageGeneratorSource::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    if (aName == "Width")
+//        {
+//        if (mSize[0] != aValue.toInt())
+//            {
+//            mImageFrame.release();
+//            mSize[0] = aValue.toInt();
+//            }
+//        }
+//    else if (aName == "Height")
+//        {
+//        if (mSize[1] != aValue.toInt())
+//            {
+//            mImageFrame.release();
+//            mSize[1] = aValue.toInt();
+//            }
+//        }
+//    }
 
 void ImageGeneratorSource::process()
     {

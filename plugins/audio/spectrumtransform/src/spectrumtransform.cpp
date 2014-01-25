@@ -11,19 +11,19 @@ SpectrumTransform::SpectrumTransform(ElementFactory *aFactory, const QString &aO
     mSpectrumFrame.setResolution(512, M_PI);
     }
 
-ElementBase::ParamList SpectrumTransform::getParams() const
-    {
-    ParamList ret;
-    ret["Resolution"] = mSpectrumFrame.getResolution();
-    return ret;
-    }
+//ElementBase::ParamList SpectrumTransform::getParams() const
+//    {
+//    ParamList ret;
+//    ret["Resolution"] = mSpectrumFrame.getResolution();
+//    return ret;
+//    }
 
-void SpectrumTransform::setParamValue(const QString& aName, const QVariant& aValue)
-    {
-    Q_UNUSED(aName);
-    if (mSpectrumFrame.getResolution() != aValue.toInt())
-        mSpectrumFrame.setResolution(aValue.toInt(), M_PI);
-    }
+//void SpectrumTransform::setParamValue(const QString& aName, const QVariant& aValue)
+//    {
+//    Q_UNUSED(aName);
+//    if (mSpectrumFrame.getResolution() != aValue.toInt())
+//        mSpectrumFrame.setResolution(aValue.toInt(), M_PI);
+//    }
 
 void SpectrumTransform::process()
     {
