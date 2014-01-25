@@ -7,17 +7,16 @@ namespace media {
 ElementBase::ElementBase(QObject *aFactory, const QString &aObjectName) :
     QObject(aFactory),
     mSourceElementsNo(0),
-    mRun(true)
+    mRunning(false)
     {
     setObjectName(aObjectName);
     }
 
-void ElementBase::start(bool aEnabled)
+void ElementBase::setRunning(bool aEnabled)
     {
-    mRun = aEnabled;
+    mRunning = aEnabled;
     if (aEnabled)
         {
-        qDebug() << "start " << objectName() << ", thread " << QThread::currentThreadId();
         mCurrentReceiversReadySet.clear();
         process();
         }
@@ -26,7 +25,7 @@ void ElementBase::start(bool aEnabled)
 void ElementBase::readFrames()
     {
 //    qDebug() << "readFrames " << objectName() << ", thread " << QThread::currentThreadId();
-    if (!mRun)
+    if (!mRunning)
         return;
 
     // get frames from sender
@@ -47,7 +46,7 @@ void ElementBase::readFrames()
 
 void ElementBase::processFrames()
     {
-    if (!mRun)
+    if (!mRunning)
         return;
 
 //    qDebug() << "processFrames " << objectName() << ", thread " << QThread::currentThreadId();

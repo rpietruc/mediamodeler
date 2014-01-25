@@ -58,7 +58,7 @@ public slots:
         }
 
     virtual void processFrames();
-    void start(bool aEnable);
+    void setRunning(bool aEnable);
     void readFrames();
 
 protected:
@@ -73,7 +73,7 @@ private:
     QSet<QObject*> mConnectedReceiversSet;
     QSet<QObject*> mCurrentReceiversReadySet;
 
-    bool mRun;
+    bool mRunning;
     };
 
 class MEDIAMODELSHARED_EXPORT ElementFactory : public QObject

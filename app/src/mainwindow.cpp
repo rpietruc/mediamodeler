@@ -82,7 +82,6 @@ void MainWindow::loadModel(const QString& aFilePath)
             }
         }
 
-    QSet<int> sources;
     for (int i = 0; i < index; ++i)
         {
         ElementBase* elem = mCreator->getElement(i);
@@ -96,15 +95,22 @@ void MainWindow::loadModel(const QString& aFilePath)
         QObject::connect(box, SIGNAL(settingChanged(QString, QString, QVariant)), this, SLOT(saveSetting(QString, QString, QVariant)));
         mUi->gridLayout->addWidget(box, i/3, i%3);
         mElemBoxes.push_back(box);
-        sources.insert(i);
 
-//        QThread *elemThread = new QThread(this);
-//        elem->moveToThread(elemThread);
-//        elemThread->start();
-//        QObject::connect(elemThread, SIGNAL(finished()), elem, SLOT(deleteLater()));
-//        QObject::connect(elemThread, SIGNAL(finished()), elemThread, SLOT(deleteLater()));
-//        mElemThreads.push_back(elemThread);
+        QObject::connect(mUi->actionRun, SIGNAL(toggled(bool)), elem, SLOT(setRunning(bool)), Qt::QueuedConnection);
+        //TODO: processing should be completed when all sources finish
+        QObject::connect(elem, SIGNAL(processingCompleted(bool)), mUi->actionRun, SLOT(setDisabled(bool)), Qt::QueuedConnection);
+        QObject::connect(elem, SIGNAL(processingCompleted(bool)), mUi->actionRun, SLOT(setChecked(bool)), Qt::QueuedConnection);
+
+        QThread *elemThread = new QThread(this);
+        elem->setParent(NULL); //cannot moveToThread object with a parent
+        elem->moveToThread(elemThread);
+        QObject::connect(elemThread, SIGNAL(finished()), elem, SLOT(deleteLater()));
+        QObject::connect(elemThread, SIGNAL(finished()), elemThread, SLOT(deleteLater()));
+        mElemThreads.push_back(elemThread);
         }
+
+    foreach (QThread* thread, mElemThreads)
+        thread->start();
 
     for (int i = 0;; ++i)
         {
@@ -114,16 +120,8 @@ void MainWindow::loadModel(const QString& aFilePath)
 
         QStringList connectionList = connectionPair.split(" ");
         mCreator->connectElements(connectionList.front().toInt(), connectionList.back().toInt());
-
-        sources.remove(connectionList.back().toInt());
         }
 
-    foreach (int index, sources)
-        {
-        QObject::connect(mUi->actionRun, SIGNAL(toggled(bool)), mCreator->getElement(index), SLOT(start(bool)), Qt::QueuedConnection);
-        QObject::connect(mCreator->getElement(index), SIGNAL(processingCompleted(bool)), mUi->actionRun, SLOT(setDisabled(bool)), Qt::QueuedConnection);
-        QObject::connect(mCreator->getElement(index), SIGNAL(processingCompleted(bool)), mUi->actionRun, SLOT(setChecked(bool)), Qt::QueuedConnection);
-        }
     QSettings(QApplication::organizationName(), QApplication::applicationName()).setValue(QString("model/last"), aFilePath);
     mUi->groupBox->setTitle(aFilePath);
 //    mUi->actionRun->setEnabled(true);
