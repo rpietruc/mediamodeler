@@ -7,23 +7,10 @@ namespace media {
 
 PictureContourTransform::PictureContourTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName),
-    mGrayFrame(1),
-    mMethod(CV_CHAIN_APPROX_SIMPLE)
+    mGrayFrame(1)
     {
+    setProperty("method", CV_CHAIN_APPROX_SIMPLE);
     }
-
-//ElementBase::ParamList PictureContourTransform::getParams() const
-//    {
-//    ParamList ret;
-//    ret["Method"] =  mMethod;
-//    return ret;
-//    }
-
-//void PictureContourTransform::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    Q_UNUSED(aName);
-//    mMethod = aValue.toInt();
-//    }
 
 void PictureContourTransform::process()
     {
@@ -38,7 +25,7 @@ void PictureContourTransform::process()
                 mGrayFrame.resizeAndCopyImage(*srcImg);
 
                 vector<vector<Point> > contours;
-                findContours(Mat(mGrayFrame), contours, CV_RETR_LIST, mMethod);
+                findContours(Mat(mGrayFrame), contours, CV_RETR_LIST, property("method").toInt());
 
                 mPointsFrameSet.clear();
                 foreach (vector<Point> contour, contours)

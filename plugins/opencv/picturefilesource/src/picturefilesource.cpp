@@ -9,6 +9,26 @@ PictureFileSource::PictureFileSource(ElementFactory *aFactory, const QString &aO
     {
     setProperty("fileList", QStringList());
     }
+bool PictureFileSource::event(QEvent *aEvent)
+    {
+    if (aEvent->type() == QEvent::DynamicPropertyChange)
+        {
+        QDynamicPropertyChangeEvent *event = (QDynamicPropertyChangeEvent*)aEvent;
+        if (QString(event->propertyName().constData()) == "fileList")
+            {
+            // special tab handling here
+            mPathList.clear();
+            foreach (QString path, property("fileList").toStringList())
+                {
+                QFileInfo fileInfo(path);
+                mPathList.append(fileInfo.filePath());
+                }
+            event->accept();
+            return TRUE;
+            }
+        }
+    return ElementBase::event(aEvent);
+    }
 
 void PictureFileSource::process()
     {
@@ -32,27 +52,6 @@ void PictureFileSource::process()
         mNextFileIndex = 0;
         emit processingCompleted();
         }
-    }
-
-bool PictureFileSource::event(QEvent *aEvent)
-    {
-    if (aEvent->type() == QEvent::DynamicPropertyChange)
-        {
-        QDynamicPropertyChangeEvent *event = (QDynamicPropertyChangeEvent*)aEvent;
-        if (QString(event->propertyName().constData()) == "fileList")
-            {
-            // special tab handling here
-            mPathList.clear();
-            foreach (QString path, property("fileList").toStringList())
-                {
-                QFileInfo fileInfo(path);
-                mPathList.append(fileInfo.filePath());
-                }
-            event->accept();
-            return TRUE;
-            }
-        }
-    return ElementBase::event(aEvent);
     }
 
 } // namespace media

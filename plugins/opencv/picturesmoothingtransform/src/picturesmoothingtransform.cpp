@@ -3,27 +3,11 @@
 namespace media {
 
 PictureSmoothingTransform::PictureSmoothingTransform(ElementFactory *aFactory, const QString &aObjectName) :
-    ElementBase(aFactory, aObjectName),
-    mSpatialRadius(2),
-    mColorRadius(40)
+    ElementBase(aFactory, aObjectName)
     {
+    setProperty("spatialRadius", 2);
+    setProperty("colorRadius", 40);
     }
-
-//ElementBase::ParamList PictureSmoothingTransform::getParams() const
-//    {
-//    ParamList ret;
-//    ret["Spatial Radius"] = mSpatialRadius;
-//    ret["Color Radius"] = mColorRadius;
-//    return ret;
-//    }
-
-//void PictureSmoothingTransform::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    if (aName == "Spatial Radius")
-//        mSpatialRadius = aValue.toDouble();
-//    else if (aName == "Color Radius")
-//        mColorRadius = aValue.toDouble();
-//    }
 
 void PictureSmoothingTransform::process()
     {
@@ -38,7 +22,7 @@ void PictureSmoothingTransform::process()
                 IplImage* srcImg = mSrcFrame;
                 mPictureFrame.resize(srcImg->width, srcImg->height);
 
-                cvPyrMeanShiftFiltering(srcImg, mPictureFrame, mSpatialRadius, mColorRadius);
+                cvPyrMeanShiftFiltering(srcImg, mPictureFrame, property("spatialRadius").toDouble(), property("colorRadius").toDouble());
 
                 emit framesReady();
                 break;

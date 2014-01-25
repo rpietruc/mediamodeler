@@ -3,40 +3,17 @@
 namespace media {
 
 PictureMorphologyTransform::PictureMorphologyTransform(ElementFactory *aFactory, const QString &aObjectName) :
-    ElementBase(aFactory, aObjectName),
-    mMorphologySize(1),
-    mOperation(CV_MOP_GRADIENT)
+    ElementBase(aFactory, aObjectName)
     {
-    mStructuringElement = cvCreateStructuringElementEx(mMorphologySize*2 + 1, mMorphologySize*2 + 1, mMorphologySize, mMorphologySize, CV_SHAPE_RECT, 0);
+    setProperty("morphologySize", 1);
+    setProperty("operation", CV_MOP_GRADIENT);
+    mStructuringElement = cvCreateStructuringElementEx(property("morphologySize").toInt()*2 + 1, property("morphologySize").toInt()*2 + 1, property("morphologySize").toInt(), property("morphologySize").toInt(), CV_SHAPE_RECT, 0);
     }
 
 PictureMorphologyTransform::~PictureMorphologyTransform()
     {
     cvReleaseStructuringElement(&mStructuringElement);
     }
-
-//ElementBase::ParamList PictureMorphologyTransform::getParams() const
-//    {
-//    ParamList ret;
-//    ret["Morphology Size"] = mMorphologySize;
-//    ret["Operation"] = mOperation;
-//    return ret;
-//    }
-
-//void PictureMorphologyTransform::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    if (aName == "Morphology Size")
-//        {
-//        if (mMorphologySize != aValue.toInt())
-//            {
-//            mMorphologySize = aValue.toInt();
-//            cvReleaseStructuringElement(&mStructuringElement);
-//            mStructuringElement = cvCreateStructuringElementEx(mMorphologySize*2 + 1, mMorphologySize*2 + 1, mMorphologySize, mMorphologySize, CV_SHAPE_RECT, 0);
-//            }
-//        }
-//    else if (aName == "Operation")
-//        mOperation = aValue.toInt();
-//    }
 
 void PictureMorphologyTransform::process()
     {
@@ -51,7 +28,13 @@ void PictureMorphologyTransform::process()
                 IplImage* srcImg = mSrcFrame;
                 mPictureFrame.resize(srcImg->width, srcImg->height);
 
-                cvMorphologyEx(srcImg, mPictureFrame, mTempFrame, mStructuringElement, mOperation, 1);
+                Q_ASSERT(mStructuringElement);
+                if (mStructuringElement->nCols != (property("morphologySize").toInt()*2 + 1))
+                    {
+                    cvReleaseStructuringElement(&mStructuringElement);
+                    mStructuringElement = cvCreateStructuringElementEx(property("morphologySize").toInt()*2 + 1, property("morphologySize").toInt()*2 + 1, property("morphologySize").toInt(), property("morphologySize").toInt(), CV_SHAPE_RECT, 0);
+                    }
+                cvMorphologyEx(srcImg, mPictureFrame, mTempFrame, mStructuringElement, property("operation").toInt(), 1);
 
                 emit framesReady();
                 break;

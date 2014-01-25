@@ -5,31 +5,12 @@ namespace media {
 PictureThresholdTransform::PictureThresholdTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName),
     mSrcFrame(1),
-    mPictureFrame(1),
-    mThreshold(1),
-    mMaxValue(100),
-    mType(CV_THRESH_BINARY)
+    mPictureFrame(1)
     {
+    setProperty("threshold", 127);
+    setProperty("maxValue", 255);
+    setProperty("type", CV_THRESH_BINARY);
     }
-
-//ElementBase::ParamList PictureThresholdTransform::getParams() const
-//    {
-//    ParamList ret;
-//    ret["Threshold"] =  mThreshold;
-//    ret["Max Value"] = mMaxValue;
-//    ret["Type"] = mType;
-//    return ret;
-//    }
-
-//void PictureThresholdTransform::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    if (aName == "Threshold")
-//        mThreshold = aValue.toDouble();
-//    else if (aName == "Max Value")
-//        mMaxValue = aValue.toDouble();
-//    else if (aName == "Type")
-//        mType = aValue.toInt();
-//    }
 
 void PictureThresholdTransform::process()
     {
@@ -44,7 +25,7 @@ void PictureThresholdTransform::process()
                 IplImage* srcImg = mSrcFrame;
                 mPictureFrame.resize(srcImg->width, srcImg->height);
 
-                cvThreshold(srcImg, mPictureFrame, mThreshold, mMaxValue, mType);
+                cvThreshold(srcImg, mPictureFrame, property("threshold").toDouble(), property("maxValue").toDouble(), property("type").toInt());
 
                 emit framesReady();
                 break;
