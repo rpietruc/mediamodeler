@@ -11,8 +11,7 @@ AlsaDestination::AlsaDestination(ElementFactory *aFactory, const QString &aObjec
     ElementBase(aFactory, aObjectName),
     mPcmHandle(NULL)
     {
-    setDeviceName("default");
-    QObject::connect(this, SIGNAL(deviceNameChanged()), this, SLOT(close()), Qt::QueuedConnection);
+    setProperty("deviceName", "default");
     QObject::connect(&mAlsaFrame, SIGNAL(bufferFilled()), this, SLOT(write()));
     }
 
@@ -122,6 +121,13 @@ void AlsaDestination::write()
 
 void AlsaDestination::process()
     {
+    if (mAlsaFrame.getSourceName() != property("deviceName").toString())
+        {
+        close();
+        mAlsaFrame.setSourceName(property("deviceName").toString());
+        qDebug() << objectName() << ": deviceName changed to " << mAlsaFrame.getSourceName();
+        }
+
     foreach (const ElementBase *source, mSourceElementsReadySet)
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
@@ -134,11 +140,15 @@ void AlsaDestination::process()
                     {
                     close();
                     mAlsaFrame.setChannelsNo(frame->getDimension(AlsaFrame::Channels).mResolution);
+                    qDebug() << objectName() << ": channelsNo changed to " << mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution;
                     }
-                if (frame->getDimension(AlsaFrame::Time).mDelta != mAlsaFrame.getDimension(AlsaFrame::Time).mDelta)
+
+                if ((frame->getDimension(AlsaFrame::Time).mDelta != mAlsaFrame.getDimension(AlsaFrame::Time).mDelta) &&
+                    (frame->getDimension(AlsaFrame::Time).mDelta != 0))
                     {
                     close();
                     mAlsaFrame.setSampleRate(1.0/frame->getDimension(AlsaFrame::Time).mDelta);
+                    qDebug() << objectName() << ": sampleRate changed to " << 1.0/mAlsaFrame.getDimension(AlsaFrame::Time).mDelta;
                     }
                 if (!mPcmHandle)
                     open();
@@ -152,9 +162,4 @@ void AlsaDestination::process()
             }
     }
 
-void AlsaDestination::setDeviceName(QString aDeviceName)
-    {
-    mAlsaFrame.setSourceName(aDeviceName);
-    emit deviceNameChanged();
-    }
 } // namespace media

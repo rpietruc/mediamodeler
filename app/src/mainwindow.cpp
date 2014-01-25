@@ -97,7 +97,7 @@ void MainWindow::loadModel(const QString& aFilePath)
         mElemBoxes.push_back(box);
 
         QObject::connect(mUi->actionRun, SIGNAL(toggled(bool)), elem, SLOT(setRunning(bool)), Qt::QueuedConnection);
-        QObject::connect(mUi->actionRun, SIGNAL(toggled(bool)), mUi->groupBox, SLOT(setDisabled(bool)), Qt::QueuedConnection);
+//        QObject::connect(mUi->actionRun, SIGNAL(toggled(bool)), mUi->groupBox, SLOT(setDisabled(bool)), Qt::QueuedConnection);
         //TODO: processing should be completed when all sources finish
         QObject::connect(elem, SIGNAL(processingCompleted(bool)), mUi->actionRun, SLOT(setDisabled(bool)), Qt::QueuedConnection);
         QObject::connect(elem, SIGNAL(processingCompleted(bool)), mUi->actionRun, SLOT(setChecked(bool)), Qt::QueuedConnection);

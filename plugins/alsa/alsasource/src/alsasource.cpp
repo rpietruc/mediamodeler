@@ -11,46 +11,14 @@ AlsaSource::AlsaSource(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName),
     mPcmHandle(NULL)
     {
-    setDeviceName("default");
-    setSampleRate(8000);
-    setChannelsNo(2);
-
-    QObject::connect(this, SIGNAL(deviceNameChanged()), this, SLOT(close()), Qt::QueuedConnection);
-    QObject::connect(this, SIGNAL(sampleRateChanged()), this, SLOT(close()), Qt::QueuedConnection);
-    QObject::connect(this, SIGNAL(channelsNoChanged()), this, SLOT(close()), Qt::QueuedConnection);
+    setProperty("deviceName", "default");
+    setProperty("sampleRate", 8000);
+    setProperty("channelsNo", 2);
     }
 
 AlsaSource::~AlsaSource()
     {
     close();
-    }
-
-void AlsaSource::process()
-    {
-    snd_pcm_sframes_t ret = 0;
-    if (!mPcmHandle)
-        open();
-
-    if (mPcmHandle)
-        {
-        ret = snd_pcm_readi(mPcmHandle, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimension(AlsaFrame::Time).mResolution);
-        if (ret <= 0)
-            qWarning() << "snd_pcm_readi returned " << ret;
-        if (ret == -EPIPE)
-            {
-            /* EPIPE means xrun (overrun for capture)
-               The overrun can happen when an application does not take new captured samples in time from alsa-lib. */
-            snd_pcm_prepare(mPcmHandle);
-            ret = snd_pcm_readi(mPcmHandle, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimension(AlsaFrame::Time).mResolution);
-            }
-        if (ret > 0)
-            mAlsaFrame.setTimeStamp(QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0);
-        }
-
-    if (ret > 0)
-        emit framesReady();
-    else
-        emit processingCompleted();
     }
 
 void AlsaSource::open()
@@ -134,30 +102,52 @@ void AlsaSource::close()
     mPcmHandle = NULL;
     }
 
-int AlsaSource::getSampleRate() const
+void AlsaSource::process()
     {
-    if (mAlsaFrame.getDimension(AlsaFrame::Time).mDelta)
-        return 1/mAlsaFrame.getDimension(AlsaFrame::Time).mDelta;
-    //else
-        return 0;
-    }
+    if (mAlsaFrame.getSourceName() != property("deviceName").toString())
+        {
+        close();
+        mAlsaFrame.setSourceName(property("deviceName").toString());
+        qDebug() << objectName() << ": deviceName changed to " << mAlsaFrame.getSourceName();
+        }
+    if (mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution != property("channelsNo").toInt())
+        {
+        close();
+        mAlsaFrame.setChannelsNo(property("channelsNo").toInt());
+        qDebug() << objectName() << ": channelsNo changed to " << mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution;
+        }
+    if (property("sampleRate").toInt() &&
+        (mAlsaFrame.getDimension(AlsaFrame::Time).mDelta != 1.0/property("sampleRate").toInt()))
+        {
+        close();
+        mAlsaFrame.setSampleRate(property("sampleRate").toInt());
+        qDebug() << objectName() << ": sampleRate changed to " << 1.0/mAlsaFrame.getDimension(AlsaFrame::Time).mDelta;
+        }
 
-void AlsaSource::setDeviceName(QString aDeviceName)
-    {
-    mAlsaFrame.setSourceName(aDeviceName);
-    emit deviceNameChanged();
-    }
+    snd_pcm_sframes_t ret = 0;
+    if (!mPcmHandle)
+        open();
 
-void AlsaSource::setSampleRate(int aSampleRate)
-    {
-    mAlsaFrame.setSampleRate(aSampleRate);
-    emit sampleRateChanged();
-    }
+    if (mPcmHandle)
+        {
+        ret = snd_pcm_readi(mPcmHandle, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimension(AlsaFrame::Time).mResolution);
+        if (ret <= 0)
+            qWarning() << "snd_pcm_readi returned " << ret;
+        if (ret == -EPIPE)
+            {
+            /* EPIPE means xrun (overrun for capture)
+               The overrun can happen when an application does not take new captured samples in time from alsa-lib. */
+            snd_pcm_prepare(mPcmHandle);
+            ret = snd_pcm_readi(mPcmHandle, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimension(AlsaFrame::Time).mResolution);
+            }
+        if (ret > 0)
+            mAlsaFrame.setTimeStamp(QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0);
+        }
 
-void AlsaSource::setChannelsNo(int aChannelsNo)
-    {
-    mAlsaFrame.setChannelsNo(aChannelsNo);
-    emit channelsNoChanged();
+    if (ret > 0)
+        emit framesReady();
+    else
+        emit processingCompleted();
     }
 
 } // namespace media

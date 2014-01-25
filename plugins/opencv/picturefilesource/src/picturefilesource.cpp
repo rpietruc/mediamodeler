@@ -1,4 +1,5 @@
 #include "picturefilesource.h"
+#include <QDynamicPropertyChangeEvent>
 
 namespace media {
 
@@ -6,6 +7,7 @@ PictureFileSource::PictureFileSource(ElementFactory *aFactory, const QString &aO
     ElementBase(aFactory, aObjectName),
     mNextFileIndex(0)
     {
+    setProperty("fileList", QStringList());
     }
 
 void PictureFileSource::process()
@@ -32,14 +34,25 @@ void PictureFileSource::process()
         }
     }
 
-void PictureFileSource::setFileList(QStringList aFileList)
+bool PictureFileSource::event(QEvent *aEvent)
     {
-    mPathList.clear();
-    foreach (QString path, aFileList)
+    if (aEvent->type() == QEvent::DynamicPropertyChange)
         {
-        QFileInfo fileInfo(path);
-        mPathList.append(fileInfo.filePath());
+        QDynamicPropertyChangeEvent *event = (QDynamicPropertyChangeEvent*)aEvent;
+        if (QString(event->propertyName().constData()) == "fileList")
+            {
+            // special tab handling here
+            mPathList.clear();
+            foreach (QString path, property("fileList").toStringList())
+                {
+                QFileInfo fileInfo(path);
+                mPathList.append(fileInfo.filePath());
+                }
+            event->accept();
+            return TRUE;
+            }
         }
-    emit fileListChanged();
+    return ElementBase::event(aEvent);
     }
+
 } // namespace media

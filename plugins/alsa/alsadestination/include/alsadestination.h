@@ -17,17 +17,10 @@ namespace media {
 class ALSADESTINATIONSHARED_EXPORT AlsaDestination : public ElementBase
     {
     Q_OBJECT
-    Q_PROPERTY(QString deviceName
-               READ getDeviceName
-               WRITE setDeviceName
-               NOTIFY deviceNameChanged)
 
 public:
     explicit AlsaDestination(ElementFactory *aFactory, const QString &aObjectName);
     ~AlsaDestination();
-
-signals:
-    void deviceNameChanged();
 
 private slots:
     void open();
@@ -36,9 +29,6 @@ private slots:
 
 private:
     void process();
-
-    QString getDeviceName() const { return mAlsaFrame.getSourceName(); }
-    void setDeviceName(QString aDeviceName);
 
 private:
     snd_pcm_t *mPcmHandle;

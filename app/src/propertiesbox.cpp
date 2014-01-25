@@ -2,7 +2,6 @@
 #include "guielementlist.h"
 #include "fileguielement.h"
 #include <QVBoxLayout>
-#include <QMetaProperty>
 
 using namespace media;
 
@@ -10,30 +9,23 @@ PropertiesBox::PropertiesBox(QObject *aPropertiesObject, QWidget *aParent) :
     QGroupBox(aPropertiesObject->objectName(), aParent),
     mPropertiesObject(aPropertiesObject)
     {
-    const QMetaObject *metaobject = aPropertiesObject->metaObject();
-    int count = metaobject->propertyCount();
-    if (count > 1) //first property is object name
+    QList<QByteArray> list = aPropertiesObject->dynamicPropertyNames();
+    if (list.count() > 0)
         {
         GuiElementBase* gui = NULL;
-        if (count == 2)
+        if (list.count() == 1)
             {
-            QMetaProperty metaproperty = metaobject->property(1);
-            QString name = metaproperty.name();
-            if (name == "fileName")
+            if (QString(list.first().constData()) == "fileName")
                 gui = new FileGuiElement(this);
-            else if (name == "fileList")
+            else if (QString(list.first().constData()) == "fileList")
                 gui = new FilesGuiElement(this);
             }
         if (!gui)
             gui = new GuiElementList(this);
 
-        for (int i = 1; i < count; ++i)
-            {
-            QMetaProperty metaproperty = metaobject->property(i);
-            const char *name = metaproperty.name();
-            QVariant value = aPropertiesObject->property(name);
-            gui->addProperty(name, value);
-            }
+        foreach (QByteArray name, list)
+            gui->addProperty(QString(name.constData()), aPropertiesObject->property(name.constData()));
+
         QObject::connect(gui, SIGNAL(paramChanged(QString, QVariant)), this, SLOT(paramChanged(QString, QVariant)));
         QVBoxLayout *verticalLayout = new QVBoxLayout(this);
         verticalLayout->addWidget(gui);

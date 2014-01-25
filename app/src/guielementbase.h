@@ -2,6 +2,7 @@
 #define GUIELEMENTBASE_H
 
 #include <QWidget>
+#include <QVariant>
 
 namespace media {
 
