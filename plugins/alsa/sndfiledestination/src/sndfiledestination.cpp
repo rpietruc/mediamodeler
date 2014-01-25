@@ -7,6 +7,7 @@ SndFileDestination::SndFileDestination(ElementFactory *aFactory, const QString &
     ElementBase(aFactory, aObjectName),
     mSoundFile(NULL)
     {
+    setProperty("fileName", "output.wav");
     QObject::connect(&mAlsaFrame, SIGNAL(bufferFilled()), this, SLOT(write()));
     }
 
@@ -15,34 +16,22 @@ SndFileDestination::~SndFileDestination()
     close();
     }
 
-//ElementBase::ParamList SndFileDestination::getParams() const
-//    {
-//    ParamList ret;
-//    ret["File"] = mFileName;
-//    return ret;
-//    }
-
-//void SndFileDestination::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    Q_UNUSED(aName);
-//    if (mFileName != aValue.toString())
-//        {
-//        close();
-//        mFileName = aValue.toString();
-//        }
-//    }
-
-bool SndFileDestination::open(SF_INFO &aFileInfo)
+void SndFileDestination::open()
     {
-    if (mSoundFile)
-        close();
+    Q_ASSERT(mAlsaFrame.getDimension(AlsaFrame::Time).mDelta);
 
-    mAlsaFrame.setChannelsNo(aFileInfo.channels);
-    mAlsaFrame.setSampleRate(aFileInfo.samplerate);
-    mAlsaFrame.setFrameTime(AlsaFrame::DefaultFrameTime);
+    SF_INFO fileInfo;
+    fileInfo.frames = 0;
+    fileInfo.samplerate = 1.0/mAlsaFrame.getDimension(AlsaFrame::Time).mDelta;
+    fileInfo.channels = mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution;
+    fileInfo.format = SF_FORMAT_WAV|SF_FORMAT_PCM_16;
+    fileInfo.sections = 1;
+    fileInfo.seekable = 1;
 
-    mSoundFile = sf_open(qPrintable(mFileName), SFM_WRITE, &aFileInfo);
-    return mSoundFile;
+    Q_ASSERT(!mSoundFile);
+    mSoundFile = sf_open(qPrintable(mAlsaFrame.getSourceName()), SFM_WRITE, &fileInfo);
+    if (!mSoundFile)
+        qWarning() << "open file failed" << mAlsaFrame.getSourceName();
     }
 
 void SndFileDestination::close()
@@ -70,20 +59,32 @@ void SndFileDestination::process()
             if (frame->getMaxDimension() == AlsaFrame::Dimensions)
                 {
                 Q_ASSERT(frame->getDimension(AlsaFrame::Time).mDelta > 0);
+                if (mAlsaFrame.getSourceName() != property("fileName").toString())
+                    {
+                    close();
+                    mAlsaFrame.setSourceName(property("fileName").toString());
+                    }
+                if (mAlsaFrame.getDimension(AlsaFrame::Time).mDelta != frame->getDimension(AlsaFrame::Time).mDelta)
+                    {
+                    close();
+                    mAlsaFrame.setSampleTime(frame->getDimension(AlsaFrame::Time).mDelta);
+                    }
+                if (mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution != frame->getDimension(AlsaFrame::Channels).mResolution)
+                    {
+                    close();
+                    mAlsaFrame.setChannelsNo(frame->getDimension(AlsaFrame::Channels).mResolution);
+                    }
+
                 if (!mSoundFile)
                     {
-                    SF_INFO fileInfo;
-                    fileInfo.frames = 0;
-                    fileInfo.samplerate = 1.0/frame->getDimension(AlsaFrame::Time).mDelta;
-                    fileInfo.channels = frame->getDimension(AlsaFrame::Channels).mResolution;
-                    fileInfo.format = SF_FORMAT_WAV|SF_FORMAT_PCM_16;
-                    fileInfo.sections = 1;
-                    fileInfo.seekable = 1;
-                    if (!open(fileInfo))
-                        qWarning() << "open file failed" << mFileName;
+                    mAlsaFrame.setFrameTime(AlsaFrame::DefaultFrameTime);
+                    open();
                     }
-                mAlsaFrame += *frame;
-                emit framesProcessed();
+                if (mSoundFile)
+                    {
+                    mAlsaFrame += *frame;
+                    emit framesProcessed();
+                    }
                 }
             }
     }

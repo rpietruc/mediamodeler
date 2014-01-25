@@ -12,9 +12,9 @@ SoundDeviceSource::SoundDeviceSource(ElementFactory *aFactory, const QString &aO
     mAudioInput(NULL),
     mInputDevice(NULL)
     {
-    mSoundFrame.setChannelsNo(1);
-    mSoundFrame.setSampleBits(16);
-    mSoundFrame.setSampleRate(8000);
+    setProperty("deviceName", "Defult");
+    setProperty("sampleRate", 8000);
+    setProperty("channelsNo", 1);
     }
 
 SoundDeviceSource::~SoundDeviceSource()
@@ -42,7 +42,24 @@ void SoundDeviceSource::readMore()
 
 void SoundDeviceSource::process()
     {
-    if (mAudioInput)
+    if (mSoundFrame.getSourceName() != property("deviceName").toString())
+        {
+        close();
+        mSoundFrame.setSourceName(property("deviceName").toString());
+        }
+    if (property("sampleRate").toInt() && (mSoundFrame.getDimension(SoundFrame::Time).mDelta != 1.0/property("sampleRate").toInt()))
+        {
+        close();
+        mSoundFrame.setSampleTime(1.0/property("sampleRate").toInt());
+        }
+    if (mSoundFrame.getDimension(SoundFrame::Channels).mResolution != property("channelsNo").toInt())
+        {
+        close();
+        mSoundFrame.setChannelsNo(property("channelsNo").toInt());
+        }
+    mSoundFrame.setSampleBits(16);
+
+    if (!mAudioInput)
         open();
 
     if (!mInputDevice)
@@ -51,46 +68,8 @@ void SoundDeviceSource::process()
         QObject::connect(mInputDevice, SIGNAL(readyRead()), SLOT(readMore()), Qt::QueuedConnection);
         }
     mSoundFrame.setFrameSize(0);
-    qDebug() << "frame prepared";
+//    qDebug() << "frame prepared";
     }
-
-//ElementBase::ParamList SoundDeviceSource::getParams() const
-//    {
-//    Q_ASSERT(mSoundFrame.getDimension(SoundFrame::Time).mDelta);
-//    ParamList ret;
-//    ret["Audio Device"] = mSoundFrame.getSourceName();
-//    ret["Sample Rate"] = 1.0/mSoundFrame.getDimension(SoundFrame::Time).mDelta;
-//    ret["Channels No."] = mSoundFrame.getDimension(SoundFrame::Channels).mResolution;
-//    return ret;
-//    }
-
-//void SoundDeviceSource::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    if (aName == "Audio Device")
-//        {
-//        if (mSoundFrame.getSourceName() != aValue.toString())
-//            {
-//            mSoundFrame.setSourceName(aValue.toString());
-//            close();
-//            }
-//        }
-//    else if (aName == "Sample Rate")
-//        {
-//        if (aValue.toInt() && (mSoundFrame.getDimension(SoundFrame::Time).mDelta != 1.0/aValue.toInt()))
-//            {
-//            mSoundFrame.setSampleRate(aValue.toInt());
-//            close();
-//            }
-//        }
-//    else if (aName == "Channels No")
-//        {
-//        if (mSoundFrame.getDimension(SoundFrame::Channels).mResolution != aValue.toInt())
-//            {
-//            mSoundFrame.setChannelsNo(aValue.toInt());
-//            close();
-//            }
-//        }
-//    }
 
 void SoundDeviceSource::open()
     {
@@ -132,14 +111,14 @@ void SoundDeviceSource::close()
 
 void SoundDeviceSource::stateChanged(QAudio::State state)
     {
-    qWarning() << "audio input: state = " << state;
+//    qWarning() << "audio input: state = " << state;
     }
 
 void SoundDeviceSource::notified()
     {
-    qWarning() << "audio input: bytesReady = " << mAudioInput->bytesReady()
-               << ", " << "elapsedUSecs = " << mAudioInput->elapsedUSecs()
-               << ", " << "processedUSecs = "<< mAudioInput->processedUSecs();
+//    qWarning() << "audio input: bytesReady = " << mAudioInput->bytesReady()
+//               << ", " << "elapsedUSecs = " << mAudioInput->elapsedUSecs()
+//               << ", " << "processedUSecs = "<< mAudioInput->processedUSecs();
     }
 
 } // namespace media

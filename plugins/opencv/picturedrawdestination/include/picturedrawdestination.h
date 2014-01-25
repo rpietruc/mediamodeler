@@ -25,17 +25,13 @@ public:
     explicit PictureDrawDestination(ElementFactory *aFactory, const QString &aObjectName);
     ~PictureDrawDestination();
 
-//    ParamList getParams() const;
-
-protected slots:
-//    void setParamValue(const QString& aName, const QVariant& aValue);
-
 private slots:
     void showPicture();
 
 private:
     void process();
 
+private:
     QTimer *mTimer;
     DrawWidget *mWindow;
     QImage *mImage;

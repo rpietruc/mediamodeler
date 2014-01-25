@@ -25,15 +25,12 @@ public:
     int getFramesNo() const { return 1; }
     const FrameBase *getFrame(int) const { return &mPictureFrame; }
 
-//    ParamList getParams() const;
-
-protected slots:
-//    void setParamValue(const QString& aName, const QVariant& aValue);
+    bool event(QEvent *aEvent);
 
 private:
     void process();
-    void setCascadeClassifier(const QString &aFileName);
 
+private:
     IplImageFrame mPictureFrame;
     cv::CascadeClassifier mCascadeClassifier;
     std::vector<cv::Rect> mRectVector;

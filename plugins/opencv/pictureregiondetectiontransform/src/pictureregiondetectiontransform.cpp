@@ -1,24 +1,28 @@
 #include "pictureregiondetectiontransform.h"
+#include <QDynamicPropertyChangeEvent>
 
 namespace media {
 
 PictureRegionDetectionTransform::PictureRegionDetectionTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
+    setProperty("fileName", QString());
     }
 
-//ElementBase::ParamList PictureRegionDetectionTransform::getParams() const
-//    {
-//    ParamList ret;
-//    ret["File"] =  mPictureFrame.getSourceName();
-//    return ret;
-//    }
-
-//void PictureRegionDetectionTransform::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    Q_UNUSED(aName);
-//    mCascadeClassifier.load(std::string(qPrintable(aValue.toString())));
-//    }
+bool PictureRegionDetectionTransform::event(QEvent *aEvent)
+    {
+    if (aEvent->type() == QEvent::DynamicPropertyChange)
+        {
+        QDynamicPropertyChangeEvent *event = (QDynamicPropertyChangeEvent*)aEvent;
+        if (QString(event->propertyName().constData()) == "fileName")
+            {
+            mCascadeClassifier.load(std::string(qPrintable(property("fileName").toString())));
+            event->accept();
+            return true;
+            }
+        }
+    return ElementBase::event(aEvent);
+    }
 
 void PictureRegionDetectionTransform::process()
     {

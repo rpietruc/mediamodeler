@@ -24,11 +24,6 @@ public:
     explicit SoundDeviceDestination(ElementFactory *aFactory, const QString &aObjectName);
     ~SoundDeviceDestination();
 
-//    ParamList getParams() const;
-
-public slots:
-//    void setParamValue(const QString& aName, const QVariant& aValue);
-
 private slots:
     void notified();
     void stateChanged(QAudio::State aState);

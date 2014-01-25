@@ -33,10 +33,9 @@ void AlsaFrame::setChannelsNo(int aChannelsNo)
     resizeSoundBuffer();
     }
 
-void AlsaFrame::setSampleRate(int aSampleRate)
+void AlsaFrame::setSampleTime(double aSampleTime)
     {
-    if (aSampleRate);
-        mDimensions[Time].mDelta = 1.0/aSampleRate;
+    mDimensions[Time].mDelta = aSampleTime;
     }
 
 void AlsaFrame::setFrameTime(double aFrameTime)

@@ -7,21 +7,8 @@ PictureFileDestination::PictureFileDestination(ElementFactory *aFactory, const Q
     ElementBase(aFactory, aObjectName),
     mFileIndex(0)
     {
+    setProperty("fileName", "output.png");
     }
-
-//ElementBase::ParamList PictureFileDestination::getParams() const
-//    {
-//    ParamList ret;
-//    ret["File"] =  mPictureFrame.getSourceName();
-//    return ret;
-//    }
-
-//void PictureFileDestination::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    Q_UNUSED(aName);
-//    mPictureFrame.setSourceName(aValue.toString());
-//    mFileIndex = 0;
-//    }
 
 void PictureFileDestination::process()
     {
@@ -32,6 +19,7 @@ void PictureFileDestination::process()
             if (frame->getMaxDimension() == IplImageFrame::Dimensions)
                 {
                 mPictureFrame.resizeAndCopyFrame(*frame);
+                mPictureFrame.setSourceName(property("fileName").toString());
                 QString fileName(mPictureFrame.getSourceName());
                 if (mFileIndex > 0)
                     fileName.replace(QString(".png"), QString(".%1.png").arg(mFileIndex));

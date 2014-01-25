@@ -17,39 +17,24 @@ PictureDrawDestination::PictureDrawDestination(ElementFactory *aFactory, const Q
     mImage(NULL)
     {
     QObject::connect(mTimer, SIGNAL(timeout()), this, SLOT(showPicture()));
-    mTimer->setInterval(25);
+    setProperty("delayTime", 25);
+    mTimer->setSingleShot(true);
     }
 
 PictureDrawDestination::~PictureDrawDestination()
     {
-    mTimer->stop();
-
     delete mTimer;
     delete mImage;
     delete mWindow;
     }
 
-//ElementBase::ParamList PictureDrawDestination::getParams() const
-//    {
-//    ParamList ret;
-//    ret["Delay time [ms]"] = QVariant(mTimer->interval());
-//    return ret;
-//    }
-
-//void PictureDrawDestination::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    Q_UNUSED(aName);
-//    if (mTimer->interval() != aValue.toInt())
-//        {
-//        mTimer->stop();
-//        mTimer->setInterval(aValue.toInt());
-//        }
-//    }
-
 void PictureDrawDestination::showPicture()
     {
     if (mImage)
+        {
         mWindow->showPicture(*mImage);
+        emit framesProcessed();
+        }
     }
 
 void PictureDrawDestination::process()
@@ -88,11 +73,9 @@ void PictureDrawDestination::process()
                             mImage->setPixel(point[IplImageFrame::Width], point[IplImageFrame::Height], qRgb(rgb[2], rgb[1], rgb[0]));
                             }
                     mWindow->setWindowTitle(frame->getSourceName());
-
-                    if (!mTimer->isActive())
-                        mTimer->start();
+                    mTimer->setInterval(property("delayTime").toInt());
+                    mTimer->start();
                     }
-                emit framesProcessed();
                 }
             }
     }

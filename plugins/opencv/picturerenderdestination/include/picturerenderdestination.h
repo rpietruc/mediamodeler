@@ -26,17 +26,13 @@ public:
     explicit PictureRenderDestination(ElementFactory *aFactory, const QString &aObjectName);
     ~PictureRenderDestination();
 
-//    ParamList getParams() const;
-
-protected slots:
-//    void setParamValue(const QString& aName, const QVariant& aValue);
-
 private slots:
     void showPicture();
 
 private:
     void process();
 
+private:
     QTimer *mTimer;
     IplImageFrame mPictureFrame;
     };

@@ -8,25 +8,14 @@ namespace media {
 SpectrumTransform::SpectrumTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
-    mSpectrumFrame.setResolution(512, M_PI);
+    setProperty("resolution", 512);
     }
-
-//ElementBase::ParamList SpectrumTransform::getParams() const
-//    {
-//    ParamList ret;
-//    ret["Resolution"] = mSpectrumFrame.getResolution();
-//    return ret;
-//    }
-
-//void SpectrumTransform::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    Q_UNUSED(aName);
-//    if (mSpectrumFrame.getResolution() != aValue.toInt())
-//        mSpectrumFrame.setResolution(aValue.toInt(), M_PI);
-//    }
 
 void SpectrumTransform::process()
     {
+    if (mSpectrumFrame.getResolution() != property("resolution").toInt())
+        mSpectrumFrame.setResolution(property("resolution").toInt(), M_PI);
+
     Q_ASSERT(mSpectrumFrame.getDimension(SpectrumFrame::Frequency).mResolution);
     foreach (const ElementBase *source, mSourceElementsReadySet)
         for (int i = 0; i < source->getFramesNo(); ++i)

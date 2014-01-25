@@ -6,31 +6,21 @@ namespace media {
 
 #define Pi 3.14159265358979
 
-struct SingleFrequencySignal
+qreal getSample(double aTime, double aFrequency, double aAmplitude, double aPhase)
     {
-    double mFrequency;
-    double mAmplitude;
-    double mPhase;
-
-    SingleFrequencySignal(double aFrequency, double aAmplitude, double aPhase) :
-        mFrequency(aFrequency),
-        mAmplitude(aAmplitude),
-        mPhase(aPhase)
-        {}
-
-    qreal getSample(double aTime)
-        {
-        return mAmplitude*sin(2*Pi*(aTime*mFrequency + mPhase));
-        }
-    };
+    return aAmplitude*sin(2*Pi*(aTime*aFrequency + aPhase));
+    }
 
 AlsaDummySource::AlsaDummySource(ElementFactory *aFactory, const QString &aObjectName) :
-    ElementBase(aFactory, aObjectName),
-    mSignal(new SingleFrequencySignal(1.0, 0.5, 0.0))
+    ElementBase(aFactory, aObjectName)
     {
+    setProperty("frequency", 1000);
+    setProperty("amplitude", 1.0);
+    setProperty("phase", 0.0);
+
     mAlsaFrame.setSourceName("dummy");
     mAlsaFrame.setChannelsNo(1);
-    mAlsaFrame.setSampleRate(8000);
+    mAlsaFrame.setSampleTime(1.0/8000);
     mAlsaFrame.setFrameTime(AlsaFrame::DefaultFrameTime);
 #if QT_VERSION < QT_VERSION_CHECK(4, 7, 0)
     mAlsaFrame.setTimeStamp(0);
@@ -39,25 +29,6 @@ AlsaDummySource::AlsaDummySource(ElementFactory *aFactory, const QString &aObjec
 #endif
     }
 
-//ElementBase::ParamList AlsaDummySource::getParams() const
-//    {
-//    ParamList ret;
-//    ret["Frequency"] = mSignal->mFrequency;
-//    ret["Amplitude"] = mSignal->mAmplitude;
-//    ret["Phase"] = mSignal->mPhase;
-//    return ret;
-//    }
-
-//void AlsaDummySource::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    if (aName == "Frequency")
-//        mSignal->mFrequency = aValue.toDouble();
-//    else if (aName == "Amplitude")
-//        mSignal->mAmplitude = aValue.toDouble();
-//    else if (aName == "Phase")
-//        mSignal->mPhase = aValue.toDouble();
-//    }
-
 void AlsaDummySource::process()
     {
     int point[AlsaFrame::Dimensions] = {0, 0};
@@ -65,7 +36,7 @@ void AlsaDummySource::process()
     for (point[AlsaFrame::Time] = 0;
          point[AlsaFrame::Time] < mAlsaFrame.getDimension(AlsaFrame::Time).mResolution;
        ++point[AlsaFrame::Time], timeStamp += mAlsaFrame.getDimension(AlsaFrame::Time).mDelta)
-        mAlsaFrame.setSample(point, mSignal->getSample(timeStamp));
+        mAlsaFrame.setSample(point, getSample(timeStamp, property("frequency").toDouble(), property("amplitude").toDouble(), property("phase").toDouble()));
     mAlsaFrame.incrementTimeStamp();
     //mAlsaFrame.setTimeStamp(QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0);
 

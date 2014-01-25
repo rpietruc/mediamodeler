@@ -27,16 +27,14 @@ public:
     int getFramesNo() const { return 1; }
     const FrameBase *getFrame(int) const { return &mPictureFrame; }
 
-//    ParamList getParams() const;
-
-public slots:
-//    void setParamValue(const QString& aName, const QVariant& aValue);
+    bool event(QEvent *aEvent);
 
 private:
     void process();
-    void open(const QString &aFileName);
+    void open();
     int getCamIndex(const QString &aFileName);
 
+private:
     IplImageFrame mPictureFrame;
     CvCapture* mCapture;
     int mFrameIndex;

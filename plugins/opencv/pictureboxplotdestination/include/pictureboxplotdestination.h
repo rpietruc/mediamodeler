@@ -23,16 +23,10 @@ public:
     explicit PictureBoxPlotDestination(ElementFactory *aFactory, const QString &aObjectName);
     ~PictureBoxPlotDestination();
 
-//    ParamList getParams() const;
-
-protected slots:
-//    void setParamValue(const QString& aName, const QVariant& aValue);
-
 private:
     void process();
 
     BoxPlot *mBoxPlot;
-    double mMaxValue;
     };
 
 class PictureBoxPlotDestinationFactory : public ElementFactory

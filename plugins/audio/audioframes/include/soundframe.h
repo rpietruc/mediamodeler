@@ -32,7 +32,7 @@ public:
     void setSampleBits(int aSampleBits);
     int getSampleBits() const { return mSampleBits; }
 
-    void setSampleRate(int aSampleRate);
+    void setSampleTime(double aSampleTime);
     void setChannelsNo(int aChannelsNo);
 
     inline void setTimeStamp(double aTimeStamp) { mDimensions[Time].mStartLocation = aTimeStamp; }

@@ -26,19 +26,12 @@ public:
     int getFramesNo() const { return 1; }
     const FrameBase *getFrame(int) const { return &mImageFrame; }
 
-//    ParamList getParams() const;
-
-protected slots:
-//    void setParamValue(const QString& aName, const QVariant& aValue);
-
 private:
     void process();
 
 private:
     GrayImageFrame mSrcFrame;
     GrayImageFrame mImageFrame;
-    int mIterations;
-    double mTimeStep;
     };
 
 class IMAGEDENOISINGSHARED_EXPORT ImageDenoisingTransformFactory : public ElementFactory

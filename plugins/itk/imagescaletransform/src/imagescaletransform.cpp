@@ -9,25 +9,9 @@ namespace media {
 ImageScaleTransform::ImageScaleTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
-    mScale[0] = 1.5;
-    mScale[1] = 1.5;
+    setProperty("widthScale", 1.5);
+    setProperty("heightScale", 1.5);
     }
-
-//ElementBase::ParamList ImageScaleTransform::getParams() const
-//    {
-//    ParamList ret;
-//    ret["Width Scale"] =  mScale[0];
-//    ret["Height Scale"] = mScale[1];
-//    return ret;
-//    }
-
-//void ImageScaleTransform::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    if (aName == "Width Scale")
-//        mScale[0] = aValue.toDouble();
-//    else if (aName == "Height Scale")
-//        mScale[1] = aValue.toDouble();
-//    }
 
 void ImageScaleTransform::process()
     {
@@ -43,7 +27,10 @@ void ImageScaleTransform::process()
 
                 typedef itk::ScaleTransform<double, 2> TransformType;
                 TransformType::Pointer scaleTransform = TransformType::New();
-                scaleTransform->SetScale(mScale);
+                itk::FixedArray<float, 2> scale;
+                scale[0] = property("widthScale").toDouble();
+                scale[1] = property("heightScale").toDouble();
+                scaleTransform->SetScale(scale);
                 Point<float, 2> center;
                 center[0] = srcImg->GetLargestPossibleRegion().GetSize()[0]/2;
                 center[1] = srcImg->GetLargestPossibleRegion().GetSize()[1]/2;

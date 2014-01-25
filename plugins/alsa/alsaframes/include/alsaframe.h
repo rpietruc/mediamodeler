@@ -29,7 +29,7 @@ public:
     qint16 *getSoundBuffer() { return mSoundBuffer; }
 
     void setChannelsNo(int aChannelsNo);
-    void setSampleRate(int aSampleRate);
+    void setSampleTime(double aSampleTime);
     void setFrameTime(double aFrameTime);
 
     void incrementTimeStamp();

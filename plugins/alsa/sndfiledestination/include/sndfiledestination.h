@@ -23,23 +23,17 @@ public:
     explicit SndFileDestination(ElementFactory *aFactory, const QString &aObjectName);
     ~SndFileDestination();
 
-//    ParamList getParams() const;
-
-public slots:
-//    void setParamValue(const QString& aName, const QVariant& aValue);
-
 private slots:
+    void open();
+    void close();
     void write();
 
 private:
     void process();
-    bool open(SF_INFO &aFileInfo);
-    void close();
 
 private:
     SNDFILE *mSoundFile;
     AlsaFrame mAlsaFrame;
-    QString mFileName;
     };
 
 class SndFileDestinationFactory : public ElementFactory

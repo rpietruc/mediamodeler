@@ -7,25 +7,12 @@ namespace media {
 FormantTransform::FormantTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
-    mFormantFrame.setFormantsNo(10);
+    setProperty("maxFormants", 10);
     }
-
-//ElementBase::ParamList FormantTransform::getParams() const
-//    {
-//    ParamList ret;
-//    ret["Max Formants"] = mFormantFrame.getDimension(FormantFrame::Formants).mResolution;
-//    return ret;
-//    }
-
-//void FormantTransform::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    Q_UNUSED(aName);
-//    if (mFormantFrame.getDimension(FormantFrame::Formants).mResolution != aValue.toInt())
-//        mFormantFrame.setFormantsNo(aValue.toInt());
-//    }
 
 void FormantTransform::process()
     {
+    mFormantFrame.setFormantsNo(property("maxFormants").toInt());
     foreach (const ElementBase *source, mSourceElementsReadySet)
         for (int i = 0; i < source->getFramesNo(); ++i)
             {

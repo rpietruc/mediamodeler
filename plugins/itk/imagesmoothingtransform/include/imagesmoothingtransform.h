@@ -26,20 +26,12 @@ public:
     int getFramesNo() const { return 1; }
     const FrameBase *getFrame(int) const { return &mImageFrame; }
 
-//    ParamList getParams() const;
-
-protected slots:
-//    void setParamValue(const QString& aName, const QVariant& aValue);
-
 private:
     void process();
 
 private:
     GrayImageFrame mSrcFrame;
     GrayImageFrame mImageFrame;
-
-    double mRangeSigma;
-    double mDomainSigma;
     };
 
 class IMAGESMOOTHINGSHARED_EXPORT ImageSmoothingTransformFactory : public ElementFactory

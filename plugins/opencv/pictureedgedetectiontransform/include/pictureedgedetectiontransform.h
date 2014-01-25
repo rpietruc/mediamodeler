@@ -24,11 +24,6 @@ public:
     int getFramesNo() const { return 1; }
     const FrameBase *getFrame(int) const { return &mPictureFrame; }
 
-//    ParamList getParams() const;
-
-protected slots:
-//    void setParamValue(const QString& aName, const QVariant& aValue);
-
 private:
     void process();
 
@@ -36,10 +31,6 @@ private:
     IplImageFrame mSrcFrame;
     IplImageFrame mGrayFrame;
     IplImageFrame mPictureFrame;
-
-    double mThreshold1;
-    double mThreshold2;
-    int mApertureSize;
     };
 
 class PICTUREEDGEDETECTIONTRANSFORMSHARED_EXPORT PictureEdgeDetectionTransformFactory : public ElementFactory

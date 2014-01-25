@@ -1,4 +1,5 @@
 #include "videocamerasource.h"
+#include <QDynamicPropertyChangeEvent>
 
 //most Logitech UVC webcams, can't resume correctly from USB suspend
 //echo -1 > /sys/module/usbcore/parameters/autosuspend
@@ -15,7 +16,7 @@ VideoCameraSource::VideoCameraSource(ElementFactory *aFactory, const QString &aO
     ElementBase(aFactory, aObjectName),
     mCapture(NULL)
     {
-    open("/dev/video0");
+    setProperty("fileName", QString());
     }
 
 VideoCameraSource::~VideoCameraSource()
@@ -23,23 +24,25 @@ VideoCameraSource::~VideoCameraSource()
     if (mCapture)
         cvReleaseCapture(&mCapture);
     }
-//ElementBase::ParamList VideoCameraSource::getParams() const
-//    {
-//    ParamList ret;
-//    ret["File"] = mPictureFrame.getSourceName();
-//    return ret;
-//    }
 
-//void VideoCameraSource::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    Q_UNUSED(aName);
-//    if (mPictureFrame.getSourceName() != aValue.toString())
-//        open(aValue.toString());
-//    }
-
-void VideoCameraSource::open(const QString &aFileName)
+bool VideoCameraSource::event(QEvent *aEvent)
     {
-    if (mCapture && (mPictureFrame.getSourceName() != aFileName))
+    if (aEvent->type() == QEvent::DynamicPropertyChange)
+        {
+        QDynamicPropertyChangeEvent *event = (QDynamicPropertyChangeEvent*)aEvent;
+        if (QString(event->propertyName().constData()) == "fileName")
+            {
+            open();
+            event->accept();
+            return true;
+            }
+        }
+    return ElementBase::event(aEvent);
+    }
+
+void VideoCameraSource::open()
+    {
+    if (mCapture && (mPictureFrame.getSourceName() != property("fileName").toString()))
         {
         cvReleaseCapture(&mCapture);
         mCapture = NULL;
@@ -47,13 +50,13 @@ void VideoCameraSource::open(const QString &aFileName)
 
     if (!mCapture)
         {
-        int camIndex = getCamIndex(aFileName);
+        int camIndex = getCamIndex(property("fileName").toString());
         if (camIndex >= 0)
             {
             mCapture = cvCaptureFromCAM(camIndex);
             if (mCapture)
                 {
-                mPictureFrame.setSourceName(aFileName);
+                mPictureFrame.setSourceName(property("fileName").toString());
                 mFrameIndex = 0;
                 }
             }

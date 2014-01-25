@@ -6,27 +6,11 @@ using namespace itk;
 namespace media {
 
 ImageDenoisingTransform::ImageDenoisingTransform(ElementFactory *aFactory, const QString &aObjectName) :
-    ElementBase(aFactory, aObjectName),
-    mIterations(10),
-    mTimeStep(0.25)
+    ElementBase(aFactory, aObjectName)
     {
+    setProperty("iterations", 10);
+    setProperty("timeStep", 0.25);
     }
-
-//ElementBase::ParamList ImageDenoisingTransform::getParams() const
-//    {
-//    ParamList ret;
-//    ret["Iterations"] =  mIterations;
-//    ret["Time Step"] = mTimeStep;
-//    return ret;
-//    }
-
-//void ImageDenoisingTransform::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    if (aName == "Iterations")
-//        mIterations = aValue.toInt();
-//    else if (aName == "Time Step")
-//        mTimeStep = aValue.toDouble();
-//    }
 
 void ImageDenoisingTransform::process()
     {
@@ -40,8 +24,8 @@ void ImageDenoisingTransform::process()
                 mSrcFrame.resizeAndCopyFrame(*frame);
                 typedef itk::CurvatureFlowImageFilter<GrayImageFrame::ImageType, GrayImageFrame::ImageType> DenoisingImageFilterType;
                 DenoisingImageFilterType::Pointer denoisingFilter = DenoisingImageFilterType::New();
-                denoisingFilter->SetNumberOfIterations(mIterations);
-                denoisingFilter->SetTimeStep(mTimeStep);
+                denoisingFilter->SetNumberOfIterations(property("iterations").toInt());
+                denoisingFilter->SetTimeStep(property("timeStep").toInt());
                 denoisingFilter->SetInput((GrayImageFrame::ImageType::Pointer)mSrcFrame);
                 denoisingFilter->Update();
                 mImageFrame.resizeAndCopyImage(denoisingFilter->GetOutput());

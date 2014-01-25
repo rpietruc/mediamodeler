@@ -9,6 +9,7 @@ PictureFileSource::PictureFileSource(ElementFactory *aFactory, const QString &aO
     {
     setProperty("fileList", QStringList());
     }
+
 bool PictureFileSource::event(QEvent *aEvent)
     {
     if (aEvent->type() == QEvent::DynamicPropertyChange)
@@ -16,7 +17,6 @@ bool PictureFileSource::event(QEvent *aEvent)
         QDynamicPropertyChangeEvent *event = (QDynamicPropertyChangeEvent*)aEvent;
         if (QString(event->propertyName().constData()) == "fileList")
             {
-            // special tab handling here
             mPathList.clear();
             foreach (QString path, property("fileList").toStringList())
                 {
@@ -24,7 +24,7 @@ bool PictureFileSource::event(QEvent *aEvent)
                 mPathList.append(fileInfo.filePath());
                 }
             event->accept();
-            return TRUE;
+            return true;
             }
         }
     return ElementBase::event(aEvent);

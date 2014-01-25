@@ -36,17 +36,14 @@ public:
             return &mVideoFrame;
         }
 
-//    ParamList getParams() const;
-
-public slots:
-//    void setParamValue(const QString& aName, const QVariant& aValue);
+private slots:
+    void open();
 
 private:
     static int openCodecContext(int *aStreamIdx, AVFormatContext *aFormatContext, enum AVMediaType aMediaType);
-
-private:
     void process();
 
+private:
     AudioFrame mAudioFrame;
     VideoFrame mVideoFrame;
 

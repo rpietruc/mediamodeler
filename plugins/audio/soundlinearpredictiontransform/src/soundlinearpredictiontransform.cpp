@@ -9,38 +9,24 @@ SoundLinearPredictionTransform::SoundLinearPredictionTransform(ElementFactory *a
     {
     mSoundFrame.setChannelsNo(2);
     mSoundFrame.setSampleBits(16);
-    setTaps(10);
-    }
-
-//ElementBase::ParamList SoundLinearPredictionTransform::getParams() const
-//    {
-//    ParamList ret;
-//    ret["Taps No"] = mCoefficients.size();
-//    return ret;
-//    }
-
-//void SoundLinearPredictionTransform::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    Q_UNUSED(aName);
-//    if (mCoefficients.size() != aValue.toInt())
-//        setTaps(aValue.toInt());
-//    }
-
-void SoundLinearPredictionTransform::setTaps(int aTaps)
-    {
-    mCoefficients.clear();
-    mAudioSamplesTail.clear();
-    for (int i = 0; i < aTaps; ++i)
-        {
-        double v = qrand();
-        mCoefficients.push_back(0.5 - v/RAND_MAX);
-        mAudioSamplesTail.push_back(0);
-        }
-    mFilterFrame.setResolution(aTaps + 1);
+    setProperty("tapsNo", 10);
     }
 
 void SoundLinearPredictionTransform::process()
     {
+    if (property("tapsNo").toInt() != mCoefficients.size())
+        {
+        mCoefficients.clear();
+        mAudioSamplesTail.clear();
+        for (int i = 0; i < property("tapsNo").toInt(); ++i)
+            {
+            double v = qrand();
+            mCoefficients.push_back(0.5 - v/RAND_MAX);
+            mAudioSamplesTail.push_back(0);
+            }
+        mFilterFrame.setResolution(property("tapsNo").toInt() + 1);
+        }
+
     Q_ASSERT(mSourceElementsReadySet.size() == 1);
     const ElementBase* elem = *mSourceElementsReadySet.begin();
     Q_ASSERT(elem->getFramesNo() == 1);
@@ -52,7 +38,7 @@ void SoundLinearPredictionTransform::process()
     Q_ASSERT(frame->getDimension(SoundFrame::Time).mResolution > mCoefficients.size());
 
     mSoundFrame.setFrameSamples(frame->getDimension(SoundFrame::Time).mResolution);
-    mSoundFrame.setSampleRate(1/frame->getDimension(SoundFrame::Time).mDelta);
+    mSoundFrame.setSampleTime(frame->getDimension(SoundFrame::Time).mDelta);
     mSoundFrame.setTimeStamp(frame->getDimension(SoundFrame::Time).mStartLocation);
     mSoundFrame.setSourceName(frame->getSourceName());
 

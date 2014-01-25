@@ -11,7 +11,7 @@ SoundDeviceDestination::SoundDeviceDestination(ElementFactory *aFactory, const Q
     mLastFrameTime(-1.0),
     mWaitForBytesRead(false)
     {
-    mAudioOutputDevice.getSoundFrame().setSourceName("Default");
+    setProperty("deviceName", "Default");
     QObject::connect(&mAudioOutputDevice, SIGNAL(bytesRead(int)), this, SLOT(checkBytesRead(int)), Qt::QueuedConnection);
     }
 
@@ -20,28 +20,9 @@ SoundDeviceDestination::~SoundDeviceDestination()
     close();
     }
 
-//ElementBase::ParamList SoundDeviceDestination::getParams() const
-//    {
-//    ParamList ret;
-////    mAudioDeviceInfo(QAudioDeviceInfo::defaultOutputDevice()),
-////    ret["Audio Device"] = mAudioDeviceInfo.deviceName();
-//    ret["Audio Device"] = mAudioOutputDevice.getSoundFrame().getSourceName();
-//    return ret;
-//    }
-
-//void SoundDeviceDestination::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    Q_UNUSED(aName);
-//    if (mAudioOutputDevice.getSoundFrame().getSourceName() != aValue.toString())
-//        {
-//        close();
-//        mAudioOutputDevice.getSoundFrame().setSourceName(aValue.toString());
-//        }
-//    }
-
 void SoundDeviceDestination::open()
     {
-    close();
+    Q_ASSERT(!mAudioOutput);
 
     foreach (QAudioDeviceInfo info, QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
         if (info.deviceName() == mAudioOutputDevice.getSoundFrame().getSourceName())
@@ -78,6 +59,12 @@ void SoundDeviceDestination::close()
 
 void SoundDeviceDestination::process()
     {
+    if (mAudioOutputDevice.getSoundFrame().getSourceName() != property("deviceName").toString())
+        {
+        close();
+        mAudioOutputDevice.getSoundFrame().setSourceName(property("deviceName").toString());
+        }
+
     foreach (const ElementBase *source, mSourceElementsReadySet)
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
@@ -93,7 +80,7 @@ void SoundDeviceDestination::process()
                 if (frame->getDimension(SoundFrame::Time).mDelta != mAudioOutputDevice.getSoundFrame().getDimension(SoundFrame::Time).mDelta)
                     {
                     close();
-                    mAudioOutputDevice.getSoundFrame().setSampleRate(1.0/frame->getDimension(SoundFrame::Time).mDelta);
+                    mAudioOutputDevice.getSoundFrame().setSampleTime(frame->getDimension(SoundFrame::Time).mDelta);
                     }
                 if (!isOpened())
                     open();

@@ -23,11 +23,6 @@ public:
     int getFramesNo() const { return 1; }
     const FrameBase *getFrame(int) const { return &mPictureFrame; }
 
-//    ParamList getParams() const;
-
-protected slots:
-//    void setParamValue(const QString& aName, const QVariant& aValue);
-
 private:
     void process();
 
@@ -37,7 +32,6 @@ private:
 
     IplImageFrame mSrcFrame;
     IplImageFrame mPictureFrame;
-    int mClustersNo;
     };
 
 class PICTURECLUSTERTRANSFORMSHARED_EXPORT PictureClusterTransformFactory : public ElementFactory

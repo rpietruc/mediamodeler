@@ -5,23 +5,10 @@ namespace media {
 
 PictureClusterTransform::PictureClusterTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName),
-    mPictureFrame(1),
-    mClustersNo(10)
+    mPictureFrame(1)
     {
+    setProperty("clustersNo", 10);
     }
-
-//ElementBase::ParamList PictureClusterTransform::getParams() const
-//    {
-//    ParamList ret;
-//    ret["Clusters No"] =  mClustersNo;
-//    return ret;
-//    }
-
-//void PictureClusterTransform::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    if (aName == "Clusters No")
-//        mClustersNo = aValue.toInt();
-//    }
 
 void PictureClusterTransform::process()
     {
@@ -40,7 +27,7 @@ void PictureClusterTransform::process()
                 CvMat *clustersMat = cvCreateMat(srcImg->width*srcImg->height, 1, CV_32SC1);
 
                 //cvKMeansTest(pictureMat, clustersMat, pictureFrame->mIplImage->nChannels);
-                cvKMeans2(pictureMat, mClustersNo, clustersMat, cvTermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 50, 0.1));
+                cvKMeans2(pictureMat, property("clustersNo").toInt(), clustersMat, cvTermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 50, 0.1));
                 imageFromMat((IplImage*)mPictureFrame, clustersMat);
 
                 cvReleaseMat(&clustersMat);

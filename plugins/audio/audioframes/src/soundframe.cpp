@@ -48,9 +48,9 @@ void SoundFrame::setSample(const int *aPoint, qreal aValue)
         }
     }
 
-void SoundFrame::setSampleRate(int aSampleRate)
+void SoundFrame::setSampleTime(double aSampleTime)
     {
-    mDimensions[Time].mDelta = 1.0/aSampleRate;
+    mDimensions[Time].mDelta = aSampleTime;
     }
 
 void SoundFrame::setChannelsNo(int aChannelsNo)

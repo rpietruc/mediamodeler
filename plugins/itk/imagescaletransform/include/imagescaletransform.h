@@ -23,19 +23,12 @@ public:
     int getFramesNo() const { return 1; }
     const FrameBase *getFrame(int) const { return &mImageFrame; }
 
-//    ParamList getParams() const;
-
-protected slots:
-//    void setParamValue(const QString& aName, const QVariant& aValue);
-
 private:
     void process();
 
 private:
     ColorImageFrame mSrcFrame;
     ColorImageFrame mImageFrame;
-
-    itk::FixedArray<float, 2> mScale;
     };
 
 class IMAGESCALESHARED_EXPORT ImageScaleTransformFactory : public ElementFactory

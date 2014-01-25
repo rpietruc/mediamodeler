@@ -1,4 +1,5 @@
 #include "sndfilesource.h"
+#include <QDynamicPropertyChangeEvent>
 
 namespace media {
 
@@ -7,6 +8,7 @@ SndFileSource::SndFileSource(ElementFactory *aFactory, const QString &aObjectNam
     mNextFileIndex(0),
     mSoundFile(0)
     {
+    setProperty("fileList", QStringList());
     }
 
 SndFileSource::~SndFileSource()
@@ -15,29 +17,30 @@ SndFileSource::~SndFileSource()
         sf_close(mSoundFile);
     }
 
-//ElementBase::ParamList SndFileSource::getParams() const
-//    {
-//    ParamList ret;
-//    ret["Files"] =  mPathList;
-//    return ret;
-//    }
-
-//void SndFileSource::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    Q_UNUSED(aName);
-//    QStringList pathList = aValue.toStringList();
-//    if (mSoundFile != 0)
-//        {
-//        sf_close(mSoundFile);
-//        mSoundFile = 0;
-//        }
-//    mPathList.clear();
-//    foreach (QString path, pathList)
-//        {
-//        QFileInfo fileInfo(path);
-//        mPathList.append(fileInfo.filePath());
-//        }
-//    }
+bool SndFileSource::event(QEvent *aEvent)
+    {
+    if (aEvent->type() == QEvent::DynamicPropertyChange)
+        {
+        QDynamicPropertyChangeEvent *event = (QDynamicPropertyChangeEvent*)aEvent;
+        if (QString(event->propertyName().constData()) == "fileList")
+            {
+            if (mSoundFile != 0)
+                {
+                sf_close(mSoundFile);
+                mSoundFile = 0;
+                }
+            mPathList.clear();
+            foreach (QString path, property("fileList").toStringList())
+                {
+                QFileInfo fileInfo(path);
+                mPathList.append(fileInfo.filePath());
+                }
+            event->accept();
+            return true;
+            }
+        }
+    return ElementBase::event(aEvent);
+    }
 
 bool SndFileSource::openNextFile()
     {
@@ -53,8 +56,9 @@ bool SndFileSource::openNextFile()
         mSoundFile = sf_open(qPrintable(mPathList.at(mNextFileIndex)), SFM_READ, &fileInfo);
         if (mSoundFile)
             {
+            Q_ASSERT(fileInfo.samplerate);
             mAlsaFrame.setChannelsNo(fileInfo.channels);
-            mAlsaFrame.setSampleRate(fileInfo.samplerate);
+            mAlsaFrame.setSampleTime(1.0/fileInfo.samplerate);
             mAlsaFrame.setFrameTime(AlsaFrame::DefaultFrameTime);
             mAlsaFrame.setSourceName(mPathList.at(mNextFileIndex++));
             return true;

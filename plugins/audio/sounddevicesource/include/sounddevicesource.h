@@ -27,11 +27,6 @@ public:
     int getFramesNo() const { return 1; }
     const FrameBase *getFrame(int) const { return &mSoundFrame; }
 
-//    ParamList getParams() const;
-
-public slots:
-//    void setParamValue(const QString& aName, const QVariant& aValue);
-
 private slots:
     void notified();
     void stateChanged(QAudio::State state);

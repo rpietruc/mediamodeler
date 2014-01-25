@@ -8,44 +8,31 @@ namespace media {
 SoundFilterTransform::SoundFilterTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
+    Q_ASSERT((sizeof(mFilter)/sizeof(mFilter[0])) == (sizeof(mTail)/sizeof(mTail[0])));
+    // preemphasis: 1, -0.9735
     mSoundFrame.setChannelsNo(1);
-
-    // preemphasis
-    mFilter << 1 << -0.9735;
-    mTail << 0 << 0;
+    for (int i = 0; i < (int)(sizeof(mFilter)/sizeof(mFilter[0])); ++i)
+        setProperty(qPrintable(QString("a%1").arg(i)), 0);
+    memset(mTail, 0, sizeof(mTail));
     }
-
-//ElementBase::ParamList SoundFilterTransform::getParams() const
-//    {
-//    ParamList ret;
-//    ret["a0"] = mFilter.at(0);
-//    ret["a1"] = mFilter.at(1);
-//    return ret;
-//    }
-
-//void SoundFilterTransform::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    if (aName == "a0")
-//        mFilter[0] = aValue.toDouble();
-//    else if (aName == "a1")
-//        mFilter[1] = aValue.toDouble();
-//    }
 
 void SoundFilterTransform::process()
     {
+    for (int i = 0; i < (int)(sizeof(mFilter)/sizeof(mFilter[0])); ++i)
+        mFilter[i] = property(qPrintable(QString("a%1").arg(i))).toDouble();
+
     Q_ASSERT(mSourceElementsReadySet.size() == 1);
     const ElementBase* elem = *mSourceElementsReadySet.begin();
     Q_ASSERT(elem->getFramesNo() == 1);
     const FrameBase *frame = elem->getFrame(0);
 
     Q_ASSERT(frame->getMaxDimension() == SoundFrame::Dimensions);
-    Q_ASSERT(mFilter.size() > 0);
     Q_ASSERT(frame->getDimension(SoundFrame::Time).mDelta);
-    Q_ASSERT(frame->getDimension(SoundFrame::Time).mResolution > mFilter.size());
+    Q_ASSERT(frame->getDimension(SoundFrame::Time).mResolution > (int)(sizeof(mFilter)/sizeof(mFilter[0])));
 
     mSoundFrame.setSampleBits(16);
     mSoundFrame.setFrameSamples(frame->getDimension(SoundFrame::Time).mResolution);
-    mSoundFrame.setSampleRate(1/frame->getDimension(SoundFrame::Time).mDelta);
+    mSoundFrame.setSampleTime(frame->getDimension(SoundFrame::Time).mDelta);
     mSoundFrame.setSourceName(frame->getSourceName());
     mSoundFrame.setTimeStamp(frame->getDimension(SoundFrame::Time).mStartLocation);
 
@@ -53,7 +40,7 @@ void SoundFilterTransform::process()
     for (;point[SoundFrame::Time] < frame->getDimension(SoundFrame::Time).mResolution; ++point[SoundFrame::Time])
         {
         double res = 0;
-        for (int i = 0; i < mFilter.size(); ++i)
+        for (int i = 0; i < (int)(sizeof(mFilter)/sizeof(mFilter[0])); ++i)
             {
             if ((point[SoundFrame::Time] - i) < 0)
                 res += mFilter[i] * mTail[i - point[SoundFrame::Time] - 1];
@@ -62,7 +49,7 @@ void SoundFilterTransform::process()
             }
         mSoundFrame.setSample(point, res);
         }
-    for (int i = 0; i < (mFilter.size() - 1); ++i)
+    for (int i = 0; i < (int)(sizeof(mFilter)/sizeof(mFilter[0]) - 1); ++i)
         {
         --point[SoundFrame::Time];
         mTail[i] = frame->getSample(point);

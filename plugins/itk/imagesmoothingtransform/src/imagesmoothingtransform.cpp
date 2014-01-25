@@ -6,27 +6,11 @@ using namespace itk;
 namespace media {
 
 ImageSmoothingTransform::ImageSmoothingTransform(ElementFactory *aFactory, const QString &aObjectName) :
-    ElementBase(aFactory, aObjectName),
-    mRangeSigma(50),
-    mDomainSigma(5)
+    ElementBase(aFactory, aObjectName)
     {
+    setProperty("rangeSigma", 50);
+    setProperty("domainSigma", 5);
     }
-
-//ElementBase::ParamList ImageSmoothingTransform::getParams() const
-//    {
-//    ParamList ret;
-//    ret["Range Sigma"] =  mRangeSigma;
-//    ret["Domain Sigma"] = mDomainSigma;
-//    return ret;
-//    }
-
-//void ImageSmoothingTransform::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    if (aName == "Range Sigma")
-//        mRangeSigma = aValue.toDouble();
-//    else if (aName == "Domain Sigma")
-//        mDomainSigma = aValue.toDouble();
-//    }
 
 void ImageSmoothingTransform::process()
     {
@@ -42,8 +26,8 @@ void ImageSmoothingTransform::process()
 
                 typedef itk::BilateralImageFilter<GrayImageFrame::ImageType, GrayImageFrame::ImageType> SmoothingImageFilterType;
                 SmoothingImageFilterType::Pointer smoothingFilter = SmoothingImageFilterType::New();
-                smoothingFilter->SetRangeSigma(mRangeSigma);
-                smoothingFilter->SetDomainSigma(mDomainSigma);
+                smoothingFilter->SetRangeSigma(property("rangeSigma").toDouble());
+                smoothingFilter->SetDomainSigma(property("domainSigma").toDouble());
                 smoothingFilter->SetInput(srcImg);
                 smoothingFilter->Update();
                 mImageFrame.resizeAndCopyImage(smoothingFilter->GetOutput());

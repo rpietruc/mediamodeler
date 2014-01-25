@@ -23,14 +23,6 @@ public:
     int getFramesNo() const { return 1; }
     const FrameBase *getFrame(int) const { return &mFormantFrame; }
 
-//    ParamList getParams() const;
-
-public slots:
-//    void setParamValue(const QString& aName, const QVariant& aValue);
-
-private slots:
-    void setMaxFormants(int aFormantsNo);
-
 private:
     void process();
 

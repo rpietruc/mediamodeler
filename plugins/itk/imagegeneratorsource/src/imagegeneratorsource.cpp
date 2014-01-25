@@ -8,41 +8,24 @@ namespace media {
 ImageGeneratorSource::ImageGeneratorSource(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
-    mSize[0] = 800;
-    mSize[1] = 600;
+    setProperty("width", 800);
+    setProperty("height", 600);
     mImageFrame.setSourceName(objectName());
     }
 
-//ElementBase::ParamList ImageGeneratorSource::getParams() const
-//    {
-//    ParamList ret;
-//    ret["Width"] = (int)mSize[0];
-//    ret["Height"] = (int)mSize[1];
-//    return ret;
-//    }
-
-//void ImageGeneratorSource::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    if (aName == "Width")
-//        {
-//        if (mSize[0] != aValue.toInt())
-//            {
-//            mImageFrame.release();
-//            mSize[0] = aValue.toInt();
-//            }
-//        }
-//    else if (aName == "Height")
-//        {
-//        if (mSize[1] != aValue.toInt())
-//            {
-//            mImageFrame.release();
-//            mSize[1] = aValue.toInt();
-//            }
-//        }
-//    }
-
 void ImageGeneratorSource::process()
     {
+    if ((int)mSize[0] != property("width").toInt())
+        {
+        mImageFrame.release();
+        mSize[0] = property("width").toInt();
+        }
+    if ((int)mSize[1] != property("height").toInt())
+        {
+        mImageFrame.release();
+        mSize[1] = property("height").toInt();
+        }
+
     // Create an image
     if (!mImageFrame.isEmpty())
         emit processingCompleted();

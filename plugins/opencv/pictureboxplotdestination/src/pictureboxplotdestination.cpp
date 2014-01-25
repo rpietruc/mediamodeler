@@ -13,7 +13,7 @@ PictureBoxPlotDestination::PictureBoxPlotDestination(ElementFactory *aFactory, c
     ElementBase(aFactory, aObjectName),
     mBoxPlot(new BoxPlot())
     {
-    mBoxPlot->setMaxValue(1);
+    setProperty("maxValue", 1);
     mBoxPlot->show();
     }
 
@@ -22,21 +22,9 @@ PictureBoxPlotDestination::~PictureBoxPlotDestination()
     delete mBoxPlot;
     }
 
-//ElementBase::ParamList PictureBoxPlotDestination::getParams() const
-//    {
-//    ParamList ret;
-//    ret["Max"] =  mBoxPlot->maxValue();
-//    return ret;
-//    }
-
-//void PictureBoxPlotDestination::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    Q_UNUSED(aName);
-//    mBoxPlot->setMaxValue(aValue.toDouble());
-//    }
-
 void PictureBoxPlotDestination::process()
     {
+    mBoxPlot->setMaxValue(property("maxValue").toDouble());
     foreach (const ElementBase *source, mSourceElementsReadySet)
         for (int i = 0; i < source->getFramesNo(); ++i)
             {

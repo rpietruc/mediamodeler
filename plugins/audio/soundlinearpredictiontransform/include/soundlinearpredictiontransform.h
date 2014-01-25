@@ -35,15 +35,10 @@ public:
             return &mFilterFrame;
         }
 
-//    ParamList getParams() const;
-
-public slots:
-//    void setParamValue(const QString& aName, const QVariant& aValue);
-
 private:
-    void setTaps(int aTaps);
     void process();
 
+private:
     QVector<double> mCoefficients;
     QVector<double> mAudioSamplesTail;
     SoundFrame mSoundFrame;

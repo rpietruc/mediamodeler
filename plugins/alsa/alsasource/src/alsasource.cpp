@@ -120,7 +120,7 @@ void AlsaSource::process()
         (mAlsaFrame.getDimension(AlsaFrame::Time).mDelta != 1.0/property("sampleRate").toInt()))
         {
         close();
-        mAlsaFrame.setSampleRate(property("sampleRate").toInt());
+        mAlsaFrame.setSampleTime(1.0/property("sampleRate").toInt());
         qDebug() << objectName() << ": sampleRate changed to " << 1.0/mAlsaFrame.getDimension(AlsaFrame::Time).mDelta;
         }
 

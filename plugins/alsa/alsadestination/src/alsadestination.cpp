@@ -143,12 +143,11 @@ void AlsaDestination::process()
                     qDebug() << objectName() << ": channelsNo changed to " << mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution;
                     }
 
-                if ((frame->getDimension(AlsaFrame::Time).mDelta != mAlsaFrame.getDimension(AlsaFrame::Time).mDelta) &&
-                    (frame->getDimension(AlsaFrame::Time).mDelta != 0))
+                if (frame->getDimension(AlsaFrame::Time).mDelta != mAlsaFrame.getDimension(AlsaFrame::Time).mDelta)
                     {
                     close();
-                    mAlsaFrame.setSampleRate(1.0/frame->getDimension(AlsaFrame::Time).mDelta);
-                    qDebug() << objectName() << ": sampleRate changed to " << 1.0/mAlsaFrame.getDimension(AlsaFrame::Time).mDelta;
+                    mAlsaFrame.setSampleTime(frame->getDimension(AlsaFrame::Time).mDelta);
+                    qDebug() << objectName() << ": sampleTime changed to " << mAlsaFrame.getDimension(AlsaFrame::Time).mDelta;
                     }
                 if (!mPcmHandle)
                     open();

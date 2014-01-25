@@ -1,4 +1,5 @@
 #include "videofilesource.h"
+#include <QDynamicPropertyChangeEvent>
 
 namespace media {
 
@@ -6,6 +7,7 @@ VideoFileSource::VideoFileSource(ElementFactory *aFactory, const QString &aObjec
     ElementBase(aFactory, aObjectName),
     mCapture(NULL)
     {
+    setProperty("fileName", QString());
     }
 
 VideoFileSource::~VideoFileSource()
@@ -14,32 +16,39 @@ VideoFileSource::~VideoFileSource()
         cvReleaseCapture(&mCapture);
     }
 
-//ElementBase::ParamList VideoFileSource::getParams() const
-//    {
-//    ParamList ret;
-//    ret["File"] = mPictureFrame.getSourceName();
-//    return ret;
-//    }
+bool VideoFileSource::event(QEvent *aEvent)
+    {
+    if (aEvent->type() == QEvent::DynamicPropertyChange)
+        {
+        QDynamicPropertyChangeEvent *event = (QDynamicPropertyChangeEvent*)aEvent;
+        if (QString(event->propertyName().constData()) == "fileName")
+            {
+            open();
+            event->accept();
+            return true;
+            }
+        }
+    return ElementBase::event(aEvent);
+    }
 
-//void VideoFileSource::setParamValue(const QString& aName, const QVariant& aValue)
-//    {
-//    Q_UNUSED(aName);
-//    if (mPictureFrame.getSourceName() != aValue.toString())
-//        {
-//        if (mCapture && mPictureFrame.getSourceName() != aValue.toString())
-//            {
-//            cvReleaseCapture(&mCapture);
-//            mCapture = NULL;
-//            }
+void VideoFileSource::open()
+    {
+    if (mPictureFrame.getSourceName() != property("fileName").toString())
+        {
+        if (mCapture && mPictureFrame.getSourceName() != property("fileName").toString())
+            {
+            cvReleaseCapture(&mCapture);
+            mCapture = NULL;
+            }
 
-//        if (!mCapture)
-//            {
-//            mCapture = cvCaptureFromAVI(qPrintable(aValue.toString()));
-//            if (mCapture)
-//                mPictureFrame.setSourceName(aValue.toString());
-//            }
-//        }
-//    }
+        if (!mCapture)
+            {
+            mCapture = cvCaptureFromAVI(qPrintable(property("fileName").toString()));
+            if (mCapture)
+                mPictureFrame.setSourceName(property("fileName").toString());
+            }
+        }
+    }
 
 void VideoFileSource::process()
     {
