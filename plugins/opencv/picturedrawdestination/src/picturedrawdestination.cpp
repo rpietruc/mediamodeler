@@ -92,6 +92,10 @@ void PictureDrawDestination::process()
 
                     mWindow->setWindowTitle(frame->getSourceName());
                     mImageReady = true;
+
+                    //color frames have priority
+                    if (frame->getMaxDimension() == IplImageFrame::Dimensions)
+                        return;
                     }
                 }
             }
