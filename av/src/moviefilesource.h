@@ -11,7 +11,7 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
-#if defined(MOVIEFILESOURCE_LIBRARY)
+#if defined(moviefilesource_EXPORTS)
 #  define MOVIEFILESOURCESHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define MOVIEFILESOURCESHARED_EXPORT Q_DECL_IMPORT

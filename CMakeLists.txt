@@ -19,3 +19,4 @@ include_directories(${PROJECT_SOURCE_DIR}/lib/src)
 
 subdirs(lib)
 subdirs(app)
+subdirs(av)

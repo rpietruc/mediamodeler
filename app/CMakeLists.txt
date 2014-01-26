@@ -67,7 +67,8 @@ set(QMM_APP_INI
     ini/wavplayer.ini)
 
 qt5_wrap_ui(QMM_APP_FRM_H ${QMM_APP_FRM})
-add_executable(mediamodeler ${QMM_APP_SRC} ${QMM_APP_INC} ${QMM_APP_INI} ${QMM_APP_FRM_MOC})
+#qt5_wrap_cpp(QMM_APP_FRM_MOC ${QMM_APP_FRM_H})
+add_executable(mediamodeler ${QMM_APP_SRC} ${QMM_APP_INC} ${QMM_APP_INI} ${QMM_APP_FRM_H})
 
 link_directories(${CMAKE_BINARY_DIR})
 target_link_libraries(mediamodeler ${Qt5Widgets_LIBRARIES} modelcore)
