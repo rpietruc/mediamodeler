@@ -7,7 +7,7 @@
 #include <QtCore/qglobal.h>
 #include "alsaframe.h"
 
-#if defined(SNDFILEDESTINATION_LIBRARY)
+#if defined(sndfiledestination_EXPORTS)
 #  define SNDFILEDESTINATIONSHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define SNDFILEDESTINATIONSHARED_EXPORT Q_DECL_IMPORT

@@ -9,16 +9,16 @@ add_definitions(${Qt5Core_DEFINITIONS})
 set(CMAKE_CXX_FLAGS "${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
 
 set(QMM_LIB_SRC
-    src/matrixframe.cpp
-    src/modelcreator.cpp
-    src/elementbase.cpp)
+    matrixframe.cpp
+    modelcreator.cpp
+    elementbase.cpp)
 
 set(QMM_LIB_INC
-    src/globaldefs.h
-    src/matrixframe.h
-    src/modelcreator.h
-    src/elementbase.h
-    src/framebase.h)
+    globaldefs.h
+    matrixframe.h
+    modelcreator.h
+    elementbase.h
+    framebase.h)
 
 add_library(modelcore SHARED ${QMM_LIB_SRC} ${QMM_LIB_INC})
 target_link_libraries(modelcore ${Qt5Core_LIBRARIES})

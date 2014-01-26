@@ -15,8 +15,10 @@ add_definitions(-DINSTALL_INI="${CMAKE_INSTALL_PREFIX}/${QMM_INI_PATH}")
 set(CMAKE_VERBOSE_MAKEFILE true)
 add_definitions(-Wall)
 
-include_directories(${PROJECT_SOURCE_DIR}/lib/src)
+include_directories(${PROJECT_SOURCE_DIR}/lib)
 
 subdirs(lib)
 subdirs(app)
+subdirs(alsa)
 subdirs(av)
+subdirs(ini)

@@ -7,7 +7,7 @@
 #include "alsaframe.h"
 #include <QtCore/qglobal.h>
 
-#if defined(SNDFILESOURCE_LIBRARY)
+#if defined(sndfilesource_EXPORTS)
 #  define SNDFILESOURCESHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define SNDFILESOURCESHARED_EXPORT Q_DECL_IMPORT

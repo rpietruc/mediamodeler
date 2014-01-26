@@ -6,7 +6,7 @@
 #include <QString>
 #include <alsa/asoundlib.h>
 
-#if defined(ALSASOURCE_LIBRARY)
+#if defined(alsasource_EXPORTS)
 #  define ALSASOURCESHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define ALSASOURCESHARED_EXPORT Q_DECL_IMPORT

@@ -6,7 +6,7 @@
 #include "alsaframe.h"
 #include <QtCore/qglobal.h>
 
-#if defined(ALSADUMMYSOURCE_LIBRARY)
+#if defined(alsadummysource_EXPORTS)
 #  define ALSADUMMYSOURCESHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define ALSADUMMYSOURCESHARED_EXPORT Q_DECL_IMPORT
