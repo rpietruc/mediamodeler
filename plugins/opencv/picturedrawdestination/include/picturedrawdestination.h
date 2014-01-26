@@ -25,6 +25,8 @@ public:
     explicit PictureDrawDestination(ElementFactory *aFactory, const QString &aObjectName);
     ~PictureDrawDestination();
 
+    bool event(QEvent *aEvent);
+
 private slots:
     void showPicture();
 
@@ -35,6 +37,7 @@ private:
     QTimer *mTimer;
     DrawWidget *mWindow;
     QImage *mImage;
+    bool mImageReady;
     };
 
 class PictureDrawDestinationFactory : public ElementFactory

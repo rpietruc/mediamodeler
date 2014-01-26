@@ -7,6 +7,7 @@
 #include <QPixmap>
 #include "pictureframes.h"
 #include "drawwidget.h"
+#include <QDynamicPropertyChangeEvent>
 
 namespace media {
 
@@ -14,25 +15,41 @@ PictureDrawDestination::PictureDrawDestination(ElementFactory *aFactory, const Q
     ElementBase(aFactory, aObjectName),
     mTimer(new QTimer(this)),
     mWindow(new DrawWidget),
-    mImage(NULL)
+    mImage(NULL),
+    mImageReady(false)
     {
     QObject::connect(mTimer, SIGNAL(timeout()), this, SLOT(showPicture()));
-    setProperty("delayTime", 25);
-    mTimer->setSingleShot(true);
+    setProperty("delayTime", 0);
     }
 
 PictureDrawDestination::~PictureDrawDestination()
     {
-    delete mTimer;
     delete mImage;
     delete mWindow;
     }
 
+bool PictureDrawDestination::event(QEvent *aEvent)
+    {
+    if (aEvent->type() == QEvent::DynamicPropertyChange)
+        {
+        QDynamicPropertyChangeEvent *event = (QDynamicPropertyChangeEvent*)aEvent;
+        if (QString(event->propertyName().constData()) == "delayTime")
+            {
+            mTimer->start(property("delayTime").toInt());
+            event->accept();
+            return true;
+            }
+        }
+    return ElementBase::event(aEvent);
+    }
+
 void PictureDrawDestination::showPicture()
     {
-    if (mImage)
+    if (mImageReady)
         {
+        Q_ASSERT(mImage);
         mWindow->showPicture(*mImage);
+        mImageReady = false;
         emit framesProcessed();
         }
     }
@@ -72,9 +89,9 @@ void PictureDrawDestination::process()
                                     rgb[point[IplImageFrame::Channels]] = frame->getSample(point);
                             mImage->setPixel(point[IplImageFrame::Width], point[IplImageFrame::Height], qRgb(rgb[2], rgb[1], rgb[0]));
                             }
+
                     mWindow->setWindowTitle(frame->getSourceName());
-                    mTimer->setInterval(property("delayTime").toInt());
-                    mTimer->start();
+                    mImageReady = true;
                     }
                 }
             }

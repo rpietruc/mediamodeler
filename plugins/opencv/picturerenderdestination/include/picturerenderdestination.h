@@ -26,6 +26,8 @@ public:
     explicit PictureRenderDestination(ElementFactory *aFactory, const QString &aObjectName);
     ~PictureRenderDestination();
 
+    bool event(QEvent *aEvent);
+
 private slots:
     void showPicture();
 
@@ -35,6 +37,7 @@ private:
 private:
     QTimer *mTimer;
     IplImageFrame mPictureFrame;
+    bool mImageReady;
     };
 
 class PictureRenderDestinationFactory : public ElementFactory

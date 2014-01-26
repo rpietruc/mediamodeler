@@ -2,16 +2,17 @@
 #include "pictureframes.h"
 #include <QDebug>
 #include <QTimer>
+#include <QDynamicPropertyChangeEvent>
 
 namespace media {
 
 PictureRenderDestination::PictureRenderDestination(ElementFactory *aFactory, const QString &aObjectName) :
-    ElementBase(aFactory, aObjectName)
+    ElementBase(aFactory, aObjectName),
+    mTimer(new QTimer(this)),
+    mImageReady(false)
     {
-    mTimer = new QTimer(this);
-    mTimer->setSingleShot(true);
     QObject::connect(mTimer, SIGNAL(timeout()), this, SLOT(showPicture()));
-    setProperty("delayTime", 25);
+    setProperty("delayTime", 0);
     }
 
 PictureRenderDestination::~PictureRenderDestination()
@@ -19,11 +20,28 @@ PictureRenderDestination::~PictureRenderDestination()
     cvDestroyWindow(qPrintable(mPictureFrame.getSourceName()));
     }
 
+bool PictureRenderDestination::event(QEvent *aEvent)
+    {
+    if (aEvent->type() == QEvent::DynamicPropertyChange)
+        {
+        QDynamicPropertyChangeEvent *event = (QDynamicPropertyChangeEvent*)aEvent;
+        if (QString(event->propertyName().constData()) == "delayTime")
+            {
+            mTimer->start(property("delayTime").toInt());
+            event->accept();
+            return true;
+            }
+        }
+    return ElementBase::event(aEvent);
+    }
+
 void PictureRenderDestination::showPicture()
     {
-    if (!mPictureFrame.getSourceName().isEmpty())
+    if (mImageReady)
         {
-        cvShowImage(qPrintable(mPictureFrame.getSourceName()), (IplImage*)mPictureFrame);
+        if (!mPictureFrame.getSourceName().isEmpty())
+            cvShowImage(qPrintable(mPictureFrame.getSourceName()), (IplImage*)mPictureFrame);
+        mImageReady = false;
         emit framesProcessed();
         }
     }
@@ -38,8 +56,7 @@ void PictureRenderDestination::process()
                 {
                 mPictureFrame.setSourceName(QString("%1::%2").arg(source->objectName()).arg(frame->getSourceName()));
                 mPictureFrame.resizeAndCopyFrame(*frame);
-                mTimer->setInterval(property("delayTime").toInt());
-                mTimer->start();
+                mImageReady = true;
                 }
             }
     }
