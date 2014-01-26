@@ -1,4 +1,4 @@
-include(../../../config.pri)
+include(../../config.pri)
 TEMPLATE = lib
 CONFIG += plugin
 CONFIG += debug_and_release
@@ -14,7 +14,7 @@ HEADERS += \
     include/moviefilesource.h
 
 DEPENDPATH = include
-DEPENDPATH += ../../../core/include
+DEPENDPATH += ../../../lib/src
 DEPENDPATH += ../movieframes/include
 INCLUDEPATH = $$DEPENDPATH
 

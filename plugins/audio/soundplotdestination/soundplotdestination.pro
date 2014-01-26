@@ -1,4 +1,4 @@
-include(../../../config.pri)
+include(../../config.pri)
 QT += multimedia
 QT += widgets
 QT += printsupport
@@ -23,7 +23,7 @@ FORMS += \
 
 DEPENDPATH = include
 DEPENDPATH += ../audioframes/include
-DEPENDPATH += ../../../core/include
+DEPENDPATH += ../../../lib/src
 INCLUDEPATH = $$DEPENDPATH
 
 #CONFIG(debug, debug|release):unix:LIBS += -L../../../core \

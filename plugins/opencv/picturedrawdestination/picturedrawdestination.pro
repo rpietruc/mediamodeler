@@ -1,4 +1,4 @@
-include(../../../config.pri)
+include(../../config.pri)
 QT += widgets
 TEMPLATE = lib
 CONFIG += plugin
@@ -16,7 +16,7 @@ HEADERS += \
     src/drawwidget.h
 
 DEPENDPATH = include
-DEPENDPATH += ../../../core/include
+DEPENDPATH += ../../../lib/src
 DEPENDPATH += ../pictureframes/include
 INCLUDEPATH = $$DEPENDPATH
 

@@ -1,44 +1,30 @@
-#cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Debug
-cmake_minimum_required(VERSION 2.8)
-set(PROJECT_NAME qmediamodeler)
-project(${PROJECT_NAME})
+project(QMM_APP)
 
-#message(STATUS "System: " ${CMAKE_HOST_SYSTEM_NAME} " " ${CMAKE_HOST_SYSTEM_VERSION})
-#message(STATUS "Processor: " ${CMAKE_HOST_SYSTEM_PROCESSOR})
-
-#set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-#set(CMAKE_VERBOSE_MAKEFILE true)
-
-set(PLUGINS_PATH "share/qmediamodeler/plugins")
-set(INI_PATH "share/qmediamodeler/ini")
 
 find_package(Qt5Widgets REQUIRED)
-include_directories(${Qt5Widgets_INCLUDES}
-    ${PROJECT_SOURCE_DIR}/../core/include)
-add_definitions(${Qt5Widgets_DEFINITIONS}
-    -DINSTALL_PLUGINS="${CMAKE_INSTALL_PREFIX}/${PLUGINS_PATH}"
-    -DINSTALL_INI="${CMAKE_INSTALL_PREFIX}/${INI_PATH}"
-    -Wall)
+include_directories(${Qt5Widgets_INCLUDES})
+add_definitions(${Qt5Widgets_DEFINITIONS})
 set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
-set(${PROJECT_NAME}_SRC
+set(QMM_APP_SRC
     src/main.cpp
     src/mainwindow.cpp
     src/fileguielement.cpp
     src/guielementlist.cpp
     src/propertiesbox.cpp)
-set(${PROJECT_NAME}_INCLUDE
+set(QMM_APP_INC
     src/mainwindow.h
     src/fileguielement.h
     src/guielementbase.h
     src/guielementlist.h
     src/propertiesbox.h)
-set(${PROJECT_NAME}_FORMS
+set(QMM_APP_FRM
     forms/mainwindow.ui
     forms/fileguielement.ui
     forms/guielementlist.ui)
-set(${PROJECT_NAME}_INI
+set(QMM_APP_INI
 #    ini/linespectralpairsplot.ini.old
 #    ini/linespectralpairswrite.ini.old
 #    ini/mouthcontourdetection.ini.old
@@ -80,20 +66,11 @@ set(${PROJECT_NAME}_INI
     ini/wavfilter.ini
     ini/wavplayer.ini)
 
-qt5_wrap_ui(SOURCES_FORMS_H ${${PROJECT_NAME}_FORMS})
-qt5_wrap_cpp(SOURCES_MOC ${${PROJECT_NAME}_INCLUDE})
-add_executable(${PROJECT_NAME}
-    ${${PROJECT_NAME}_SRC}
-    ${${PROJECT_NAME}_INI}
-    ${${PROJECT_NAME}_INCLUDE}
-    ${SOURCES_FORMS_H}
-    ${SOURCES_MOC})
+qt5_wrap_ui(QMM_APP_FRM_H ${QMM_APP_FRM})
+add_executable(mediamodeler ${QMM_APP_SRC} ${QMM_APP_INC} ${QMM_APP_INI} ${QMM_APP_FRM_MOC})
 
-link_directories(${PROJECT_SOURCE_DIR}/../core)
-find_library(MODELCORE_LIB modelcore)
-target_link_libraries(${PROJECT_NAME}
-    ${Qt5Widgets_LIBRARIES}
-    ${MODELCORE_LIB})
+link_directories(${CMAKE_BINARY_DIR})
+target_link_libraries(mediamodeler ${Qt5Widgets_LIBRARIES} modelcore)
 
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
-install(FILES ${${PROJECT_NAME}_INI} DESTINATION ${INI_PATH})
+install(TARGETS mediamodeler RUNTIME DESTINATION bin)
+install(FILES ${QMM_APP_INI} DESTINATION ${QMM_INI_PATH})

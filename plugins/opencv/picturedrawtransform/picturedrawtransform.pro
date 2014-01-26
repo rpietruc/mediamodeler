@@ -1,4 +1,4 @@
-include(../../../config.pri)
+include(../../config.pri)
 TEMPLATE = lib
 CONFIG += plugin
 CONFIG += debug_and_release
@@ -13,7 +13,7 @@ HEADERS += \
     include/picturedrawtransform.h
 
 DEPENDPATH = include
-DEPENDPATH += ../../../core/include
+DEPENDPATH += ../../../lib/src
 DEPENDPATH += ../pictureframes/include
 INCLUDEPATH = $$DEPENDPATH
 

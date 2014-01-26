@@ -1,4 +1,4 @@
-include(../../../config.pri)
+include(../../config.pri)
 QT += multimedia
 TEMPLATE = lib
 CONFIG += staticlib
@@ -6,7 +6,7 @@ CONFIG += debug_and_release
 #CONFIG(debug, debug|release):TARGET = $$join(TARGET,,,_debug)
 
 DEPENDPATH = include
-DEPENDPATH += ../../../core/include
+DEPENDPATH += ../../../lib/src
 INCLUDEPATH = $$DEPENDPATH
 
 SOURCES = \

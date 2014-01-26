@@ -1,4 +1,4 @@
-include(../../../config.pri)
+include(../../config.pri)
 QT += multimedia
 QT -= gui
 
@@ -16,7 +16,7 @@ HEADERS += \
     include/formanttransform.h
 
 DEPENDPATH = include
-DEPENDPATH += ../../../core/include
+DEPENDPATH += ../../../lib/src
 DEPENDPATH += ../audioframes/include
 INCLUDEPATH = $$DEPENDPATH
 

@@ -1,4 +1,4 @@
-include(../../../config.pri)
+include(../../config.pri)
 TEMPLATE = lib
 CONFIG += staticlib
 CONFIG += debug_and_release
@@ -11,7 +11,7 @@ HEADERS += \
     include/pictureframes.h
 
 DEPENDPATH = include
-DEPENDPATH += ../../../core/include
+DEPENDPATH += ../../../lib/src
 INCLUDEPATH = $$DEPENDPATH
 
 CONFIG += link_pkgconfig

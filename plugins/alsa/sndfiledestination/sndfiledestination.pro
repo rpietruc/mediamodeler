@@ -1,4 +1,4 @@
-include(../../../config.pri)
+include(../../config.pri)
 TEMPLATE = lib
 CONFIG += plugin
 CONFIG += debug_and_release
@@ -7,7 +7,7 @@ DEFINES += PLUGINTARGETNAME=$$TARGET
 DEFINES += SNDFILEDESTINATION_LIBRARY
 
 DEPENDPATH = include
-DEPENDPATH += ../../../core/include
+DEPENDPATH += ../../../lib/src
 DEPENDPATH += ../alsaframes/include
 INCLUDEPATH = $$DEPENDPATH
 

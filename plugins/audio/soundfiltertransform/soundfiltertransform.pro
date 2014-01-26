@@ -1,4 +1,4 @@
-include(../../../config.pri)
+include(../../config.pri)
 QT += multimedia
 TEMPLATE = lib
 CONFIG += plugin
@@ -14,7 +14,7 @@ HEADERS +=\
 
 DEPENDPATH = include
 DEPENDPATH += ../audioframes/include
-DEPENDPATH += ../../../core/include
+DEPENDPATH += ../../../lib/src
 INCLUDEPATH = $$DEPENDPATH
 
 #CONFIG(debug, debug|release):unix:LIBS += -L../audioframes \

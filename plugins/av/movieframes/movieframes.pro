@@ -1,4 +1,4 @@
-include(../../../config.pri)
+include(../../config.pri)
 TEMPLATE = lib
 CONFIG += staticlib
 CONFIG += debug_and_release
@@ -6,7 +6,7 @@ CONFIG += debug_and_release
 DEFINES += __STDC_CONSTANT_MACROS
 
 DEPENDPATH = include
-DEPENDPATH += ../../../core/include
+DEPENDPATH += ../../../lib/src
 INCLUDEPATH = $$DEPENDPATH
 
 SOURCES += \

@@ -1,4 +1,4 @@
-include(../../../config.pri)
+include(../../config.pri)
 QT -= gui
 QT += multimedia
 
@@ -16,7 +16,7 @@ HEADERS += \
     include/spectrumtransform.h
 
 DEPENDPATH = include
-DEPENDPATH += ../../../core/include
+DEPENDPATH += ../../../lib/src
 DEPENDPATH += ../audioframes/include
 INCLUDEPATH = $$DEPENDPATH
 

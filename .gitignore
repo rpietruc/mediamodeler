@@ -3,7 +3,7 @@ ui_*
 Makefile
 Makefile.Debug
 Makefile.Release
-*.pro.user
+*.user
 *.so
 *.so.*
 *.a
@@ -12,4 +12,5 @@ debug
 release
 *.o
 *~
+*-build
 
