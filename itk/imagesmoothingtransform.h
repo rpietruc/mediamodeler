@@ -5,7 +5,7 @@
 #include "elementbase.h"
 #include <QtCore/qglobal.h>
 
-#if defined(IMAGESMOOTHING_LIBRARY)
+#if defined(imagesmoothing_EXPORTS)
 #  define IMAGESMOOTHINGSHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define IMAGESMOOTHINGSHARED_EXPORT Q_DECL_IMPORT

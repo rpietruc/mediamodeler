@@ -5,7 +5,7 @@
 #include "elementbase.h"
 #include <QtCore/qglobal.h>
 
-#if defined(IMAGEGENERATOR_LIBRARY)
+#if defined(imagegenerator_EXPORTS)
 #  define IMAGEGENERATORSHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define IMAGEGENERATORSHARED_EXPORT Q_DECL_IMPORT

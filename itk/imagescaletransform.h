@@ -5,7 +5,7 @@
 #include "elementbase.h"
 #include <QtCore/qglobal.h>
 
-#if defined(IMAGESCALE_LIBRARY)
+#if defined(imagescale_EXPORTS)
 #  define IMAGESCALESHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define IMAGESCALESHARED_EXPORT Q_DECL_IMPORT

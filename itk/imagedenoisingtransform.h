@@ -5,7 +5,7 @@
 #include "elementbase.h"
 #include <QtCore/qglobal.h>
 
-#if defined(IMAGEDENOISING_LIBRARY)
+#if defined(imagedenoising_EXPORTS)
 #  define IMAGEDENOISINGSHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define IMAGEDENOISINGSHARED_EXPORT Q_DECL_IMPORT

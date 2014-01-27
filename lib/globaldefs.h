@@ -3,7 +3,7 @@
 
 #include <QtCore/qglobal.h>
 
-#if defined(MEDIAMODEL_LIBRARY)
+#if defined(MEDIAMODEL_EXPORTS)
 #  define MEDIAMODELSHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define MEDIAMODELSHARED_EXPORT Q_DECL_IMPORT

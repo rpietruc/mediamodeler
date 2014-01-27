@@ -5,7 +5,7 @@
 #include "elementbase.h"
 #include <QtCore/qglobal.h>
 
-#if defined(IMAGETHINNING_LIBRARY)
+#if defined(imagethinning_EXPORTS)
 #  define IMAGETHINNINGSHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define IMAGETHINNINGSHARED_EXPORT Q_DECL_IMPORT

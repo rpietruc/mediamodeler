@@ -5,7 +5,7 @@
 #include "spectrumframe.h"
 #include <QtCore/qglobal.h>
 
-#if defined(SPECTRUMTRANSFORM_LIBRARY)
+#if defined(SPECTRUMTRANSFORM_EXPORTS)
 #  define SPECTRUMTRANSFORMSHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define SPECTRUMTRANSFORMSHARED_EXPORT Q_DECL_IMPORT

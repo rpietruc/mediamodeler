@@ -5,7 +5,7 @@
 #include "formantframe.h"
 #include <QtCore/qglobal.h>
 
-#if defined(FORMANTTRANSFORM_LIBRARY)
+#if defined(FORMANTTRANSFORM_EXPORTS)
 #  define FORMANTTRANSFORMSHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define FORMANTTRANSFORMSHARED_EXPORT Q_DECL_IMPORT

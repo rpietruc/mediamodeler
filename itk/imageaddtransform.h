@@ -5,7 +5,7 @@
 #include "elementbase.h"
 #include <QtCore/qglobal.h>
 
-#if defined(IMAGEADDTRANSFORM_LIBRARY)
+#if defined(imageaddtransform_EXPORTS)
 #  define IMAGEADDTRANSFORMSHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define IMAGEADDTRANSFORMSHARED_EXPORT Q_DECL_IMPORT
