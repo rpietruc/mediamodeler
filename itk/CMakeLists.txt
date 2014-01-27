@@ -37,6 +37,7 @@ set(QMM_ITK_INC
 add_library(imageframes STATIC imageframes.cpp imageframes.h)
 target_link_libraries(imageframes ${Qt5Core_LIBRARIES} ${ITK_LIBS})
 install(TARGETS imageframes ARCHIVE DESTINATION lib)
+install(FILES imageframes.h DESTINATION ${QMM_INCLUDE_PATH})
 
 add_library(imageaddtransform SHARED imageaddtransform.cpp imageaddtransform.h)
 target_link_libraries(imageaddtransform modelcore imageframes ${Qt5Core_LIBRARIES} ${ITK_LIBS})

@@ -35,20 +35,20 @@ set(SOUNDDEVICEDESTINATION_INC
     audiooutputdevice.h
     sounddevicedestination.h)
 
-set(QMM_AUDIO_FRM_SRC
+set(AUDIOFRAMES_SRC
     soundframe.cpp
     filterframe.cpp
     formantframe.cpp
     spectrumframe.cpp)
 
-set(QMM_AUDIO_FRM_INC
+set(AUDIOFRAMES_INC
     soundframe.h
     filterframe.h
     formantframe.h
     spectrumframe.h)
 
 set(QMM_AUDIO_SRC
-    ${QMM_AUDIO_FRM_SRC}
+    ${AUDIOFRAMES_SRC}
     acoustictubetransform.cpp
     formanttransform.cpp
     ${SOUNDDEVICEDESTINATION_SRC}
@@ -61,7 +61,7 @@ set(QMM_AUDIO_SRC
     spectrumtransform.cpp)
 
 set(QMM_AUDIO_INC
-    ${QMM_AUDIO_FRM_INC}
+    ${AUDIOFRAMES_INC}
     acoustictubetransform.h
     formanttransform.h
     ${SOUNDDEVICEDESTINATION_INC}
@@ -73,9 +73,10 @@ set(QMM_AUDIO_INC
     spectrumplotdestination.h
     spectrumtransform.h)
 
-add_library(audioframes STATIC ${QMM_AUDIO_FRM_SRC} ${QMM_AUDIO_FRM_INC})
+add_library(audioframes STATIC ${AUDIOFRAMES_SRC} ${AUDIOFRAMES_INC})
 target_link_libraries(audioframes ${Qt5Multimedia_LIBRARIES})
 install(TARGETS audioframes ARCHIVE DESTINATION lib)
+install(FILES ${AUDIOFRAMES_INC} DESTINATION ${QMM_INCLUDE_PATH})
 
 add_library(acoustictubetransform SHARED acoustictubetransform.cpp acoustictubetransform.h)
 target_link_libraries(acoustictubetransform modelcore audioframes ${Qt5Core_LIBRARIES} ${Qt5Multimedia_LIBRARIES})

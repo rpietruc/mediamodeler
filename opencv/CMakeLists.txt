@@ -68,6 +68,7 @@ set(QMM_OPENCV_INC
 add_library(pictureframes STATIC pictureframes.cpp pictureframes.h)
 target_link_libraries(pictureframes ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
 install(TARGETS pictureframes ARCHIVE DESTINATION lib)
+install(FILES pictureframes.h DESTINATION ${QMM_INCLUDE_PATH})
 
 add_library(pictureboxplotdestination SHARED ${PICTUREBOXPLOTDESTINATION_SRC} ${PICTUREBOXPLOTDESTINATION_INC})
 target_link_libraries(pictureboxplotdestination modelcore pictureframes ${Qt5Widgets_LIBRARIES} ${OpenCV_LIBS})

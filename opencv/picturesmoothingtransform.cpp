@@ -31,3 +31,4 @@ void PictureSmoothingTransform::process()
     }
 
 } // namespace media
+

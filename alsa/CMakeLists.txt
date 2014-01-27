@@ -31,6 +31,7 @@ set(QMM_ALSA_INC
 add_library(alsaframes STATIC alsaframe.cpp alsaframe.h)
 target_link_libraries(alsaframes ${Qt5Core_LIBRARIES})
 install(TARGETS alsaframes ARCHIVE DESTINATION lib)
+install(FILES alsaframe.h DESTINATION ${QMM_INCLUDE_PATH})
 
 add_library(alsasource SHARED alsasource.cpp alsasource.h)
 target_link_libraries(alsasource modelcore alsaframes ${Qt5Core_LIBRARIES} asound)

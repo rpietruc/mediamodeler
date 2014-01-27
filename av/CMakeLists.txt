@@ -13,25 +13,26 @@ add_definitions(-DQT_PLUGIN)
 add_definitions(-DQT_SHARED)
 set(CMAKE_CXX_FLAGS "${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
 
-set(QMM_AV_FRM_SRC
+set(MOVIEFRAMES_SRC
     audioframe.cpp
     videoframe.cpp)
 
-set(QMM_AV_FRM_INC
+set(MOVIEFRAMES_INC
     audioframe.h
     videoframe.h)
 
 set(QMM_AV_SRC
-    ${QMM_AV_FRM_SRC}
+    ${MOVIEFRAMES_SRC}
     moviefilesource.cpp)
 
 set(QMM_AV_INC
-    ${QMM_AV_FRM_INC}
+    ${MOVIEFRAMES_INC}
     moviefilesource.h)
 
-add_library(movieframes STATIC ${QMM_AV_FRM_SRC} ${QMM_AV_FRM_INC})
+add_library(movieframes STATIC ${MOVIEFRAMES_SRC} ${MOVIEFRAMES_INC})
 target_link_libraries(movieframes ${Qt5Core_LIBRARIES} ${FFMPEG_LIBS})
 install(TARGETS movieframes ARCHIVE DESTINATION lib)
+install(FILES ${MOVIEFRAMES_INC} DESTINATION ${QMM_INCLUDE_PATH})
 
 add_library(moviefilesource SHARED moviefilesource.cpp moviefilesource.h)
 target_link_libraries(moviefilesource modelcore movieframes ${Qt5Core_LIBRARIES} ${FFMPEG_LIBS})

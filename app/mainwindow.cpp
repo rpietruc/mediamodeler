@@ -102,12 +102,12 @@ void MainWindow::loadModel(const QString& aFilePath)
         QObject::connect(elem, SIGNAL(processingCompleted(bool)), mUi->actionRun, SLOT(setDisabled(bool)), Qt::QueuedConnection);
         QObject::connect(elem, SIGNAL(processingCompleted(bool)), mUi->actionRun, SLOT(setChecked(bool)), Qt::QueuedConnection);
 
-        QThread *elemThread = new QThread(this);
-        elem->setParent(NULL); //cannot moveToThread object with a parent
-        elem->moveToThread(elemThread);
-        QObject::connect(elemThread, SIGNAL(finished()), elem, SLOT(deleteLater()));
-        QObject::connect(elemThread, SIGNAL(finished()), elemThread, SLOT(deleteLater()));
-        mElemThreads.push_back(elemThread);
+//        QThread *elemThread = new QThread(this);
+//        elem->setParent(NULL); //cannot moveToThread object with a parent
+//        elem->moveToThread(elemThread);
+//        QObject::connect(elemThread, SIGNAL(finished()), elem, SLOT(deleteLater()));
+//        QObject::connect(elemThread, SIGNAL(finished()), elemThread, SLOT(deleteLater()));
+//        mElemThreads.push_back(elemThread);
         }
 
     foreach (QThread* thread, mElemThreads)
@@ -132,3 +132,4 @@ void MainWindow::saveSetting(const QString& aSection, const QString& aName, cons
     {
     QSettings(QApplication::organizationName(), mModelFile).setValue(aSection + "/" + aName, aValue);
     }
+
