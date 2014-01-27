@@ -16,7 +16,7 @@ add_definitions(-DINSTALL_INI="${CMAKE_INSTALL_PREFIX}/${QMM_INI_PATH}")
 add_definitions(-Wall)
 
 include_directories(${PROJECT_SOURCE_DIR}/lib)
-set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
+#set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
 
 subdirs(lib)
 subdirs(app)

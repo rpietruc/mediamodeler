@@ -3,15 +3,21 @@ project(QMM_AV)
 set(CMAKE_AUTOMOC ON)
 #set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(FFMPEG_LIBS avutil avformat avcodec swscale swresample)
-
 find_package(Qt5Core REQUIRED)
-find_library(${FFMPEG_LIBS} REQUIRED)
-include_directories(${Qt5Core_INCLUDES})
-add_definitions(${Qt5Core_DEFINITIONS})
-add_definitions(-DQT_PLUGIN)
-add_definitions(-DQT_SHARED)
-set(CMAKE_CXX_FLAGS "${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
+if(Qt5Core_FOUND)
+  include_directories(${Qt5Core_INCLUDES})
+  add_definitions(${Qt5Core_DEFINITIONS})
+  set(CMAKE_CXX_FLAGS "${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
+  add_definitions(-DQT_PLUGIN)
+  add_definitions(-DQT_SHARED)
+endif(Qt5Core_FOUND)
+
+find_library(avutil avutil REQUIRED)
+find_library(avformat avformat REQUIRED)
+find_library(avcodec avcodec REQUIRED)
+find_library(swscale swscale REQUIRED)
+find_library(swresample swresample REQUIRED)
+set(FFMPEG_LIBS ${avutil} ${avformat} ${avcodec} ${swscale} ${swresample})
 
 set(MOVIEFRAMES_SRC
     audioframe.cpp

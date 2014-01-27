@@ -64,7 +64,6 @@ set(QMM_OPENCV_INC
     videocamerasource.h
     videofilesource.h)
 
-
 add_library(pictureframes STATIC pictureframes.cpp pictureframes.h)
 target_link_libraries(pictureframes ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
 install(TARGETS pictureframes ARCHIVE DESTINATION lib)
@@ -130,4 +129,3 @@ install(TARGETS videocamerasource LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 add_library(videofilesource SHARED videofilesource.cpp videofilesource.h)
 target_link_libraries(videofilesource modelcore pictureframes ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
 install(TARGETS videofilesource LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
-

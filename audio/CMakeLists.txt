@@ -3,19 +3,26 @@ project(QMM_AUDIO)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Multimedia REQUIRED)
 find_package(Qt5PrintSupport REQUIRED)
-#find_library(qwt REQUIRED)
-include_directories(${Qt5Widgets_INCLUDES})
-include_directories(${Qt5Multimedia_INCLUDES})
-include_directories(${Qt5PrintSupport_INCLUDES})
-add_definitions(${Qt5Widgets_DEFINITIONS})
-add_definitions(${Qt5Multimedia_DEFINITIONS})
-add_definitions(${Qt5PrintSupport_DEFINITIONS})
-add_definitions(-DQT_PLUGIN)
-add_definitions(-DQT_SHARED)
-set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+if(Qt5Core_FOUND)
+  include_directories(${Qt5Core_INCLUDES})
+  include_directories(${Qt5Widgets_INCLUDES})
+  include_directories(${Qt5Multimedia_INCLUDES})
+  include_directories(${Qt5PrintSupport_INCLUDES})
+  add_definitions(${Qt5Core_DEFINITIONS})
+  add_definitions(${Qt5Widgets_DEFINITIONS})
+  add_definitions(${Qt5Multimedia_DEFINITIONS})
+  add_definitions(${Qt5PrintSupport_DEFINITIONS})
+  set(CMAKE_CXX_FLAGS "${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
+  add_definitions(-DQT_PLUGIN)
+  add_definitions(-DQT_SHARED)
+endif(Qt5Core_FOUND)
+
+find_library(qwt qwt REQUIRED)
+find_library(qcustomplot qcustomplot REQUIRED)
 
 set(SPECTROGRAMDESTINATION_SRC
     spectrogramplot.cpp
@@ -104,18 +111,17 @@ install(TARGETS soundlinearpredictiontransform LIBRARY DESTINATION ${QMM_PLUGINS
 
 qt5_wrap_ui(PLOTDIALOG_FRM_H plotdialog.ui)
 add_library(soundplotdestination SHARED soundplotdestination.cpp plotdialog.cpp soundplotdestination.h plotdialog.h ${PLOTDIALOG_FRM_H})
-target_link_libraries(soundplotdestination modelcore audioframes ${Qt5Widgets_LIBRARIES} ${Qt5Multimedia_LIBRARIES} ${Qt5PrintSupport_LIBRARIES})
+target_link_libraries(soundplotdestination modelcore audioframes ${Qt5Widgets_LIBRARIES} ${Qt5Multimedia_LIBRARIES} ${Qt5PrintSupport_LIBRARIES} ${qcustomplot})
 install(TARGETS soundplotdestination LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 
 add_library(spectrogramdestination SHARED ${SPECTROGRAMDESTINATION_SRC} ${SPECTROGRAMDESTINATION_INC})
-target_link_libraries(spectrogramdestination modelcore audioframes ${Qt5Widgets_LIBRARIES} ${Qt5Multimedia_LIBRARIES} ${Qt5PrintSupport_LIBRARIES} qwt)
+target_link_libraries(spectrogramdestination modelcore audioframes ${Qt5Widgets_LIBRARIES} ${Qt5Multimedia_LIBRARIES} ${Qt5PrintSupport_LIBRARIES} ${qwt})
 install(TARGETS spectrogramdestination LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 
 add_library(spectrumplotdestination SHARED spectrumplotdestination.cpp plotdialog.cpp spectrumplotdestination.h plotdialog.h ${PLOTDIALOG_FRM_H})
-target_link_libraries(spectrumplotdestination modelcore audioframes ${Qt5Widgets_LIBRARIES} ${Qt5Multimedia_LIBRARIES} ${Qt5PrintSupport_LIBRARIES})
+target_link_libraries(spectrumplotdestination modelcore audioframes ${Qt5Widgets_LIBRARIES} ${Qt5Multimedia_LIBRARIES} ${Qt5PrintSupport_LIBRARIES} ${qcustomplot})
 install(TARGETS spectrumplotdestination LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 
 add_library(spectrumtransform SHARED spectrumtransform.cpp spectrumtransform.h)
 target_link_libraries(spectrumtransform modelcore audioframes ${Qt5Core_LIBRARIES} ${Qt5Multimedia_LIBRARIES})
 install(TARGETS spectrumtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
-
