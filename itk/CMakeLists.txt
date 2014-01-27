@@ -5,7 +5,7 @@ set(CMAKE_AUTOMOC ON)
 
 set(ITK_LIBS ITKCommon-4.3 itkvnl-4.3)
 find_package(Qt5Core REQUIRED)
-find_library(ITK REQUIRED)
+find_package(ITK REQUIRED)
 include_directories(${Qt5Core_INCLUDES})
 include_directories("/usr/include/ITK-4.3")
 add_definitions(${Qt5Core_DEFINITIONS})

@@ -12,10 +12,11 @@ set(QMM_INI_PATH "share/qmm/ini")
 add_definitions(-DINSTALL_PLUGINS="${CMAKE_INSTALL_PREFIX}/${QMM_PLUGINS_PATH}")
 add_definitions(-DINSTALL_INI="${CMAKE_INSTALL_PREFIX}/${QMM_INI_PATH}")
 
-set(CMAKE_VERBOSE_MAKEFILE true)
+#set(CMAKE_VERBOSE_MAKEFILE true)
 add_definitions(-Wall)
 
 include_directories(${PROJECT_SOURCE_DIR}/lib)
+set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
 
 subdirs(lib)
 subdirs(app)

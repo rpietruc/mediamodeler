@@ -22,20 +22,18 @@ Build instructions
 ------------------
 
 Project was successfully built by the authors on Archlinux OS.
-Prerequirements: qt5-base, qt5-multimedia, qwt-qt5, insight-toolkit, opencv, alsa-lib, libsndfile, qcustomplot-qt5, ffmpeg.
+Prerequirements: cmake, qt5-base, qt5-multimedia, qwt-qt5, insight-toolkit, opencv, alsa-lib, libsndfile, qcustomplot-qt5, ffmpeg.
 
-Build project using qmake (from the main directory, output files will be put into the 'bin' directory)
-Create makefiles and compile:
-
-    qmake-qt5 qmediamodeler.pro -r INCLUDEPATH+=/usr/include/ITK-4.3
-    make
-
-Install (default prefix: /usr/local, defined in config.pri)
-
+Build project using cmake:
+    #git clone qmediamodeler...
+    mkdir qmediamodeler-build && cd qmediamodeler-build
+    cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Debug ../qmediamodeler
+    make -j5
+Install:
     sudo make install
 
 Run application:
-
-    LD_LIBRARY_PATH=/usr/local/lib qmediamodeler
+    mediamodeler
 
 Open some ini file from 'ini' directory to build processing graph...
+
