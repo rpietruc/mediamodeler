@@ -8,11 +8,13 @@ find_package(Qt5Widgets REQUIRED)
 find_package(OpenCV REQUIRED)
 include_directories(${Qt5Core_INCLUDES})
 include_directories(${Qt5Widgets_INCLUDES})
+include_directories(${OpenCV_INCLUDE_DIRS})
 add_definitions(${Qt5Core_DEFINITIONS})
 add_definitions(${Qt5Widgets_DEFINITIONS})
 add_definitions(-DQT_PLUGIN)
 add_definitions(-DQT_SHARED)
-set(CMAKE_CXX_FLAGS "${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
+#set(CMAKE_CXX_FLAGS "${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
+set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 set(PICTUREBOXPLOTDESTINATION_SRC
     boxplot.cpp
@@ -29,12 +31,13 @@ set(PICTUREDRAWDESTINATION_INC
     picturedrawdestination.h)
 
 set(QMM_OPENCV_SRC
-    pictureframes.cpp   
+    pictureframes.cpp
     ${PICTUREBOXPLOTDESTINATION_SRC}
     pictureclustertransform.cpp
     picturecontourtransform.cpp
     ${PICTUREDRAWDESTINATION_SRC}
-    pictureedgedetectiontransform.cpp 
+    pictureedgedetectiontransform.cpp
+    picturedrawtransform.cpp
     picturefiledestination.cpp
     picturefilesource.cpp
     picturemorphologytransform.cpp
@@ -47,11 +50,12 @@ set(QMM_OPENCV_SRC
     videofilesource.cpp)
 
 set(QMM_OPENCV_INC
-    pictureframes.h 
+    pictureframes.h
     ${PICTUREBOXPLOTDESTINATION_INC}
     pictureclustertransform.h
-    picturecontourtransform.h 
+    picturecontourtransform.h
     ${PICTUREDRAWDESTINATION_INC}
+    picturedrawtransform.h
     pictureedgedetectiontransform.h
     picturefiledestination.h
     picturefilesource.h
@@ -85,6 +89,10 @@ qt5_wrap_ui(DRAWWIDGET_FRM_H drawwidget.ui)
 add_library(picturedrawdestination SHARED ${PICTUREDRAWDESTINATION_SRC} ${PICTUREDRAWDESTINATION_INC} ${DRAWWIDGET_FRM_H})
 target_link_libraries(picturedrawdestination modelcore pictureframes ${Qt5Widgets_LIBRARIES} ${OpenCV_LIBS})
 install(TARGETS picturedrawdestination LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
+
+add_library(picturedrawtransform SHARED picturedrawtransform.cpp picturedrawtransform.h)
+target_link_libraries(picturedrawtransform modelcore pictureframes ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
+install(TARGETS picturedrawtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 
 add_library(pictureedgedetectiontransform SHARED pictureedgedetectiontransform.cpp pictureedgedetectiontransform.h)
 target_link_libraries(pictureedgedetectiontransform modelcore pictureframes ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
