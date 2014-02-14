@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     {
     mUi->setupUi(this);
     mCreator->loadFactories(QDir(INSTALL_PLUGINS));
+    mCreator->loadFactories(qApp->applicationDirPath());
     QString modelDir = INSTALL_INI;
     QString modelPath = QSettings(QApplication::organizationName(), QApplication::applicationName()).value(QString("model/last")).toString();
     if (!modelPath.isEmpty())

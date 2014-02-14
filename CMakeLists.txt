@@ -18,6 +18,16 @@ add_definitions(-Wall)
 include_directories(${PROJECT_SOURCE_DIR}/lib)
 #set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
 
+# Output directories.
+if(NOT LIBRARY_OUTPUT_PATH)
+    set(LIBRARY_OUTPUT_PATH ${QMM_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
+endif(NOT LIBRARY_OUTPUT_PATH)
+if(NOT EXECUTABLE_OUTPUT_PATH)
+    set(EXECUTABLE_OUTPUT_PATH ${QMM_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
+endif(NOT EXECUTABLE_OUTPUT_PATH)
+mark_as_advanced(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
+message(STATUS "qmediamodeler: Example executables are stored in ${EXECUTABLE_OUTPUT_PATH}")
+
 subdirs(lib)
 subdirs(app)
 subdirs(alsa)
