@@ -22,7 +22,8 @@ set(QMM_ITK_SRC
     imageframes.cpp   
     imageaddtransform.cpp
     imageandtransform.cpp
-    imagedenoisingtransform.cpp 
+    imagecontourtransform.cpp
+    imagedenoisingtransform.cpp
     imagegeneratorsource.cpp
     imagescaletransform.cpp
     imagesmoothingtransform.cpp
@@ -32,6 +33,7 @@ set(QMM_ITK_INC
     imageframes.h 
     imageaddtransform.h
     imageandtransform.h 
+    imagecontourtransform.h
     imagedenoisingtransform.h
     imagegeneratorsource.h
     imagescaletransform.h
@@ -50,6 +52,10 @@ install(TARGETS imageaddtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 add_library(imageandtransform SHARED imageandtransform.cpp imageandtransform.h)
 target_link_libraries(imageandtransform modelcore imageframes ${Qt5Core_LIBRARIES} ITKCommon)
 install(TARGETS imageandtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
+
+add_library(imagecontourtransform SHARED imagecontourtransform.cpp imagecontourtransform.h)
+target_link_libraries(imagecontourtransform modelcore imageframes ${Qt5Core_LIBRARIES} ITKCommon)
+install(TARGETS imagecontourtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 
 add_library(imagedenoisingtransform SHARED imagedenoisingtransform.cpp imagedenoisingtransform.h)
 target_link_libraries(imagedenoisingtransform modelcore imageframes ${Qt5Core_LIBRARIES} ITKCommon)

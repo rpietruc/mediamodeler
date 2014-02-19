@@ -40,6 +40,9 @@ void PictureWatershedTransform::process()
             }
 
     IplImage *srcImg = (IplImage*)mSrcFrame;
+    if (!srcImg)
+        return;
+
     IplImage *markers = cvCreateImage(cvGetSize(srcImg), IPL_DEPTH_32S, 1);
 
     //draws contours on the markers image from CvSeq* contours
