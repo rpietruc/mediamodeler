@@ -10,6 +10,7 @@ PictureContourTransform::PictureContourTransform(ElementFactory *aFactory, const
     mGrayFrame(1)
     {
     setProperty("method", CV_CHAIN_APPROX_SIMPLE);
+    setProperty("minlen", 30);
     }
 
 void PictureContourTransform::process()
@@ -30,7 +31,7 @@ void PictureContourTransform::process()
                 mPointsFrameSet.clear();
                 foreach (vector<Point> contour, contours)
                     {
-//                    if (contour.size() > 30)
+                    if ((int)contour.size() > property("minlen").toInt())
                         {
                         PointsFrame pointsFrame;
                         pointsFrame = contour;

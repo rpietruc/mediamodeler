@@ -40,7 +40,7 @@ void PictureWatershedTransform::process()
             }
 
     IplImage *srcImg = (IplImage*)mSrcFrame;
-    if (!srcImg)
+    if (!srcImg || !contours.size())
         return;
 
     IplImage *markers = cvCreateImage(cvGetSize(srcImg), IPL_DEPTH_32S, 1);
