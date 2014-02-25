@@ -38,7 +38,8 @@ set(QMM_APP_INI
     render.ini
     spectrum.ini
     videoplayer.ini
-    watershed.ini
+    picturewatershed.ini
+    imagewatershed.ini
     wavcopy.ini
     wavfilter.ini
     wavplayer.ini)

@@ -27,7 +27,8 @@ set(QMM_ITK_SRC
     imagegeneratorsource.cpp
     imagescaletransform.cpp
     imagesmoothingtransform.cpp
-    imagethinningtransform.cpp)
+    imagethinningtransform.cpp
+    imagewatershedtransform.cpp)
 
 set(QMM_ITK_INC
     imageframes.h 
@@ -38,7 +39,8 @@ set(QMM_ITK_INC
     imagegeneratorsource.h
     imagescaletransform.h
     imagesmoothingtransform.h
-    imagethinningtransform.h)
+    imagethinningtransform.h
+    imagewatershedtransform.h)
 
 add_library(imageframes STATIC imageframes.cpp imageframes.h)
 target_link_libraries(imageframes ${Qt5Core_LIBRARIES} ITKCommon)
@@ -76,3 +78,7 @@ install(TARGETS imagesmoothingtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 add_library(imagethinningtransform SHARED imagethinningtransform.cpp imagethinningtransform.h)
 target_link_libraries(imagethinningtransform modelcore imageframes ${Qt5Core_LIBRARIES} ITKCommon)
 install(TARGETS imagethinningtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
+
+add_library(imagewatershedtransform SHARED imagewatershedtransform.cpp imagewatershedtransform.h)
+target_link_libraries(imagewatershedtransform modelcore imageframes ${Qt5Core_LIBRARIES} ITKCommon ITKWatersheds)
+install(TARGETS imagewatershedtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
