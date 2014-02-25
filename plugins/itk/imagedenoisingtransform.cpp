@@ -22,7 +22,7 @@ void ImageDenoisingTransform::process()
                 {
                 mImageFrame.setSourceName(frame->getSourceName());
                 mSrcFrame.resizeAndCopyFrame(*frame);
-                typedef itk::CurvatureFlowImageFilter<GrayImageFrame::ImageType, GrayImageFrame::ImageType> DenoisingImageFilterType;
+                typedef CurvatureFlowImageFilter<GrayImageFrame::ImageType, GrayImageFrame::ImageType> DenoisingImageFilterType;
                 DenoisingImageFilterType::Pointer denoisingFilter = DenoisingImageFilterType::New();
                 denoisingFilter->SetNumberOfIterations(property("iterations").toInt());
                 denoisingFilter->SetTimeStep(property("timeStep").toInt());

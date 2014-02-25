@@ -8,6 +8,8 @@ namespace media {
 PictureDrawTransform::PictureDrawTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
+    setProperty("intensity", 0);
+    setProperty("thickness", -1);
     }
 
 void PictureDrawTransform::process()
@@ -38,7 +40,7 @@ void PictureDrawTransform::process()
                 contours.push_back(contour);
                 }
             }
-    drawContours(Mat(mPictureFrame), contours, -1, Scalar(0, 0, 0), -1, 8, noArray());
+    drawContours(Mat(mPictureFrame), contours, -1, Scalar(property("intensity").toDouble(), property("intensity").toDouble(), property("intensity").toDouble()), property("thickness").toInt(), 8, noArray());
     emit framesReady();
     }
 

@@ -3,6 +3,7 @@
 #include <itkApproximateSignedDistanceMapImageFilter.h>
 
 using namespace itk;
+using namespace std;
 
 namespace media {
 
@@ -22,8 +23,8 @@ void ImageContourTransform::process()
 //                mContourFrame.setSourceName(frame->getSourceName());
                 mSrcFrame.resizeAndCopyFrame(*frame);
 
-                typedef itk::Image<float, 2>  FloatImageType;
-                typedef itk::ApproximateSignedDistanceMapImageFilter<GrayImageFrame::ImageType, FloatImageType> ApproximateSignedDistanceMapImageFilterType;
+                typedef Image<float, 2>  FloatImageType;
+                typedef ApproximateSignedDistanceMapImageFilter<GrayImageFrame::ImageType, FloatImageType> ApproximateSignedDistanceMapImageFilterType;
                 ApproximateSignedDistanceMapImageFilterType::Pointer approximateSignedDistanceMapImageFilter = ApproximateSignedDistanceMapImageFilterType::New();
                 approximateSignedDistanceMapImageFilter->SetInput((GrayImageFrame::ImageType::Pointer)mSrcFrame);
 
@@ -32,31 +33,34 @@ void ImageContourTransform::process()
                 approximateSignedDistanceMapImageFilter->SetInsideValue(255);
                 approximateSignedDistanceMapImageFilter->SetOutsideValue(0);
                 approximateSignedDistanceMapImageFilter->Update();
-                typedef itk::ContourExtractor2DImageFilter<FloatImageType> ContourExtractor2DImageFilterType;
+                typedef ContourExtractor2DImageFilter<FloatImageType> ContourExtractor2DImageFilterType;
                 ContourExtractor2DImageFilterType::Pointer contourExtractor2DImageFilter = ContourExtractor2DImageFilterType::New();
                 contourExtractor2DImageFilter->SetInput(approximateSignedDistanceMapImageFilter->GetOutput());
                 contourExtractor2DImageFilter->SetContourValue(0);
                 contourExtractor2DImageFilter->Update();
-                std::cout << "There are " << contourExtractor2DImageFilter->GetNumberOfOutputs() << " contours" << std::endl;
+
+                mPointsFrameSet.clear();
+                cout << "There are " << contourExtractor2DImageFilter->GetNumberOfOutputs() << " contours" << endl;
                 for (unsigned int i = 0; i < contourExtractor2DImageFilter->GetNumberOfOutputs(); ++i)
                     {
-                    std::cout << "Contour " << i << ": " << std::endl;
+                    vector< Point<int> > points;
+                    cout << "Contour " << i << ": " << endl;
                     ContourExtractor2DImageFilterType::VertexListType::ConstIterator vertexIterator = contourExtractor2DImageFilter->GetOutput(i)->GetVertexList()->Begin();
                     while (vertexIterator != contourExtractor2DImageFilter->GetOutput(i)->GetVertexList()->End())
                         {
-                        std::cout << vertexIterator->Value() << ", " << vertexIterator->Value()[0] << ": " << vertexIterator->Value()[1] << std::endl;
+                        Point<int> point;
+                        point[0] = vertexIterator->Value()[0];
+                        point[1] = vertexIterator->Value()[1];
+                        points.push_back(point);
+                        cout << vertexIterator->Value() << ", " << vertexIterator->Value()[0] << ": " << vertexIterator->Value()[1] << endl;
                         ++vertexIterator;
                         }
-                    std::cout << std::endl;
+                    PointsFrame frame;
+                    frame.operator=(points);
+                    mPointsFrameSet.push_back(frame);
+                    cout << endl;
                     }
-//                mContourFrame.resizeAndCopyImage(contourExtractor2DImageFilter->GetOutput());
-
-
-                //behave like destination by now, only for debuging purposes
-                emit framesProcessed();
-
-                //TODO: write result in some matrix, and
-                //emit framesReady();
+                emit framesReady();
                 break;
                 }
             }

@@ -194,4 +194,19 @@ void GrayImageFrame::resizeAndCopy(const GrayImageFrame& aImageColorFrame)
     resizeAndCopyImage(aImageColorFrame);
     }
 
+PointsFrame::PointsFrame() :
+    FrameBase(Dimensions)
+    {
+    mDimensions[Axis].mDelta = 1;
+    mDimensions[Axis].mResolution = MaxAxis;
+    }
+
+double PointsFrame::getSample(const int *aPoint) const
+    {
+    Q_ASSERT(aPoint[Axis] < MaxAxis);
+    Q_ASSERT(aPoint[Index] < (int)mPoints.size());
+
+    return (aPoint[Axis] == XAxis ? mPoints[aPoint[Index]][0] : mPoints[aPoint[Index]][1]);
+    }
+
 } // namespace media

@@ -25,9 +25,9 @@ void ImageScaleTransform::process()
                 mSrcFrame.resizeAndCopyFrame(*frame);
                 ColorImageFrame::ImageType::Pointer srcImg = mSrcFrame;
 
-                typedef itk::ScaleTransform<double, 2> TransformType;
+                typedef ScaleTransform<double, 2> TransformType;
                 TransformType::Pointer scaleTransform = TransformType::New();
-                itk::FixedArray<float, 2> scale;
+                FixedArray<float, 2> scale;
                 scale[0] = property("widthScale").toDouble();
                 scale[1] = property("heightScale").toDouble();
                 scaleTransform->SetScale(scale);
@@ -36,7 +36,7 @@ void ImageScaleTransform::process()
                 center[1] = srcImg->GetLargestPossibleRegion().GetSize()[1]/2;
                 scaleTransform->SetCenter(center);
 
-                typedef itk::ResampleImageFilter<ColorImageFrame::ImageType, ColorImageFrame::ImageType> ResampleImageFilterType;
+                typedef ResampleImageFilter<ColorImageFrame::ImageType, ColorImageFrame::ImageType> ResampleImageFilterType;
                 ResampleImageFilterType::Pointer resampleFilter = ResampleImageFilterType::New();
                 resampleFilter->SetTransform(scaleTransform);
                 resampleFilter->SetInput(srcImg);

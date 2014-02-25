@@ -24,13 +24,13 @@ void ImageThinningTransform::process()
                 GrayImageFrame::ImageType::Pointer srcImg = mSrcFrame;
 
                 // Rescale the image so that it can be seen (the output is 0 and 1, we want 0 and 255)
-                typedef itk::BinaryThinningImageFilter<GrayImageFrame::ImageType, GrayImageFrame::ImageType> BinaryThinningImageFilterType;
+                typedef BinaryThinningImageFilter<GrayImageFrame::ImageType, GrayImageFrame::ImageType> BinaryThinningImageFilterType;
                 BinaryThinningImageFilterType::Pointer binaryThinningImageFilter = BinaryThinningImageFilterType::New();
                 binaryThinningImageFilter->SetInput(srcImg);
                 binaryThinningImageFilter->Update();
 
                 // Rescale the image so that it can be seen (the output is 0 and 1, we want 0 and 255)
-                typedef itk::RescaleIntensityImageFilter<GrayImageFrame::ImageType, GrayImageFrame::ImageType > RescaleFilterType;
+                typedef RescaleIntensityImageFilter<GrayImageFrame::ImageType, GrayImageFrame::ImageType > RescaleFilterType;
                 RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
                 rescaler->SetInput(binaryThinningImageFilter->GetOutput());
                 rescaler->SetOutputMinimum(0);

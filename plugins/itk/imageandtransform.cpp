@@ -30,7 +30,7 @@ void ImageAndTransform::process()
             break;
         }
 
-    typedef itk::AndImageFilter<GrayImageFrame::ImageType, GrayImageFrame::ImageType> AndImageFilterType;
+    typedef AndImageFilter<GrayImageFrame::ImageType, GrayImageFrame::ImageType> AndImageFilterType;
     AndImageFilterType::Pointer andFilter = AndImageFilterType::New();
     andFilter->SetInput1((GrayImageFrame::ImageType::Pointer)mSrcFrames[0]);
     andFilter->SetInput2((GrayImageFrame::ImageType::Pointer)mSrcFrames[1]);

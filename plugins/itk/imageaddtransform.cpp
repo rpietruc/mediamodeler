@@ -30,7 +30,7 @@ void ImageAddTransform::process()
             break;
         }
 
-    typedef itk::AddImageFilter<GrayImageFrame::ImageType, GrayImageFrame::ImageType> AddImageFilterType;
+    typedef AddImageFilter<GrayImageFrame::ImageType, GrayImageFrame::ImageType> AddImageFilterType;
     AddImageFilterType::Pointer addFilter = AddImageFilterType::New();
     addFilter->SetInput1((GrayImageFrame::ImageType::Pointer)mSrcFrames[0]);
     addFilter->SetInput2((GrayImageFrame::ImageType::Pointer)mSrcFrames[1]);

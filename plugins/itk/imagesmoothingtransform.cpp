@@ -24,7 +24,7 @@ void ImageSmoothingTransform::process()
                 mSrcFrame.resizeAndCopyFrame(*frame);
                 GrayImageFrame::ImageType::Pointer srcImg = mSrcFrame;
 
-                typedef itk::BilateralImageFilter<GrayImageFrame::ImageType, GrayImageFrame::ImageType> SmoothingImageFilterType;
+                typedef BilateralImageFilter<GrayImageFrame::ImageType, GrayImageFrame::ImageType> SmoothingImageFilterType;
                 SmoothingImageFilterType::Pointer smoothingFilter = SmoothingImageFilterType::New();
                 smoothingFilter->SetRangeSigma(property("rangeSigma").toDouble());
                 smoothingFilter->SetDomainSigma(property("domainSigma").toDouble());

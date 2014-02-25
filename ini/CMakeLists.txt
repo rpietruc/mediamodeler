@@ -40,6 +40,7 @@ set(QMM_APP_INI
     videoplayer.ini
     picturewatershed.ini
     imagewatershed.ini
+    imagecontour.ini
     wavcopy.ini
     wavfilter.ini
     wavplayer.ini)

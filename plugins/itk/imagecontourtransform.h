@@ -23,14 +23,15 @@ class IMAGECONTOURSHARED_EXPORT ImageContourTransform : public ElementBase
 public:
     explicit ImageContourTransform(ElementFactory *aFactory, const QString &aObjectName);
 
-    int getFramesNo() const { return 1; }
-//    const FrameBase *getFrame(int) const { return &mContourFrame; }
+    int getFramesNo() const { return mPointsFrameSet.size(); }
+    const FrameBase *getFrame(int aIndex) const { return &mPointsFrameSet.at(aIndex); }
 
 private:
     void process();
 
 private:
     GrayImageFrame mSrcFrame;
+    QVector<PointsFrame> mPointsFrameSet;
     };
 
 class IMAGECONTOURSHARED_EXPORT ImageContourTransformFactory : public ElementFactory

@@ -5,6 +5,7 @@
 #include <QString>
 #include <itkImage.h>
 #include <itkRGBPixel.h>
+#include <vector>
 
 namespace media {
 
@@ -59,6 +60,25 @@ public:
 
 private:
     ImageType::Pointer mImage;
+    };
+
+class PointsFrame : public FrameBase
+    {
+public:
+    enum { XAxis, YAxis, MaxAxis };
+    enum { Index, Axis, Dimensions };
+    explicit PointsFrame();
+
+    qreal getSample(const int *aPoint) const;
+    const PointsFrame& operator=(const std::vector< itk::Point<int> > aPoints)
+        {
+        mPoints = aPoints;
+        mDimensions[Index].mResolution = mPoints.size();
+        return *this;
+        }
+
+private:
+    std::vector< itk::Point<int> > mPoints;
     };
 
 } // namespace media
