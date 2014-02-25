@@ -30,9 +30,5 @@ message(STATUS "qmediamodeler: Example executables are stored in ${EXECUTABLE_OU
 
 subdirs(lib)
 subdirs(app)
-subdirs(alsa)
-subdirs(av)
-subdirs(audio)
-subdirs(itk)
-subdirs(opencv)
+subdirs(plugins)
 subdirs(ini)
