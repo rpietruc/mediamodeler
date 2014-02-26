@@ -41,6 +41,7 @@ set(QMM_APP_INI
     picturewatershed.ini
     imagewatershed.ini
     imagecontour.ini
+#    imageclustering.ini
     wavcopy.ini
     wavfilter.ini
     wavplayer.ini)

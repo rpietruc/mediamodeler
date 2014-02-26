@@ -13,9 +13,6 @@
 
 namespace media {
 
-/*! Curvature flow image filter for producing homogeneous regions
- */
-
 class IMAGETHINNINGSHARED_EXPORT ImageThinningTransform : public ElementBase
     {
     Q_OBJECT

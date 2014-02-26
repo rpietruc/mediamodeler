@@ -13,9 +13,6 @@
 
 namespace media {
 
-/*! Curvature flow image filter for producing homogeneous regions
- */
-
 class IMAGEWATERSHEDSHARED_EXPORT ImageWatershedTransform : public ElementBase
     {
     Q_OBJECT
