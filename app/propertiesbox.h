@@ -4,6 +4,7 @@
 #include <QGroupBox>
 
 class QTextBrowser;
+class QTimer;
 
 namespace media {
 
@@ -22,10 +23,16 @@ public slots:
 
 private slots:
     void paramChanged(const QString &aName, const QVariant &aValue);
+    void logTimestamp();
+
+private:
+    void log(const QColor &aColor, const QString &aInfo);
 
 private:
     QObject *mPropertiesObject;
     QTextBrowser *mTextBrowser;
+    QTimer *mTimeStamper;
+    int mCountDown;
     };
 
 } // namespace media
