@@ -44,6 +44,7 @@ signals:
     void framesProcessed();
     void framesReady();
     void processingCompleted(bool aRunning = false);
+    void logMessage(int aPriority, const QString &aText);
 
 public slots:
     void incrementSourceElementsNo() { ++mSourceElementsNo; }

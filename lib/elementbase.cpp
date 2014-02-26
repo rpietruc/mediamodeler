@@ -14,6 +14,7 @@ ElementBase::ElementBase(QObject *aFactory, const QString &aObjectName) :
 
 void ElementBase::setRunning(bool aEnabled)
     {
+    emit logMessage(Qt::black, QString("setRunning %1").arg(aEnabled));
     mRunning = aEnabled;
     if (aEnabled)
         {
@@ -25,6 +26,7 @@ void ElementBase::setRunning(bool aEnabled)
 void ElementBase::readFrames()
     {
 //    qDebug() << "readFrames " << objectName() << ", thread " << QThread::currentThreadId();
+    emit logMessage(Qt::gray, "readFrames");
     if (!mRunning)
         return;
 
@@ -50,6 +52,7 @@ void ElementBase::processFrames()
         return;
 
 //    qDebug() << "processFrames " << objectName() << ", thread " << QThread::currentThreadId();
+    emit logMessage(Qt::gray, "processFrames");
 
     mCurrentReceiversReadySet.insert(sender());
 

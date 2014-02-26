@@ -3,6 +3,8 @@
 
 #include <QGroupBox>
 
+class QTextBrowser;
+
 namespace media {
 
 class PropertiesBox : public QGroupBox
@@ -15,11 +17,15 @@ public:
 signals:
     void settingChanged(const QString &aSection, const QString &aName, const QVariant &aValue);
 
+public slots:
+    void logMessage(int aPriority, const QString &aInfo);
+
 private slots:
     void paramChanged(const QString &aName, const QVariant &aValue);
 
 private:
     QObject *mPropertiesObject;
+    QTextBrowser *mTextBrowser;
     };
 
 } // namespace media

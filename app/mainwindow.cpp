@@ -94,6 +94,7 @@ void MainWindow::loadModel(const QString& aFilePath)
 
         PropertiesBox* box = new PropertiesBox(elem, mUi->groupBox);
         QObject::connect(box, SIGNAL(settingChanged(QString, QString, QVariant)), this, SLOT(saveSetting(QString, QString, QVariant)));
+        QObject::connect(elem, SIGNAL(logMessage(int, QString)), box, SLOT(logMessage(int, QString)));
         mUi->gridLayout->addWidget(box, i/3, i%3);
         mElemBoxes.push_back(box);
 

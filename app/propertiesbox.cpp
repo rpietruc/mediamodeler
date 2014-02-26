@@ -2,14 +2,17 @@
 #include "guielementlist.h"
 #include "fileguielement.h"
 #include <QVBoxLayout>
+#include <QTextBrowser>
 
 using namespace media;
 
 PropertiesBox::PropertiesBox(QObject *aPropertiesObject, QWidget *aParent) :
     QGroupBox(aPropertiesObject->objectName(), aParent),
-    mPropertiesObject(aPropertiesObject)
+    mPropertiesObject(aPropertiesObject),
+    mTextBrowser(new QTextBrowser(this))
     {
     QList<QByteArray> list = aPropertiesObject->dynamicPropertyNames();
+    QVBoxLayout *verticalLayout = new QVBoxLayout(this);
     if (list.count() > 0)
         {
         GuiElementBase* gui = NULL;
@@ -27,9 +30,16 @@ PropertiesBox::PropertiesBox(QObject *aPropertiesObject, QWidget *aParent) :
             gui->addProperty(QString(name.constData()), aPropertiesObject->property(name.constData()));
 
         QObject::connect(gui, SIGNAL(paramChanged(QString, QVariant)), this, SLOT(paramChanged(QString, QVariant)));
-        QVBoxLayout *verticalLayout = new QVBoxLayout(this);
         verticalLayout->addWidget(gui);
         }
+    verticalLayout->addWidget(mTextBrowser);
+    }
+
+void PropertiesBox::logMessage(int aPriority, const QString &aInfo)
+    {
+    mTextBrowser->setTextColor(QColor(static_cast<Qt::GlobalColor>(aPriority)));
+    mTextBrowser->insertPlainText(aInfo + "\n");
+    mTextBrowser->ensureCursorVisible();
     }
 
 void PropertiesBox::paramChanged(const QString &aName, const QVariant &aValue)
