@@ -38,6 +38,8 @@ private:
     QTimer *mTimer;
     IplImageFrame mPictureFrame;
     bool mImageReady;
+
+    static const int DefaultDelay = 25;
     };
 
 class PictureRenderDestinationFactory : public ElementFactory

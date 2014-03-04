@@ -12,7 +12,7 @@ PictureRenderDestination::PictureRenderDestination(ElementFactory *aFactory, con
     mImageReady(false)
     {
     QObject::connect(mTimer, SIGNAL(timeout()), this, SLOT(showPicture()));
-    setProperty("delayTime", 25);
+    setProperty("delayTime", DefaultDelay);
     }
 
 PictureRenderDestination::~PictureRenderDestination()
@@ -27,8 +27,10 @@ bool PictureRenderDestination::event(QEvent *aEvent)
         QDynamicPropertyChangeEvent *event = (QDynamicPropertyChangeEvent*)aEvent;
         if (QString(event->propertyName().constData()) == "delayTime")
             {
-            if (property("delayTime").toInt() > 0)
-                mTimer->start(property("delayTime").toInt());
+            int delayTime = DefaultDelay;
+            if (property("delayTime").canConvert(QVariant::Int) && (property("delayTime").toInt() > 0))
+                delayTime = property("delayTime").toInt();
+            mTimer->start(delayTime);
             event->accept();
             return true;
             }

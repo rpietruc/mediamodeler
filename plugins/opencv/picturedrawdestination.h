@@ -38,6 +38,8 @@ private:
     DrawWidget *mWindow;
     QImage *mImage;
     bool mImageReady;
+
+    static const int DefaultDelay = 25;
     };
 
 class PictureDrawDestinationFactory : public ElementFactory
