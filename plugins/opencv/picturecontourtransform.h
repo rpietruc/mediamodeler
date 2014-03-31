@@ -31,7 +31,6 @@ private:
 
 private:
     IplImageFrame mSrcFrame;
-    IplImageFrame mGrayFrame;
     QVector<PointsFrame> mPointsFrameSet;
     };
 

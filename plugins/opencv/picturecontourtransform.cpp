@@ -7,7 +7,7 @@ namespace media {
 
 PictureContourTransform::PictureContourTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName),
-    mGrayFrame(1)
+    mSrcFrame(1)
     {
     setProperty("method", CV_CHAIN_APPROX_SIMPLE);
     setProperty("minlen", 30);
@@ -22,11 +22,8 @@ void PictureContourTransform::process()
             if ((frame->getMaxDimension() == IplImageFrame::Dimensions) || (frame->getMaxDimension() == (IplImageFrame::Dimensions - 1)))
                 {
                 mSrcFrame.resizeAndCopyFrame(*frame);
-                IplImage* srcImg = mSrcFrame;
-                mGrayFrame.resizeAndCopyImage(*srcImg);
-
                 vector<vector<Point> > contours;
-                findContours(Mat(mGrayFrame), contours, CV_RETR_LIST, property("method").toInt());
+                findContours(Mat(mSrcFrame), contours, CV_RETR_LIST, property("method").toInt());
 
                 mPointsFrameSet.clear();
                 foreach (vector<Point> contour, contours)
