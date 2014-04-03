@@ -23,7 +23,7 @@ void PictureContourTransform::process()
                 {
                 mSrcFrame.resizeAndCopyFrame(*frame);
                 vector<vector<Point> > contours;
-                findContours(Mat(mSrcFrame), contours, CV_RETR_LIST, property("method").toInt());
+                findContours(Mat(mSrcFrame), contours, CV_RETR_LIST, qBound((int)CV_CHAIN_APPROX_NONE, property("method").toInt(), (int)CV_LINK_RUNS));
 
                 mPointsFrameSet.clear();
                 foreach (vector<Point> contour, contours)
