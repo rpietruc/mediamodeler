@@ -34,6 +34,10 @@ private:
     IplImage* mIplImage;
     };
 
+//
+// TODO: add binary points frame for contour approx. (e.g. approxPolyDP)
+// TODO: add 2+5-dim points frame for ellipse approx.
+//
 class PointsFrame : public FrameBase
     {
 public:

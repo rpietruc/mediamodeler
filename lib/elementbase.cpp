@@ -85,19 +85,25 @@ void ElementFactoryContainer::load(const QDir& aDir)
     foreach (QString fileName, dir.entryList(QDir::Files))
         {
         QPluginLoader* pluginLoader = new QPluginLoader(aDir.absoluteFilePath(fileName));
-        if (pluginLoader->load())
-            {
-            factory = qobject_cast<ElementFactory*>(pluginLoader->instance());
-            if (factory)
-                mPluginLoaderList.append(pluginLoader);
-            else
+        try {
+            if (pluginLoader->load())
                 {
-                pluginLoader->unload();
-                delete pluginLoader;
+                factory = qobject_cast<ElementFactory*>(pluginLoader->instance());
+                if (factory)
+                    mPluginLoaderList.append(pluginLoader);
+                else
+                    {
+                    pluginLoader->unload();
+                    delete pluginLoader;
+                    }
                 }
+            else
+                qDebug() << pluginLoader->errorString();
             }
-        else
+        catch (...)
+            {
             qDebug() << pluginLoader->errorString();
+            }
         }
     }
 
