@@ -1,4 +1,4 @@
-#cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Debug
+#cmake -DCMAKE_INSTALL_PREFIX=`pwd`/inst -DCMAKE_BUILD_TYPE=Debug
 cmake_minimum_required(VERSION 2.8)
 project(QMM)
 

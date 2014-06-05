@@ -137,3 +137,4 @@ install(TARGETS videocamerasource LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 add_library(videofilesource SHARED videofilesource.cpp videofilesource.h)
 target_link_libraries(videofilesource modelcore pictureframes ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
 install(TARGETS videofilesource LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
+
