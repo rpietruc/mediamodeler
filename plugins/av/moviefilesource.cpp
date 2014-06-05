@@ -24,7 +24,7 @@ MovieFileSource::MovieFileSource(ElementFactory *aFactory, const QString &aObjec
     {
     // register all formats and codecs
     av_register_all();
-    mFrame = avcodec_alloc_frame();
+    mFrame = av_frame_alloc();
     Q_ASSERT(mFrame);
     /* initialize packet, set data to NULL, let the demuxer fill it */
     av_init_packet(&mPacket);

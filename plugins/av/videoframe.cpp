@@ -19,7 +19,7 @@ VideoFrame::VideoFrame() :
     mDimensions[Height].mDelta = 1;
     mDimensions[Channels].mDelta = 1;
     mDimensions[Channels].mResolution = 3;
-    mRgbFrame = avcodec_alloc_frame();
+    mRgbFrame = av_frame_alloc();
     }
 
 VideoFrame::~VideoFrame()
