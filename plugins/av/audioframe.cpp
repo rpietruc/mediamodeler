@@ -33,7 +33,7 @@ AudioFrame::~AudioFrame()
     mBuffers = NULL;
     }
 
-double AudioFrame::getSample(const int *aPoint) const
+double AudioFrame::getSampleT(const int *aPoint) const
     {
     Q_ASSERT(aPoint[Channels] < mDimensions[Channels].mResolution);
     Q_ASSERT(aPoint[Time] < mMaxSamples);

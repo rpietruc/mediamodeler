@@ -17,12 +17,12 @@ public:
 
     explicit FormantFrame();
 
-    inline void setFrameSamples(int aSampleNo) { setMaxSamples(aSampleNo); }
+    inline void setFrameSamples(int aSampleNo) { setMaxSamplesT(aSampleNo); }
     void setSampleRate(int aSampleRate);
     inline void setTimeStamp(double aTimeStamp) { mDimensions[Time].mStartLocation = aTimeStamp; }
     inline void incrementTimeStamp() { mDimensions[Time].mStartLocation += mDimensions[Time].mDelta * mDimensions[Time].mResolution; }
 
-    inline void setFormantsNo(int aMaxFormants) { setMaxVectors(aMaxFormants); }
+    inline void setFormantsNo(int aMaxFormants) { setMaxVectorsT(aMaxFormants); }
 
 private:
     QString mSourceName;

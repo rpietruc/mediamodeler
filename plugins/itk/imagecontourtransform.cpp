@@ -27,9 +27,9 @@ void ImageContourTransform::process()
 
                 QSet<int> regions;
                 int point[GrayImageFrame::Dimensions];
-                for (point[GrayImageFrame::Height] = 0; point[GrayImageFrame::Height] < mSrcFrame.getDimension(GrayImageFrame::Height).mResolution; ++point[GrayImageFrame::Height])
-                    for (point[GrayImageFrame::Width] = 0; point[GrayImageFrame::Width] < mSrcFrame.getDimension(GrayImageFrame::Width).mResolution; ++point[GrayImageFrame::Width])
-                        regions.insert(mSrcFrame.getSample(point));
+                for (point[GrayImageFrame::Height] = 0; point[GrayImageFrame::Height] < mSrcFrame.getDimensionT(GrayImageFrame::Height).mResolution; ++point[GrayImageFrame::Height])
+                    for (point[GrayImageFrame::Width] = 0; point[GrayImageFrame::Width] < mSrcFrame.getDimensionT(GrayImageFrame::Width).mResolution; ++point[GrayImageFrame::Width])
+                        regions.insert(mSrcFrame.getSampleT(point));
 
                 mPointsFrameSet.clear();
                 foreach (int i, regions)

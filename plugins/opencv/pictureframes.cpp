@@ -21,7 +21,7 @@ IplImageFrame::~IplImageFrame()
     release();
     }
 
-double IplImageFrame::getSample(const int *aPoint) const
+double IplImageFrame::getSampleT(const int *aPoint) const
     {
     Q_ASSERT(mIplImage);
     Q_ASSERT(aPoint[Width] < mIplImage->width);
@@ -77,7 +77,7 @@ void IplImageFrame::resizeAndCopyFrame(const FrameBase &aFrame)
     {
     if (((aFrame.getMaxDimension() == Dimensions) || (aFrame.getMaxDimension() == (Dimensions - 1))) && !aFrame.isEmpty())
         {
-        resize(aFrame.getDimension(Width).mResolution, aFrame.getDimension(Height).mResolution);
+        resize(aFrame.getDimensionT(Width).mResolution, aFrame.getDimensionT(Height).mResolution);
 
         int point[Dimensions];
         int widthStep = 0;
@@ -90,8 +90,8 @@ void IplImageFrame::resizeAndCopyFrame(const FrameBase &aFrame)
                 for (point[Channels] = 0; point[Channels] < mIplImage->nChannels; ++point[Channels])
                     {
                     Q_ASSERT(mIplImage->imageSize > widthStep + heightStep + point[Channels]);
-                    if ((aFrame.getMaxDimension() < Dimensions) || (aFrame.getDimension(Channels).mResolution > point[Channels]))
-                        value = aFrame.getSample(point);
+                    if ((aFrame.getMaxDimension() < Dimensions) || (aFrame.getDimensionT(Channels).mResolution > point[Channels]))
+                        value = aFrame.getSampleT(point);
                     mIplImage->imageData[widthStep + heightStep + point[Channels]] = value;
                     }
                 }
@@ -113,7 +113,7 @@ PointsFrame::PointsFrame() :
     mDimensions[Axis].mResolution = MaxAxis;
     }
 
-double PointsFrame::getSample(const int *aPoint) const
+double PointsFrame::getSampleT(const int *aPoint) const
     {
     Q_ASSERT(aPoint[Axis] < MaxAxis);
     Q_ASSERT(aPoint[Index] < (int)mPoints.size());

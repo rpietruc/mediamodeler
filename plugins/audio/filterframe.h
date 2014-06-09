@@ -24,8 +24,8 @@ public:
 
     explicit FilterFrame();
 
-    inline void setFrameSamples(int aSampleNo) { setMaxSamples(aSampleNo); }
-    inline void setResolution(int aResolution) { setMaxVectors(aResolution); }
+    inline void setFrameSamples(int aSampleNo) { setMaxSamplesT(aSampleNo); }
+    inline void setResolution(int aResolution) { setMaxVectorsT(aResolution); }
 
     void setSampleRate(int aSampleRate);
     inline void setTimeStamp(double aTimeStamp) { mDimensions[Time].mStartLocation = aTimeStamp; }

@@ -27,17 +27,17 @@ void SoundFilterTransform::process()
     const FrameBase *frame = elem->getFrame(0);
 
     Q_ASSERT(frame->getMaxDimension() == SoundFrame::Dimensions);
-    Q_ASSERT(frame->getDimension(SoundFrame::Time).mDelta);
-    Q_ASSERT(frame->getDimension(SoundFrame::Time).mResolution > (int)(sizeof(mFilter)/sizeof(mFilter[0])));
+    Q_ASSERT(frame->getDimensionT(SoundFrame::Time).mDelta);
+    Q_ASSERT(frame->getDimensionT(SoundFrame::Time).mResolution > (int)(sizeof(mFilter)/sizeof(mFilter[0])));
 
     mSoundFrame.setSampleBits(16);
-    mSoundFrame.setFrameSamples(frame->getDimension(SoundFrame::Time).mResolution);
-    mSoundFrame.setSampleTime(frame->getDimension(SoundFrame::Time).mDelta);
+    mSoundFrame.setFrameSamples(frame->getDimensionT(SoundFrame::Time).mResolution);
+    mSoundFrame.setSampleTime(frame->getDimensionT(SoundFrame::Time).mDelta);
     mSoundFrame.setSourceName(frame->getSourceName());
-    mSoundFrame.setTimeStamp(frame->getDimension(SoundFrame::Time).mStartLocation);
+    mSoundFrame.setTimeStamp(frame->getDimensionT(SoundFrame::Time).mStartLocation);
 
     int point[SoundFrame::Dimensions] = {0, 0};
-    for (;point[SoundFrame::Time] < frame->getDimension(SoundFrame::Time).mResolution; ++point[SoundFrame::Time])
+    for (;point[SoundFrame::Time] < frame->getDimensionT(SoundFrame::Time).mResolution; ++point[SoundFrame::Time])
         {
         double res = 0;
         for (int i = 0; i < (int)(sizeof(mFilter)/sizeof(mFilter[0])); ++i)
@@ -45,14 +45,14 @@ void SoundFilterTransform::process()
             if ((point[SoundFrame::Time] - i) < 0)
                 res += mFilter[i] * mTail[i - point[SoundFrame::Time] - 1];
             else
-                res += frame->getSample(point) * mFilter[i];
+                res += frame->getSampleT(point) * mFilter[i];
             }
-        mSoundFrame.setSample(point, res);
+        mSoundFrame.setSampleT(point, res);
         }
     for (int i = 0; i < (int)(sizeof(mFilter)/sizeof(mFilter[0]) - 1); ++i)
         {
         --point[SoundFrame::Time];
-        mTail[i] = frame->getSample(point);
+        mTail[i] = frame->getSampleT(point);
         }
     emit framesReady();
     }

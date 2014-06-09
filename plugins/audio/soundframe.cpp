@@ -11,7 +11,7 @@ SoundFrame::SoundFrame(QObject *aParent) :
     mDimensions[Channels].mDelta = 1.0;
     }
 
-double SoundFrame::getSample(const int *aPoint) const
+double SoundFrame::getSampleT(const int *aPoint) const
     {
     double value = 0.0;
 
@@ -32,7 +32,7 @@ double SoundFrame::getSample(const int *aPoint) const
     return value;
     }
 
-void SoundFrame::setSample(const int *aPoint, qreal aValue)
+void SoundFrame::setSampleT(const int *aPoint, qreal aValue)
     {
     int sampleNo = aPoint[Time]*mDimensions[Channels].mResolution + aPoint[Channels];
     Q_ASSERT((sampleNo*mSampleBits/8) < mSoundBuffer.size());
@@ -113,7 +113,7 @@ void SoundFrame::operator+=(const FrameBase &aFrame)
 
     int point[Dimensions] = {0, 0};
     int newpoint[Dimensions] = {mDimensions[Time].mResolution, 0};
-    for (;point[Time] < aFrame.getDimension(Time).mResolution; ++point[Time], ++newpoint[Time])
+    for (;point[Time] < aFrame.getDimensionT(Time).mResolution; ++point[Time], ++newpoint[Time])
         {
         point[Channels] = newpoint[Channels] = 0;
         if (!incrementFrameTime())
@@ -126,9 +126,9 @@ void SoundFrame::operator+=(const FrameBase &aFrame)
         for (; point[Channels] < mDimensions[Channels].mResolution; ++point[Channels], ++newpoint[Channels])
             {
             double sample = 0;
-            if (point[Channels] < aFrame.getDimension(Channels).mResolution)
-                sample = aFrame.getSample(point);
-            setSample(newpoint, sample);
+            if (point[Channels] < aFrame.getDimensionT(Channels).mResolution)
+                sample = aFrame.getSampleT(point);
+            setSampleT(newpoint, sample);
             }
         }
     }
@@ -137,20 +137,20 @@ const SoundFrame& SoundFrame::operator=(const FrameBase &aFrame)
     {
     Q_ASSERT(aFrame.getMaxDimension() == SoundFrame::Dimensions);
 
-    mDimensions[Time].mDelta = aFrame.getDimension(Time).mDelta;
-    mDimensions[Time].mResolution = aFrame.getDimension(Time).mResolution;
-    mDimensions[Time].mStartLocation = aFrame.getDimension(Time).mStartLocation;
+    mDimensions[Time].mDelta = aFrame.getDimensionT(Time).mDelta;
+    mDimensions[Time].mResolution = aFrame.getDimensionT(Time).mResolution;
+    mDimensions[Time].mStartLocation = aFrame.getDimensionT(Time).mStartLocation;
     setSourceName(aFrame.getSourceName());
 
     int point[Dimensions] = {0, 0};
-    for (;point[Time] < aFrame.getDimension(Time).mResolution; ++point[Time])
+    for (;point[Time] < aFrame.getDimensionT(Time).mResolution; ++point[Time])
         {
         for (point[Channels] = 0; point[Channels] < mDimensions[Channels].mResolution; ++point[Channels])
             {
             double sample = 0;
-            if (point[Channels] < aFrame.getDimension(Channels).mResolution)
-                sample = aFrame.getSample(point);
-            setSample(point, sample);
+            if (point[Channels] < aFrame.getDimensionT(Channels).mResolution)
+                sample = aFrame.getSampleT(point);
+            setSampleT(point, sample);
             }
         }
     return *this;

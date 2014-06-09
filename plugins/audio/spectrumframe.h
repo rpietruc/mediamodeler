@@ -17,7 +17,7 @@ public:
 
     explicit SpectrumFrame();
 
-    inline void setFrameSamples(int aSampleNo) { setMaxSamples(aSampleNo); }
+    inline void setFrameSamples(int aSampleNo) { setMaxSamplesT(aSampleNo); }
     void setSampleRate(int aSampleRate);
     inline void setTimeStamp(double aTimeStamp) { mDimensions[Time].mStartLocation = aTimeStamp; }
     inline void incrementTimeStamp() { mDimensions[Time].mStartLocation += mDimensions[Time].mDelta * mDimensions[Time].mResolution; }

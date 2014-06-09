@@ -27,20 +27,20 @@ void SpectrumPlotDestination::process()
             {
             const FrameBase *frame = source->getFrame(i);
             if ((frame->getMaxDimension() == SpectrumFrame::Dimensions) &&
-                (frame->getDimension(SpectrumFrame::Time).mResolution == 1) &&
-                (frame->getDimension(SpectrumFrame::Frequency).mResolution > 2))
+                (frame->getDimensionT(SpectrumFrame::Time).mResolution == 1) &&
+                (frame->getDimensionT(SpectrumFrame::Frequency).mResolution > 2))
                 {
                 int point[SpectrumFrame::Dimensions] = {0, 0};
                 mPlot->setGraphNo(1);
-                double key = frame->getDimension(SpectrumFrame::Frequency).mStartLocation;
+                double key = frame->getDimensionT(SpectrumFrame::Frequency).mStartLocation;
                 for (point[SpectrumFrame::Frequency] = 0;
-                     point[SpectrumFrame::Frequency] < frame->getDimension(SpectrumFrame::Frequency).mResolution;
+                     point[SpectrumFrame::Frequency] < frame->getDimensionT(SpectrumFrame::Frequency).mResolution;
                    ++point[SpectrumFrame::Frequency])
                     {
-                    emit sampleReceived(key, frame->getSample(point), 0);
-                    key += frame->getDimension(SpectrumFrame::Frequency).mDelta;
+                    emit sampleReceived(key, frame->getSampleT(point), 0);
+                    key += frame->getDimensionT(SpectrumFrame::Frequency).mDelta;
                     }
-                mPlot->initKeyRange(frame->getDimension(SpectrumFrame::Frequency).mStartLocation, key - frame->getDimension(SpectrumFrame::Frequency).mDelta);
+                mPlot->initKeyRange(frame->getDimensionT(SpectrumFrame::Frequency).mStartLocation, key - frame->getDimensionT(SpectrumFrame::Frequency).mDelta);
                 mPlot->setTitle(frame->getSourceName());
                 emit framesProcessed();
                 }

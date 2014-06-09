@@ -6,7 +6,7 @@ namespace media {
 
 #define Pi 3.14159265358979
 
-qreal getSample(double aTime, double aFrequency, double aAmplitude, double aPhase)
+qreal getSampleT(double aTime, double aFrequency, double aAmplitude, double aPhase)
     {
     return aAmplitude*sin(2*Pi*(aTime*aFrequency + aPhase));
     }
@@ -32,11 +32,11 @@ AlsaDummySource::AlsaDummySource(ElementFactory *aFactory, const QString &aObjec
 void AlsaDummySource::process()
     {
     int point[AlsaFrame::Dimensions] = {0, 0};
-    double timeStamp = mAlsaFrame.getDimension(AlsaFrame::Time).mStartLocation;
+    double timeStamp = mAlsaFrame.getDimensionT(AlsaFrame::Time).mStartLocation;
     for (point[AlsaFrame::Time] = 0;
-         point[AlsaFrame::Time] < mAlsaFrame.getDimension(AlsaFrame::Time).mResolution;
-       ++point[AlsaFrame::Time], timeStamp += mAlsaFrame.getDimension(AlsaFrame::Time).mDelta)
-        mAlsaFrame.setSample(point, getSample(timeStamp, property("frequency").toDouble(), property("amplitude").toDouble(), property("phase").toDouble()));
+         point[AlsaFrame::Time] < mAlsaFrame.getDimensionT(AlsaFrame::Time).mResolution;
+       ++point[AlsaFrame::Time], timeStamp += mAlsaFrame.getDimensionT(AlsaFrame::Time).mDelta)
+        mAlsaFrame.setSampleT(point, getSampleT(timeStamp, property("frequency").toDouble(), property("amplitude").toDouble(), property("phase").toDouble()));
     mAlsaFrame.incrementTimeStamp();
     //mAlsaFrame.setTimeStamp(QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0);
 

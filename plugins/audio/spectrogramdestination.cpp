@@ -23,16 +23,16 @@ void SpectrogramDestination::process()
             {
             const FrameBase *frame = source->getFrame(i);
             if ((frame->getMaxDimension() == SpectrumFrame::Dimensions) &&
-                (frame->getDimension(SpectrumFrame::Time).mResolution == 1) &&
-                (frame->getDimension(SpectrumFrame::Frequency).mResolution > 2))
+                (frame->getDimensionT(SpectrumFrame::Time).mResolution == 1) &&
+                (frame->getDimensionT(SpectrumFrame::Frequency).mResolution > 2))
                 {
                 mSpectrumFrame.setSourceName(frame->getSourceName());
                 if (!mSpectrogram)
                     {
-                    Q_ASSERT(frame->getDimension(SpectrumFrame::Time).mDelta);
-                    mSpectrumFrame.setSampleRate(1.0/frame->getDimension(SpectrumFrame::Time).mDelta);
-                    mSpectrumFrame.setTimeStamp(frame->getDimension(SpectrumFrame::Time).mStartLocation);
-                    mSpectrumFrame.setResolution(frame->getDimension(SpectrumFrame::Frequency).mResolution, frame->getDimension(SpectrumFrame::Frequency).mResolution*frame->getDimension(SpectrumFrame::Frequency).mDelta);
+                    Q_ASSERT(frame->getDimensionT(SpectrumFrame::Time).mDelta);
+                    mSpectrumFrame.setSampleRate(1.0/frame->getDimensionT(SpectrumFrame::Time).mDelta);
+                    mSpectrumFrame.setTimeStamp(frame->getDimensionT(SpectrumFrame::Time).mStartLocation);
+                    mSpectrumFrame.setResolution(frame->getDimensionT(SpectrumFrame::Frequency).mResolution, frame->getDimensionT(SpectrumFrame::Frequency).mResolution*frame->getDimensionT(SpectrumFrame::Frequency).mDelta);
                     mSpectrumFrame.setFrameSamples(512);
                     mSpectrogram = new SpectrogramWindow(mSpectrumFrame);
                     mSpectrogram->resize(600, 400);
@@ -40,7 +40,7 @@ void SpectrogramDestination::process()
                     QObject::connect(this, SIGNAL(dataUpdated()), mSpectrogram, SLOT(replot()));
                     }
                 mSpectrumFrame += *frame;
-                if (mSpectrumFrame.getDimension(SpectrumFrame::Time).mResolution > 1)
+                if (mSpectrumFrame.getDimensionT(SpectrumFrame::Time).mResolution > 1)
                     emit dataUpdated();
                 emit framesProcessed();
                 }

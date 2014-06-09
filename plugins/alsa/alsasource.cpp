@@ -55,13 +55,13 @@ void AlsaSource::open()
         if (res < 0)
             break;
 
-        res = snd_pcm_hw_params_set_channels(mPcmHandle, hw_params, mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution);
+        res = snd_pcm_hw_params_set_channels(mPcmHandle, hw_params, mAlsaFrame.getDimensionT(AlsaFrame::Channels).mResolution);
         if (res < 0)
             break;
 
         int dir = 0;
-        Q_ASSERT(mAlsaFrame.getDimension(AlsaFrame::Time).mDelta);
-        int rate = 1.0/mAlsaFrame.getDimension(AlsaFrame::Time).mDelta;
+        Q_ASSERT(mAlsaFrame.getDimensionT(AlsaFrame::Time).mDelta);
+        int rate = 1.0/mAlsaFrame.getDimensionT(AlsaFrame::Time).mDelta;
         res = snd_pcm_hw_params_set_rate(mPcmHandle, hw_params, rate, dir);
         if (res < 0)
             break;
@@ -110,18 +110,18 @@ void AlsaSource::process()
         mAlsaFrame.setSourceName(property("deviceName").toString());
         qDebug() << objectName() << ": deviceName changed to " << mAlsaFrame.getSourceName();
         }
-    if (mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution != property("channelsNo").toInt())
+    if (mAlsaFrame.getDimensionT(AlsaFrame::Channels).mResolution != property("channelsNo").toInt())
         {
         close();
         mAlsaFrame.setChannelsNo(property("channelsNo").toInt());
-        qDebug() << objectName() << ": channelsNo changed to " << mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution;
+        qDebug() << objectName() << ": channelsNo changed to " << mAlsaFrame.getDimensionT(AlsaFrame::Channels).mResolution;
         }
     if (property("sampleRate").toInt() &&
-        (mAlsaFrame.getDimension(AlsaFrame::Time).mDelta != 1.0/property("sampleRate").toInt()))
+        (mAlsaFrame.getDimensionT(AlsaFrame::Time).mDelta != 1.0/property("sampleRate").toInt()))
         {
         close();
         mAlsaFrame.setSampleTime(1.0/property("sampleRate").toInt());
-        qDebug() << objectName() << ": sampleRate changed to " << 1.0/mAlsaFrame.getDimension(AlsaFrame::Time).mDelta;
+        qDebug() << objectName() << ": sampleRate changed to " << 1.0/mAlsaFrame.getDimensionT(AlsaFrame::Time).mDelta;
         }
 
     snd_pcm_sframes_t ret = 0;
@@ -130,7 +130,7 @@ void AlsaSource::process()
 
     if (mPcmHandle)
         {
-        ret = snd_pcm_readi(mPcmHandle, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimension(AlsaFrame::Time).mResolution);
+        ret = snd_pcm_readi(mPcmHandle, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimensionT(AlsaFrame::Time).mResolution);
         if (ret <= 0)
             qWarning() << "snd_pcm_readi returned " << ret;
         if (ret == -EPIPE)
@@ -138,7 +138,7 @@ void AlsaSource::process()
             /* EPIPE means xrun (overrun for capture)
                The overrun can happen when an application does not take new captured samples in time from alsa-lib. */
             snd_pcm_prepare(mPcmHandle);
-            ret = snd_pcm_readi(mPcmHandle, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimension(AlsaFrame::Time).mResolution);
+            ret = snd_pcm_readi(mPcmHandle, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimensionT(AlsaFrame::Time).mResolution);
             }
         if (ret > 0)
             mAlsaFrame.setTimeStamp(QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0);

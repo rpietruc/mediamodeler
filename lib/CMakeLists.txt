@@ -9,11 +9,13 @@ add_definitions(${Qt5Core_DEFINITIONS})
 set(CMAKE_CXX_FLAGS "${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
 
 set(QMM_LIB_SRC
+    exceptions.cpp
     matrixframe.cpp
     modelcreator.cpp
     elementbase.cpp)
 
 set(QMM_LIB_INC
+    exceptions.h
     globaldefs.h
     matrixframe.h
     modelcreator.h

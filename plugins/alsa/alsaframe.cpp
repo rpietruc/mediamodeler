@@ -57,7 +57,7 @@ void AlsaFrame::incrementTimeStamp()
     mDimensions[Time].mStartLocation += mDimensions[Time].mDelta * mDimensions[Time].mResolution;
     }
 
-double AlsaFrame::getSample(const int *aPoint) const
+double AlsaFrame::getSampleT(const int *aPoint) const
     {
     Q_ASSERT(mSoundBuffer);
     Q_ASSERT(aPoint[Time] < mDimensions[Time].mResolution);
@@ -68,7 +68,7 @@ double AlsaFrame::getSample(const int *aPoint) const
     return ret;
     }
 
-void AlsaFrame::setSample(const int *aPoint, qreal aValue)
+void AlsaFrame::setSampleT(const int *aPoint, qreal aValue)
     {
     Q_ASSERT(mSoundBuffer);
     Q_ASSERT(aPoint[Time] < mDimensions[Time].mResolution);
@@ -87,14 +87,14 @@ void AlsaFrame::operator+=(const FrameBase &aFrame)
         mDimensions[Time].mResolution = 0;
 
     int point[Dimensions];
-    for (point[Time] = 0; point[Time] < aFrame.getDimension(Time).mResolution; ++point[Time])
+    for (point[Time] = 0; point[Time] < aFrame.getDimensionT(Time).mResolution; ++point[Time])
         {
         int samplesNo = mDimensions[Time].mResolution * mDimensions[Channels].mResolution;
         for (point[Channels] = 0; point[Channels] < mDimensions[Channels].mResolution; ++point[Channels])
             {
             double sample = 0;
-            if (point[Channels] < aFrame.getDimension(Channels).mResolution)
-                sample = aFrame.getSample(point);
+            if (point[Channels] < aFrame.getDimensionT(Channels).mResolution)
+                sample = aFrame.getSampleT(point);
             Q_ASSERT(samplesNo < mBufSize);
             sample *= 32768.0;
             mSoundBuffer[samplesNo++] = sample;

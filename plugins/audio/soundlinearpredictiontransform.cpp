@@ -34,21 +34,21 @@ void SoundLinearPredictionTransform::process()
 
     Q_ASSERT(frame->getMaxDimension() == SoundFrame::Dimensions);
     Q_ASSERT(mCoefficients.size() > 0);
-    Q_ASSERT(frame->getDimension(SoundFrame::Time).mDelta);
-    Q_ASSERT(frame->getDimension(SoundFrame::Time).mResolution > mCoefficients.size());
+    Q_ASSERT(frame->getDimensionT(SoundFrame::Time).mDelta);
+    Q_ASSERT(frame->getDimensionT(SoundFrame::Time).mResolution > mCoefficients.size());
 
-    mSoundFrame.setFrameSamples(frame->getDimension(SoundFrame::Time).mResolution);
-    mSoundFrame.setSampleTime(frame->getDimension(SoundFrame::Time).mDelta);
-    mSoundFrame.setTimeStamp(frame->getDimension(SoundFrame::Time).mStartLocation);
+    mSoundFrame.setFrameSamples(frame->getDimensionT(SoundFrame::Time).mResolution);
+    mSoundFrame.setSampleTime(frame->getDimensionT(SoundFrame::Time).mDelta);
+    mSoundFrame.setTimeStamp(frame->getDimensionT(SoundFrame::Time).mStartLocation);
     mSoundFrame.setSourceName(frame->getSourceName());
 
-    mFilterFrame.setSampleRate(frame->getDimension(SoundFrame::Time).mResolution/frame->getDimension(SoundFrame::Time).mDelta);
-    mFilterFrame.setTimeStamp(frame->getDimension(SoundFrame::Time).mStartLocation);
+    mFilterFrame.setSampleRate(frame->getDimensionT(SoundFrame::Time).mResolution/frame->getDimensionT(SoundFrame::Time).mDelta);
+    mFilterFrame.setTimeStamp(frame->getDimensionT(SoundFrame::Time).mStartLocation);
     mFilterFrame.setSourceName(frame->getSourceName());
     mFilterFrame.setFrameSamples(1);
 
     int point[SoundFrame::Dimensions] = {0, 0};
-    for (;point[SoundFrame::Time] < frame->getDimension(SoundFrame::Time).mResolution;
+    for (;point[SoundFrame::Time] < frame->getDimensionT(SoundFrame::Time).mResolution;
         ++point[SoundFrame::Time])
         {
         double res = 0;
@@ -57,43 +57,43 @@ void SoundLinearPredictionTransform::process()
             {
             shiftpoint[SoundFrame::Time] = point[SoundFrame::Time] - shift;
             res += mCoefficients.at(shift - 1) * (shiftpoint[SoundFrame::Time] < 0 ?
-                mAudioSamplesTail.at(-shiftpoint[SoundFrame::Time] - 1) : frame->getSample(shiftpoint));
+                mAudioSamplesTail.at(-shiftpoint[SoundFrame::Time] - 1) : frame->getSampleT(shiftpoint));
             }
-        mSoundFrame.setSample(point, res);
+        mSoundFrame.setSampleT(point, res);
 
-        double diff = frame->getSample(point) - res;
+        double diff = frame->getSampleT(point) - res;
         for (int shift = 1; shift <= mCoefficients.size(); ++shift)
             {
             shiftpoint[SoundFrame::Time] = point[SoundFrame::Time] - shift;
             mCoefficients[shift - 1] += 2*mWeight*diff*(shiftpoint[SoundFrame::Time] < 0 ?
-                mAudioSamplesTail.at(-shiftpoint[SoundFrame::Time] - 1) : frame->getSample(shiftpoint));
+                mAudioSamplesTail.at(-shiftpoint[SoundFrame::Time] - 1) : frame->getSampleT(shiftpoint));
             }
         shiftpoint[SoundFrame::Channels] = 1;
         shiftpoint[SoundFrame::Time] = point[SoundFrame::Time];
-        mSoundFrame.setSample(shiftpoint, diff);
+        mSoundFrame.setSampleT(shiftpoint, diff);
         }
 
     for (int shift = 1; shift <= mCoefficients.size(); ++shift)
         {
-        point[SoundFrame::Time] = frame->getDimension(SoundFrame::Time).mResolution - shift;
-        mAudioSamplesTail[shift - 1] =  frame->getSample(point);
+        point[SoundFrame::Time] = frame->getDimensionT(SoundFrame::Time).mResolution - shift;
+        mAudioSamplesTail[shift - 1] =  frame->getSampleT(point);
         }
 
     int filterpoint[FilterFrame::Dimensions] = {0, 0, 0};
 
     filterpoint[FilterFrame::Polynomial] = FilterFrame::Numerator;
-    mFilterFrame.setSample(filterpoint, 1);
+    mFilterFrame.setSampleT(filterpoint, 1);
     filterpoint[FilterFrame::Polynomial] = FilterFrame::Denominator;
-    mFilterFrame.setSample(filterpoint, 1);
+    mFilterFrame.setSampleT(filterpoint, 1);
 
     for (filterpoint[FilterFrame::Coefficients] = 1;
          filterpoint[FilterFrame::Coefficients] <= mCoefficients.size();
        ++filterpoint[FilterFrame::Coefficients])
         {
         filterpoint[FilterFrame::Polynomial] = FilterFrame::Numerator;
-        mFilterFrame.setSample(filterpoint, 0);
+        mFilterFrame.setSampleT(filterpoint, 0);
         filterpoint[FilterFrame::Polynomial] = FilterFrame::Denominator;
-        mFilterFrame.setSample(filterpoint, -mCoefficients.at(filterpoint[FilterFrame::Coefficients] - 1));
+        mFilterFrame.setSampleT(filterpoint, -mCoefficients.at(filterpoint[FilterFrame::Coefficients] - 1));
         }
 
     emit framesReady();

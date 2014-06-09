@@ -21,9 +21,9 @@ public:
     explicit AlsaFrame(QObject *aParent = 0);
     virtual ~AlsaFrame();
 
-    qreal getSample(const int *aPoint) const;
+    qreal getSampleT(const int *aPoint) const;
 
-    void setSample(const int *aPoint, qreal aValue);
+    void setSampleT(const int *aPoint, qreal aValue);
     void operator+=(const FrameBase &aFrame);
     const qint16 *getSoundBuffer() const { return mSoundBuffer; }
     qint16 *getSoundBuffer() { return mSoundBuffer; }

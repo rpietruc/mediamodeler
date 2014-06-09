@@ -32,15 +32,15 @@ void PictureBoxPlotDestination::process()
             int point[2] = {0, 0};
             if (frame->getMaxDimension() == 1)
                 {
-                mBoxPlot->setBoxNo(frame->getDimension(0).mResolution);
-                for (; point[0] < frame->getDimension(0).mResolution; ++point[0])
-                    mBoxPlot->setValue(point[0], frame->getSample(point));
+                mBoxPlot->setBoxNo(frame->getDimensionT(0).mResolution);
+                for (; point[0] < frame->getDimensionT(0).mResolution; ++point[0])
+                    mBoxPlot->setValue(point[0], frame->getSampleT(point));
                 }
-            else if ((frame->getMaxDimension() == 2) && (frame->getDimension(0).mResolution == 1))
+            else if ((frame->getMaxDimension() == 2) && (frame->getDimensionT(0).mResolution == 1))
                 {
-                mBoxPlot->setBoxNo(frame->getDimension(1).mResolution);
-                for (; point[1] < frame->getDimension(1).mResolution; ++point[1])
-                    mBoxPlot->setValue(point[1], frame->getSample(point));
+                mBoxPlot->setBoxNo(frame->getDimensionT(1).mResolution);
+                for (; point[1] < frame->getDimensionT(1).mResolution; ++point[1])
+                    mBoxPlot->setValue(point[1], frame->getSampleT(point));
                 }
             }
     emit framesProcessed();

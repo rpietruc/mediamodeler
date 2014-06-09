@@ -16,7 +16,7 @@ void SpectrumFrame::setResolution(int aResolution, qreal aMaxFrequency)
     {
     mDimensions[Frequency].mStartLocation = 0;
     mDimensions[Frequency].mDelta = aMaxFrequency / aResolution;
-    setMaxVectors(aResolution);
+    setMaxVectorsT(aResolution);
     }
 
 void SpectrumFrame::operator+=(const FrameBase &aFrame)
@@ -25,7 +25,7 @@ void SpectrumFrame::operator+=(const FrameBase &aFrame)
 
     int point[Dimensions] = {0, 0};
     int newpoint[Dimensions] = {mDimensions[Time].mResolution, 0};
-    for (;point[Time] < aFrame.getDimension(Time).mResolution; ++point[Time], ++newpoint[Time])
+    for (;point[Time] < aFrame.getDimensionT(Time).mResolution; ++point[Time], ++newpoint[Time])
         {
         //if buffer full count from the beginning
         Q_ASSERT(mMatrix.size() > 0);
@@ -42,9 +42,9 @@ void SpectrumFrame::operator+=(const FrameBase &aFrame)
         for (; point[Frequency] < mDimensions[Frequency].mResolution; ++point[Frequency], ++newpoint[Frequency])
             {
             double sample = 0;
-            if (point[Frequency] < aFrame.getDimension(Frequency).mResolution)
-                sample = aFrame.getSample(point);
-            setSample(newpoint, sample);
+            if (point[Frequency] < aFrame.getDimensionT(Frequency).mResolution)
+                sample = aFrame.getSampleT(point);
+            setSampleT(newpoint, sample);
             }
         }
     }

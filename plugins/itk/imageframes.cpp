@@ -21,7 +21,7 @@ ColorImageFrame::~ColorImageFrame()
 //    mImage->Delete();
     }
 
-double ColorImageFrame::getSample(const int *aPoint) const
+double ColorImageFrame::getSampleT(const int *aPoint) const
     {
     Q_ASSERT(mImage.IsNotNull());
 
@@ -74,7 +74,7 @@ void ColorImageFrame::resizeAndCopyFrame(const FrameBase &aFrame)
     {
     if ((aFrame.getMaxDimension() == Dimensions) && !aFrame.isEmpty())
         {
-        resize(aFrame.getDimension(Width).mResolution, aFrame.getDimension(Height).mResolution);
+        resize(aFrame.getDimensionT(Width).mResolution, aFrame.getDimensionT(Height).mResolution);
 
         int point[Dimensions];
         Index<> index;
@@ -86,7 +86,7 @@ void ColorImageFrame::resizeAndCopyFrame(const FrameBase &aFrame)
                 {
                 index[Width] = point[Width];
                 for (point[Channels] = 0; point[Channels] < PixelType::Length; ++point[Channels])
-                    pixel[point[Channels]] = (aFrame.getDimension(Channels).mResolution > point[Channels] ? aFrame.getSample(point) : 0);
+                    pixel[point[Channels]] = (aFrame.getDimensionT(Channels).mResolution > point[Channels] ? aFrame.getSampleT(point) : 0);
                 mImage->SetPixel(index, pixel);
                 }
             }
@@ -116,7 +116,7 @@ GrayImageFrame::GrayImageFrame() :
     mDimensions[Width].mResolution = mDimensions[Height].mResolution = 0;
     }
 
-double GrayImageFrame::getSample(const int *aPoint) const
+double GrayImageFrame::getSampleT(const int *aPoint) const
     {
     Q_ASSERT(mImage.IsNotNull());
 
@@ -153,7 +153,7 @@ void GrayImageFrame::resizeAndCopyFrame(const FrameBase &aFrame)
     {
     if (((aFrame.getMaxDimension() == Dimensions) || (aFrame.getMaxDimension() == ColorImageFrame::Dimensions)) && !aFrame.isEmpty())
         {
-        resize(aFrame.getDimension(Width).mResolution, aFrame.getDimension(Height).mResolution);
+        resize(aFrame.getDimensionT(Width).mResolution, aFrame.getDimensionT(Height).mResolution);
 
         int point[ColorImageFrame::Dimensions];
         Index<> index;
@@ -165,13 +165,13 @@ void GrayImageFrame::resizeAndCopyFrame(const FrameBase &aFrame)
                 {
                 index[Width] = point[Width];
                 point[ColorImageFrame::Channels] = 0;
-                pixel = aFrame.getSample(point);
-                if ((aFrame.getMaxDimension() == ColorImageFrame::Dimensions) && (aFrame.getDimension(ColorImageFrame::Channels).mResolution > 1))
+                pixel = aFrame.getSampleT(point);
+                if ((aFrame.getMaxDimension() == ColorImageFrame::Dimensions) && (aFrame.getDimensionT(ColorImageFrame::Channels).mResolution > 1))
                     {
                     double sum = pixel;
-                    for (point[ColorImageFrame::Channels] = 1; point[ColorImageFrame::Channels] < aFrame.getDimension(ColorImageFrame::Channels).mResolution; ++point[ColorImageFrame::Channels])
-                        sum += aFrame.getSample(point);
-                    pixel = sum / aFrame.getDimension(ColorImageFrame::Channels).mResolution;
+                    for (point[ColorImageFrame::Channels] = 1; point[ColorImageFrame::Channels] < aFrame.getDimensionT(ColorImageFrame::Channels).mResolution; ++point[ColorImageFrame::Channels])
+                        sum += aFrame.getSampleT(point);
+                    pixel = sum / aFrame.getDimensionT(ColorImageFrame::Channels).mResolution;
                     }
                 mImage->SetPixel(index, pixel);
                 }
@@ -201,7 +201,7 @@ PointsFrame::PointsFrame() :
     mDimensions[Axis].mResolution = MaxAxis;
     }
 
-double PointsFrame::getSample(const int *aPoint) const
+double PointsFrame::getSampleT(const int *aPoint) const
     {
     Q_ASSERT(aPoint[Axis] < MaxAxis);
     Q_ASSERT(aPoint[Index] < (int)mPoints.size());

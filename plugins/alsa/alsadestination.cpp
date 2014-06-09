@@ -60,13 +60,13 @@ void AlsaDestination::open()
             }
         else
             {
-            res = snd_pcm_hw_params_set_channels(mPcmHandle, hw_params, mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution);
+            res = snd_pcm_hw_params_set_channels(mPcmHandle, hw_params, mAlsaFrame.getDimensionT(AlsaFrame::Channels).mResolution);
             if (res < 0)
-                qWarning() << "channels not supported" << mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution;
+                qWarning() << "channels not supported" << mAlsaFrame.getDimensionT(AlsaFrame::Channels).mResolution;
             else
                 {
-                Q_ASSERT(mAlsaFrame.getDimension(AlsaFrame::Time).mDelta >= 0);
-                unsigned int rate = 1.0/mAlsaFrame.getDimension(AlsaFrame::Time).mDelta;
+                Q_ASSERT(mAlsaFrame.getDimensionT(AlsaFrame::Time).mDelta >= 0);
+                unsigned int rate = 1.0/mAlsaFrame.getDimensionT(AlsaFrame::Time).mDelta;
                 int dir = 0;
                 res = snd_pcm_hw_params_set_rate(mPcmHandle, hw_params, rate, dir);
                 if (res < 0)
@@ -74,7 +74,7 @@ void AlsaDestination::open()
                 else
                     {
                     mAlsaFrame.setFrameTime(AlsaFrame::DefaultFrameTime);
-                    snd_pcm_uframes_t frameSize = mAlsaFrame.getDimension(AlsaFrame::Time).mResolution;
+                    snd_pcm_uframes_t frameSize = mAlsaFrame.getDimensionT(AlsaFrame::Time).mResolution;
                     dir = 0;
                     res = snd_pcm_hw_params_set_period_size_near(mPcmHandle, hw_params, &frameSize, &dir);
                     if (res < 0)
@@ -108,14 +108,14 @@ void AlsaDestination::write()
     if (!mPcmHandle)
         return;
 
-    snd_pcm_sframes_t ret = snd_pcm_writei(mPcmHandle, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimension(AlsaFrame::Time).mResolution);
+    snd_pcm_sframes_t ret = snd_pcm_writei(mPcmHandle, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimensionT(AlsaFrame::Time).mResolution);
     if (ret == -EPIPE)
         {
         /* EPIPE xrun (underrun for playback)
            The underrun can happen when an application does not feed new samples in time to alsa-lib */
         snd_pcm_prepare(mPcmHandle);
         usleep(100000); /* FIXME: add buffering capabilities to avoid buffer underrun every second call */
-        snd_pcm_writei(mPcmHandle, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimension(AlsaFrame::Time).mResolution);
+        snd_pcm_writei(mPcmHandle, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimensionT(AlsaFrame::Time).mResolution);
         }
     }
 
@@ -133,21 +133,21 @@ void AlsaDestination::process()
             {
             const FrameBase *frame = source->getFrame(i);
             if ((frame->getMaxDimension() == AlsaFrame::Dimensions) &&
-                (frame->getDimension(AlsaFrame::Channels).mResolution <= 2) &&
-                (frame->getDimension(AlsaFrame::Time).mDelta > 0))
+                (frame->getDimensionT(AlsaFrame::Channels).mResolution <= 2) &&
+                (frame->getDimensionT(AlsaFrame::Time).mDelta > 0))
                 {
-                if (frame->getDimension(AlsaFrame::Channels).mResolution != mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution)
+                if (frame->getDimensionT(AlsaFrame::Channels).mResolution != mAlsaFrame.getDimensionT(AlsaFrame::Channels).mResolution)
                     {
                     close();
-                    mAlsaFrame.setChannelsNo(frame->getDimension(AlsaFrame::Channels).mResolution);
-                    qDebug() << objectName() << ": channelsNo changed to " << mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution;
+                    mAlsaFrame.setChannelsNo(frame->getDimensionT(AlsaFrame::Channels).mResolution);
+                    qDebug() << objectName() << ": channelsNo changed to " << mAlsaFrame.getDimensionT(AlsaFrame::Channels).mResolution;
                     }
 
-                if (frame->getDimension(AlsaFrame::Time).mDelta != mAlsaFrame.getDimension(AlsaFrame::Time).mDelta)
+                if (frame->getDimensionT(AlsaFrame::Time).mDelta != mAlsaFrame.getDimensionT(AlsaFrame::Time).mDelta)
                     {
                     close();
-                    mAlsaFrame.setSampleTime(frame->getDimension(AlsaFrame::Time).mDelta);
-                    qDebug() << objectName() << ": sampleTime changed to " << mAlsaFrame.getDimension(AlsaFrame::Time).mDelta;
+                    mAlsaFrame.setSampleTime(frame->getDimensionT(AlsaFrame::Time).mDelta);
+                    qDebug() << objectName() << ": sampleTime changed to " << mAlsaFrame.getDimensionT(AlsaFrame::Time).mDelta;
                     }
                 if (!mPcmHandle)
                     open();

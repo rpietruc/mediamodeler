@@ -19,16 +19,16 @@ public:
 
     void updateTimeInterval()
         {
-        setInterval(Qt::XAxis, QwtInterval(mFrame.getDimension(SpectrumFrame::Time).mStartLocation,
-                                           mFrame.getDimension(SpectrumFrame::Time).mStartLocation + mFrame.getDimension(SpectrumFrame::Time).mDelta*(mFrame.getDimension(SpectrumFrame::Time).mResolution - 1)));
+        setInterval(Qt::XAxis, QwtInterval(mFrame.getDimensionT(SpectrumFrame::Time).mStartLocation,
+                                           mFrame.getDimensionT(SpectrumFrame::Time).mStartLocation + mFrame.getDimensionT(SpectrumFrame::Time).mDelta*(mFrame.getDimensionT(SpectrumFrame::Time).mResolution - 1)));
         qDebug() << "time interval updated: x=(" << interval(Qt::XAxis).minValue() << ", " << interval(Qt::XAxis).maxValue()
                                       << ") y=(" << interval(Qt::YAxis).minValue() << ", " << interval(Qt::YAxis).maxValue() << ")";
         }
 
     void updateFreqInterval()
         {
-        setInterval(Qt::YAxis, QwtInterval(mFrame.getDimension(SpectrumFrame::Frequency).mStartLocation,
-                                           mFrame.getDimension(SpectrumFrame::Frequency).mStartLocation + mFrame.getDimension(SpectrumFrame::Frequency).mDelta*(mFrame.getDimension(SpectrumFrame::Frequency).mResolution - 1)));
+        setInterval(Qt::YAxis, QwtInterval(mFrame.getDimensionT(SpectrumFrame::Frequency).mStartLocation,
+                                           mFrame.getDimensionT(SpectrumFrame::Frequency).mStartLocation + mFrame.getDimensionT(SpectrumFrame::Frequency).mDelta*(mFrame.getDimensionT(SpectrumFrame::Frequency).mResolution - 1)));
         }
 
     void updateDataInterval()
@@ -39,9 +39,9 @@ public:
     virtual double value(double x, double y) const
         {
         int point[SpectrumFrame::Dimensions];
-        point[SpectrumFrame::Time] = (x - interval(Qt::XAxis).minValue())/mFrame.getDimension(SpectrumFrame::Time).mDelta;
-        point[SpectrumFrame::Frequency] = (y - interval(Qt::YAxis).minValue())/mFrame.getDimension(SpectrumFrame::Frequency).mDelta;
-        return mFrame.getSample(point);
+        point[SpectrumFrame::Time] = (x - interval(Qt::XAxis).minValue())/mFrame.getDimensionT(SpectrumFrame::Time).mDelta;
+        point[SpectrumFrame::Frequency] = (y - interval(Qt::YAxis).minValue())/mFrame.getDimensionT(SpectrumFrame::Frequency).mDelta;
+        return mFrame.getSampleT(point);
         }
 
 private:

@@ -18,8 +18,8 @@ public:
 
     explicit SoundFrame(QObject *aParent = 0);
 
-    qreal getSample(const int *aPoint) const;
-    void setSample(const int *aPoint, qreal aValue);
+    qreal getSampleT(const int *aPoint) const;
+    void setSampleT(const int *aPoint, qreal aValue);
 
     inline char* getSoundBuffer() { return mSoundBuffer.data(); }
 

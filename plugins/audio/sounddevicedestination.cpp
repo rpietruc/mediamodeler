@@ -28,8 +28,8 @@ void SoundDeviceDestination::open()
         if (info.deviceName() == mAudioOutputDevice.getSoundFrame().getSourceName())
             {
             QAudioFormat format = info.preferredFormat();
-            format.setSampleRate(1.0/mAudioOutputDevice.getSoundFrame().getDimension(SoundFrame::Time).mDelta);
-            format.setChannelCount(mAudioOutputDevice.getSoundFrame().getDimension(SoundFrame::Channels).mResolution);
+            format.setSampleRate(1.0/mAudioOutputDevice.getSoundFrame().getDimensionT(SoundFrame::Time).mDelta);
+            format.setChannelCount(mAudioOutputDevice.getSoundFrame().getDimensionT(SoundFrame::Channels).mResolution);
             if (info.isFormatSupported(format))
                 {
                 mAudioOutputDevice.getSoundFrame().setSampleBits(format.sampleSize());
@@ -70,22 +70,22 @@ void SoundDeviceDestination::process()
             {
             const FrameBase *frame = source->getFrame(i);
             if ((frame->getMaxDimension() == SoundFrame::Dimensions)
-             && (frame->getDimension(SoundFrame::Time).mDelta > 0))
+             && (frame->getDimensionT(SoundFrame::Time).mDelta > 0))
                 {
-                if (frame->getDimension(SoundFrame::Channels).mResolution != mAudioOutputDevice.getSoundFrame().getDimension(SoundFrame::Channels).mResolution)
+                if (frame->getDimensionT(SoundFrame::Channels).mResolution != mAudioOutputDevice.getSoundFrame().getDimensionT(SoundFrame::Channels).mResolution)
                     {
                     close();
-                    mAudioOutputDevice.getSoundFrame().setChannelsNo(frame->getDimension(SoundFrame::Channels).mResolution);
+                    mAudioOutputDevice.getSoundFrame().setChannelsNo(frame->getDimensionT(SoundFrame::Channels).mResolution);
                     }
-                if (frame->getDimension(SoundFrame::Time).mDelta != mAudioOutputDevice.getSoundFrame().getDimension(SoundFrame::Time).mDelta)
+                if (frame->getDimensionT(SoundFrame::Time).mDelta != mAudioOutputDevice.getSoundFrame().getDimensionT(SoundFrame::Time).mDelta)
                     {
                     close();
-                    mAudioOutputDevice.getSoundFrame().setSampleTime(frame->getDimension(SoundFrame::Time).mDelta);
+                    mAudioOutputDevice.getSoundFrame().setSampleTime(frame->getDimensionT(SoundFrame::Time).mDelta);
                     }
                 if (!isOpened())
                     open();
 
-                if (frame->getDimension(SoundFrame::Time).mStartLocation > mLastFrameTime)
+                if (frame->getDimensionT(SoundFrame::Time).mStartLocation > mLastFrameTime)
                     {
                     mAudioOutputDevice.getSoundFrame() += *frame;
                     qDebug() << "bytes free :" << mAudioOutputDevice.getSoundFrame().getBytesFree();
@@ -98,7 +98,7 @@ void SoundDeviceDestination::process()
                             mAudioOutput->start(&mAudioOutputDevice);
                         }
                     }
-                mLastFrameTime = frame->getDimension(SoundFrame::Time).mStartLocation;
+                mLastFrameTime = frame->getDimensionT(SoundFrame::Time).mStartLocation;
                 if (!mWaitForBytesRead)
                     emit framesProcessed();
                 }

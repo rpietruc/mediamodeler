@@ -17,7 +17,7 @@ public:
     explicit IplImageFrame(int aChannels = 3, int aDepth = IPL_DEPTH_8U);
     virtual ~IplImageFrame();
 
-    qreal getSample(const int *aPoint) const;
+    qreal getSampleT(const int *aPoint) const;
 
     operator IplImage*() const { return mIplImage; }
 
@@ -45,7 +45,7 @@ public:
     enum { Index, Axis, Dimensions };
     explicit PointsFrame();
 
-    qreal getSample(const int *aPoint) const;
+    qreal getSampleT(const int *aPoint) const;
     const PointsFrame& operator=(const std::vector<cv::Point> aPoints)
         {
         mPoints = aPoints;

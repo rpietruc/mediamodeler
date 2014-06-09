@@ -18,7 +18,7 @@ public:
     explicit VideoFrame();
     virtual ~VideoFrame();
 
-    qreal getSample(const int *aPoint) const;
+    qreal getSampleT(const int *aPoint) const;
 
     void allocateData(const AVCodecContext& aCodecContext);
     bool copyData(const AVFrame& aFrame);

@@ -76,12 +76,12 @@ void SndFileSource::process()
         // read audio data
         do
             {
-            sf_count_t res = sf_readf_short(mSoundFile, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimension(AlsaFrame::Time).mResolution);
+            sf_count_t res = sf_readf_short(mSoundFile, mAlsaFrame.getSoundBuffer(), mAlsaFrame.getDimensionT(AlsaFrame::Time).mResolution);
             if (res > 0)
                 {
                 // keep constant frame size, populate with zeros
-                if (res < mAlsaFrame.getDimension(AlsaFrame::Time).mResolution)
-                    memset(mAlsaFrame.getSoundBuffer() + res*mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution, 0, (mAlsaFrame.getDimension(AlsaFrame::Time).mResolution - res)*sizeof(qint16)*mAlsaFrame.getDimension(AlsaFrame::Channels).mResolution);
+                if (res < mAlsaFrame.getDimensionT(AlsaFrame::Time).mResolution)
+                    memset(mAlsaFrame.getSoundBuffer() + res*mAlsaFrame.getDimensionT(AlsaFrame::Channels).mResolution, 0, (mAlsaFrame.getDimensionT(AlsaFrame::Time).mResolution - res)*sizeof(qint16)*mAlsaFrame.getDimensionT(AlsaFrame::Channels).mResolution);
 
                 mAlsaFrame.incrementTimeStamp();
                 emit framesReady();

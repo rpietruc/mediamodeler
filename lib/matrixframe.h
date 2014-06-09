@@ -15,12 +15,12 @@ public:
     enum { SampleNo = 0, VectorNo, Dimensions };
     explicit MatrixFrame() : FrameBase(Dimensions) {}
 
-    qreal getSample(const int *aPoint) const;
+    qreal getSampleT(const int *aPoint) const;
 
-    void setMaxSamples(int aSize);
-    void setMaxVectors(int aSize);
+    void setMaxSamplesT(int aSize);
+    void setMaxVectorsT(int aSize);
 
-    void setSample(const int *aPoint, qreal aValue);
+    void setSampleT(const int *aPoint, qreal aValue);
 
 protected:
     Matrix mMatrix;
@@ -32,13 +32,13 @@ public:
     enum { SampleNo = 0, VectorNo, PlaneNo, Dimensions };
     explicit Matrix3DFrame() : FrameBase(Dimensions) {}
 
-    qreal getSample(const int *aPoint) const;
+    qreal getSampleT(const int *aPoint) const;
 
-    void setMaxVectors(int aSize);
-    void setMaxSamples(int aSize);
+    void setMaxVectorsT(int aSize);
+    void setMaxSamplesT(int aSize);
     void setMaxPlanes(int aSize);
 
-    void setSample(const int *aPoint, qreal aValue);
+    void setSampleT(const int *aPoint, qreal aValue);
 
 protected:
     Matrix3D mMatrix3D;

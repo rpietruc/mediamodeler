@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QSet>
 #include <QString>
+#include "exceptions.h"
 
 namespace media {
 
@@ -38,13 +39,13 @@ public:
         }
 
     int getMaxDimension() const { return mDimensions.size(); }
-    const Dimension& getDimension(int aIndex) const
+    const Dimension& getDimensionT(int aIndex) const
         {
-        Q_ASSERT(aIndex <= mDimensions.size());
+        Exc::throwExcCodeIfFalse(aIndex < mDimensions.size(), 0, __FILE__, __LINE__);
         return mDimensions.at(aIndex);
         }
 
-    virtual qreal getSample(const int *aPoint) const = 0;
+    virtual qreal getSampleT(const int *aPoint) const = 0;
 
     QString getSourceName() const { return mSourceName; }
     void setSourceName(const QString& aSourceName) { mSourceName = aSourceName; }
@@ -52,7 +53,7 @@ public:
     bool isEmpty() const
         {
         for (int i = 0; i < getMaxDimension(); ++i)
-            if (getDimension(i).mResolution <= 0)
+            if (getDimensionT(i).mResolution <= 0)
                 return true;
         return false;
         }

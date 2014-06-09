@@ -66,30 +66,30 @@ void PictureDrawDestination::process()
             if ((frame->getMaxDimension() == IplImageFrame::Dimensions) ||
                 (frame->getMaxDimension() == (IplImageFrame::Dimensions - 1)))
                 {
-                if ((frame->getDimension(IplImageFrame::Width).mResolution) &&
-                    (frame->getDimension(IplImageFrame::Height).mResolution))
+                if ((frame->getDimensionT(IplImageFrame::Width).mResolution) &&
+                    (frame->getDimensionT(IplImageFrame::Height).mResolution))
                     {
                     if (mImage &&
-                      ((mImage->width() != frame->getDimension(IplImageFrame::Width).mResolution) ||
-                       (mImage->height() != frame->getDimension(IplImageFrame::Height).mResolution)))
+                      ((mImage->width() != frame->getDimensionT(IplImageFrame::Width).mResolution) ||
+                       (mImage->height() != frame->getDimensionT(IplImageFrame::Height).mResolution)))
                         {
                         delete mImage;
                         mImage = NULL;
                         }
 
                     if (!mImage)
-                        mImage = new QImage(frame->getDimension(IplImageFrame::Width).mResolution, frame->getDimension(IplImageFrame::Height).mResolution, QImage::Format_RGB32);
+                        mImage = new QImage(frame->getDimensionT(IplImageFrame::Width).mResolution, frame->getDimensionT(IplImageFrame::Height).mResolution, QImage::Format_RGB32);
 
                     int point[IplImageFrame::Dimensions] = {0};
-                    for (point[IplImageFrame::Height] = 0; point[IplImageFrame::Height] < frame->getDimension(IplImageFrame::Height).mResolution; ++point[IplImageFrame::Height])
-                        for (point[IplImageFrame::Width] = 0; point[IplImageFrame::Width] < frame->getDimension(IplImageFrame::Width).mResolution; ++point[IplImageFrame::Width])
+                    for (point[IplImageFrame::Height] = 0; point[IplImageFrame::Height] < frame->getDimensionT(IplImageFrame::Height).mResolution; ++point[IplImageFrame::Height])
+                        for (point[IplImageFrame::Width] = 0; point[IplImageFrame::Width] < frame->getDimensionT(IplImageFrame::Width).mResolution; ++point[IplImageFrame::Width])
                             {
                             int rgb[3] = {0};
                             if (frame->getMaxDimension() == (IplImageFrame::Dimensions - 1))
-                                rgb[0] = rgb[1] = rgb[2] = frame->getSample(point);
+                                rgb[0] = rgb[1] = rgb[2] = frame->getSampleT(point);
                             else // if (frame->getMaxDimension() == IplImageFrame::Dimensions)
-                                for (point[IplImageFrame::Channels] = 0; point[IplImageFrame::Channels] < frame->getDimension(IplImageFrame::Channels).mResolution; ++point[IplImageFrame::Channels])
-                                    rgb[point[IplImageFrame::Channels]] = frame->getSample(point);
+                                for (point[IplImageFrame::Channels] = 0; point[IplImageFrame::Channels] < frame->getDimensionT(IplImageFrame::Channels).mResolution; ++point[IplImageFrame::Channels])
+                                    rgb[point[IplImageFrame::Channels]] = frame->getSampleT(point);
                             mImage->setPixel(point[IplImageFrame::Width], point[IplImageFrame::Height], qRgb(rgb[2], rgb[1], rgb[0]));
                             }
 

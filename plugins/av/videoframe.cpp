@@ -52,7 +52,7 @@ bool VideoFrame::copyData(const AVFrame& aFrame)
     return ret > 0;
     }
 
-double VideoFrame::getSample(const int *aPoint) const
+double VideoFrame::getSampleT(const int *aPoint) const
     {
     double value = 0.0;
     int offset = (aPoint[Width] + aPoint[Height]*mDimensions[Width].mResolution)*mDimensions[Channels].mResolution + aPoint[Channels];

@@ -20,7 +20,7 @@ public:
     explicit ColorImageFrame();
     ~ColorImageFrame();
 
-    qreal getSample(const int *aPoint) const;
+    qreal getSampleT(const int *aPoint) const;
 
     operator ImageType::Pointer() const { return mImage; }
 
@@ -47,7 +47,7 @@ public:
 
     explicit GrayImageFrame();
 
-    qreal getSample(const int *aPoint) const;
+    qreal getSampleT(const int *aPoint) const;
 
     operator ImageType::Pointer() const { return mImage; }
 
@@ -69,7 +69,7 @@ public:
     enum { Index, Axis, Dimensions };
     explicit PointsFrame();
 
-    qreal getSample(const int *aPoint) const;
+    qreal getSampleT(const int *aPoint) const;
     const PointsFrame& operator=(const std::vector< itk::Point<int> > aPoints)
         {
         mPoints = aPoints;

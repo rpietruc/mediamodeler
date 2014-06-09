@@ -18,26 +18,26 @@ void FormantTransform::process()
             {
             const FrameBase *frame = source->getFrame(i);
             if ((frame->getMaxDimension() == SpectrumFrame::Dimensions) &&
-                (frame->getDimension(SpectrumFrame::Frequency).mResolution > 2))
+                (frame->getDimensionT(SpectrumFrame::Frequency).mResolution > 2))
                 {
-                mFormantFrame.setFrameSamples(frame->getDimension(SpectrumFrame::Time).mResolution);
-                mFormantFrame.setSampleRate(1/frame->getDimension(SpectrumFrame::Time).mDelta);
-                mFormantFrame.setTimeStamp(frame->getDimension(SpectrumFrame::Time).mStartLocation);
+                mFormantFrame.setFrameSamples(frame->getDimensionT(SpectrumFrame::Time).mResolution);
+                mFormantFrame.setSampleRate(1/frame->getDimensionT(SpectrumFrame::Time).mDelta);
+                mFormantFrame.setTimeStamp(frame->getDimensionT(SpectrumFrame::Time).mStartLocation);
                 mFormantFrame.setSourceName(frame->getSourceName());
 
                 int spoint[SpectrumFrame::Dimensions] = {0, 0};
                 int fpoint[FormantFrame::Dimensions] = {0, 0};
                 for (spoint[SpectrumFrame::Time] = fpoint[SpectrumFrame::Time] = 0;
-                     spoint[SpectrumFrame::Time] < frame->getDimension(SpectrumFrame::Time).mResolution;
+                     spoint[SpectrumFrame::Time] < frame->getDimensionT(SpectrumFrame::Time).mResolution;
                    ++spoint[SpectrumFrame::Time], ++fpoint[SpectrumFrame::Time])
                     {
-                    QVector<qreal> spectrumFirstDerivative(frame->getDimension(SpectrumFrame::Frequency).mResolution - 1);
+                    QVector<qreal> spectrumFirstDerivative(frame->getDimensionT(SpectrumFrame::Frequency).mResolution - 1);
                     spoint[SpectrumFrame::Frequency] = 0;
                     for (int i = 0; i < spectrumFirstDerivative.size(); ++i)
                         {
-                        qreal amplitude1 = frame->getSample(spoint);
+                        qreal amplitude1 = frame->getSampleT(spoint);
                         ++spoint[SpectrumFrame::Frequency];
-                        qreal amplitude2 = frame->getSample(spoint);
+                        qreal amplitude2 = frame->getSampleT(spoint);
                         spectrumFirstDerivative[i] = amplitude2 - amplitude1;
                         }
 
@@ -54,11 +54,11 @@ void FormantTransform::process()
                             {
                             if (lowering)
                                 {
-                                if (fpoint[FormantFrame::Formants] < mFormantFrame.getDimension(FormantFrame::Formants).mResolution)
+                                if (fpoint[FormantFrame::Formants] < mFormantFrame.getDimensionT(FormantFrame::Formants).mResolution)
                                     {
-                                    qreal frequency = frame->getDimension(SpectrumFrame::Frequency).mStartLocation
-                                                    + (i - 1)*frame->getDimension(SpectrumFrame::Frequency).mDelta;
-                                    mFormantFrame.setSample(fpoint, frequency);
+                                    qreal frequency = frame->getDimensionT(SpectrumFrame::Frequency).mStartLocation
+                                                    + (i - 1)*frame->getDimensionT(SpectrumFrame::Frequency).mDelta;
+                                    mFormantFrame.setSampleT(fpoint, frequency);
                                     ++fpoint[FormantFrame::Formants];
                                     }
                                 else Q_ASSERT(0 && "not enough space for formants");

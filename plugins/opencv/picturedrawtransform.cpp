@@ -25,17 +25,17 @@ void PictureDrawTransform::process()
                 mPictureFrame.setSourceName(frame->getSourceName());
                 }
             else if ((frame->getMaxDimension() == PointsFrame::Dimensions) &&
-                (frame->getDimension(PointsFrame::Axis).mResolution == PointsFrame::MaxAxis))
+                (frame->getDimensionT(PointsFrame::Axis).mResolution == PointsFrame::MaxAxis))
                 {
                 vector<Point> contour;
-                contour.resize(frame->getDimension(PointsFrame::Index).mResolution);
+                contour.resize(frame->getDimensionT(PointsFrame::Index).mResolution);
                 int point[PointsFrame::Dimensions] = {0, 0};
-                for (point[PointsFrame::Index] = 0; point[PointsFrame::Index] < frame->getDimension(PointsFrame::Index).mResolution; ++point[PointsFrame::Index])
+                for (point[PointsFrame::Index] = 0; point[PointsFrame::Index] < frame->getDimensionT(PointsFrame::Index).mResolution; ++point[PointsFrame::Index])
                     {
                     point[PointsFrame::Axis] = PointsFrame::XAxis;
-                    contour[point[PointsFrame::Index]].x = frame->getSample(point);
+                    contour[point[PointsFrame::Index]].x = frame->getSampleT(point);
                     point[PointsFrame::Axis] = PointsFrame::YAxis;
-                    contour[point[PointsFrame::Index]].y = frame->getSample(point);
+                    contour[point[PointsFrame::Index]].y = frame->getSampleT(point);
                     }
                 contours.push_back(contour);
                 }

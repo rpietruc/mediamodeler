@@ -47,12 +47,12 @@ void SoundDeviceSource::process()
         close();
         mSoundFrame.setSourceName(property("deviceName").toString());
         }
-    if (property("sampleRate").toInt() && (mSoundFrame.getDimension(SoundFrame::Time).mDelta != 1.0/property("sampleRate").toInt()))
+    if (property("sampleRate").toInt() && (mSoundFrame.getDimensionT(SoundFrame::Time).mDelta != 1.0/property("sampleRate").toInt()))
         {
         close();
         mSoundFrame.setSampleTime(1.0/property("sampleRate").toInt());
         }
-    if (mSoundFrame.getDimension(SoundFrame::Channels).mResolution != property("channelsNo").toInt())
+    if (mSoundFrame.getDimensionT(SoundFrame::Channels).mResolution != property("channelsNo").toInt())
         {
         close();
         mSoundFrame.setChannelsNo(property("channelsNo").toInt());
@@ -79,10 +79,10 @@ void SoundDeviceSource::open()
     foreach (QAudioDeviceInfo info, QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
         if (info.deviceName() == mSoundFrame.getSourceName())
             {
-            Q_ASSERT(mSoundFrame.getDimension(SoundFrame::Time).mDelta);
+            Q_ASSERT(mSoundFrame.getDimensionT(SoundFrame::Time).mDelta);
             QAudioFormat format = info.preferredFormat();
-            format.setSampleRate(1.0/mSoundFrame.getDimension(SoundFrame::Time).mDelta);
-            format.setChannelCount(mSoundFrame.getDimension(SoundFrame::Channels).mResolution);
+            format.setSampleRate(1.0/mSoundFrame.getDimensionT(SoundFrame::Time).mDelta);
+            format.setChannelCount(mSoundFrame.getDimensionT(SoundFrame::Channels).mResolution);
 //            format.setSampleType(QAudioFormat::SignedInt);
 //            format.setByteOrder(QAudioFormat::LittleEndian);
 //            format.setCodec("audio/pcm");

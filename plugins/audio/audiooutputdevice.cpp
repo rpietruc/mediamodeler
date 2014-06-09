@@ -26,14 +26,14 @@ qint64 AudioOutputDevice::readData(char *data, qint64 maxlen)
     int sample = 0;
     int point[SoundFrame::Dimensions] = {0, 0};
     for (point[SoundFrame::Time] = 0;
-         (point[SoundFrame::Time] < mSoundFrame.getDimension(SoundFrame::Time).mResolution) &&
+         (point[SoundFrame::Time] < mSoundFrame.getDimensionT(SoundFrame::Time).mResolution) &&
          ((qint64)(sample*sizeof(qint16)) < maxlen);
          ++point[SoundFrame::Time])
         for (point[SoundFrame::Channels] = 0;
-             (point[SoundFrame::Channels] < mSoundFrame.getDimension(SoundFrame::Channels).mResolution) &&
+             (point[SoundFrame::Channels] < mSoundFrame.getDimensionT(SoundFrame::Channels).mResolution) &&
              ((qint64)(sample*sizeof(qint16)) < maxlen);
              ++point[SoundFrame::Channels])
-            ptr[sample++] = qToLittleEndian(static_cast<qint16>(mSoundFrame.getSample(point)*32767.0));
+            ptr[sample++] = qToLittleEndian(static_cast<qint16>(mSoundFrame.getSampleT(point)*32767.0));
 
     if (sample > 0)
         {
@@ -54,5 +54,5 @@ qint64 AudioOutputDevice::writeData(const char *data, qint64 len)
 qint64 AudioOutputDevice::bytesAvailable() const
     {
     qint64 ret = QIODevice::bytesAvailable();
-    return mSoundFrame.getDimension(SoundFrame::Channels).mResolution*mSoundFrame.getDimension(SoundFrame::Time).mResolution*sizeof(qint16) + ret;
+    return mSoundFrame.getDimensionT(SoundFrame::Channels).mResolution*mSoundFrame.getDimensionT(SoundFrame::Time).mResolution*sizeof(qint16) + ret;
     }
