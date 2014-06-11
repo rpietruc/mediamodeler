@@ -12,7 +12,6 @@ FormantTransform::FormantTransform(ElementFactory *aFactory, const QString &aObj
 
 void FormantTransform::process()
     {
-    mFormantFrame.setFormantsNo(property("maxFormants").toInt());
     foreach (const ElementBase *source, mSourceElementsReadySet)
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
@@ -21,6 +20,7 @@ void FormantTransform::process()
                 (frame->getDimensionT(SpectrumFrame::Frequency).mResolution > 2))
                 {
                 mFormantFrame.setFrameSamples(frame->getDimensionT(SpectrumFrame::Time).mResolution);
+                mFormantFrame.setFormantsNoT(property("maxFormants").toInt());
                 mFormantFrame.setSampleRate(1/frame->getDimensionT(SpectrumFrame::Time).mDelta);
                 mFormantFrame.setTimeStamp(frame->getDimensionT(SpectrumFrame::Time).mStartLocation);
                 mFormantFrame.setSourceName(frame->getSourceName());

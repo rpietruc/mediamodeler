@@ -10,19 +10,18 @@ class FormantFrame : public MatrixFrame
 public:
     enum
         {
-        Time = SampleNo, // 0
-        Formants = VectorNo, // 1
+        Time = VectorNo, // 0
+        Formants = ParamNo, // 1
         Dimensions
         };
 
     explicit FormantFrame();
 
-    inline void setFrameSamples(int aSampleNo) { setMaxSamplesT(aSampleNo); }
+    inline void setFrameSamples(int aVectorNo) { setMaxVectors(aVectorNo); }
     void setSampleRate(int aSampleRate);
     inline void setTimeStamp(double aTimeStamp) { mDimensions[Time].mStartLocation = aTimeStamp; }
     inline void incrementTimeStamp() { mDimensions[Time].mStartLocation += mDimensions[Time].mDelta * mDimensions[Time].mResolution; }
-
-    inline void setFormantsNo(int aMaxFormants) { setMaxVectorsT(aMaxFormants); }
+    inline void setFormantsNoT(int aMaxFormants) { setVectorSizeT(aMaxFormants); }
 
 private:
     QString mSourceName;

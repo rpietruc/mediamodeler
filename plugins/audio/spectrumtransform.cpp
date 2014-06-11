@@ -13,8 +13,8 @@ SpectrumTransform::SpectrumTransform(ElementFactory *aFactory, const QString &aO
 
 void SpectrumTransform::process()
     {
-    if (mSpectrumFrame.getResolution() != property("resolution").toInt())
-        mSpectrumFrame.setResolution(property("resolution").toInt(), M_PI);
+    if (mSpectrumFrame.getFrequencyResolution() != property("resolution").toInt())
+        mSpectrumFrame.setFrequencyResolution(property("resolution").toInt(), M_PI);
 
     Q_ASSERT(mSpectrumFrame.getDimensionT(SpectrumFrame::Frequency).mResolution);
     foreach (const ElementBase *source, mSourceElementsReadySet)

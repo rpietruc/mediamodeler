@@ -25,8 +25,8 @@ void AcousticTubeTransform::process()
                 if (!mFilterConverter)
                     mFilterConverter = new CFilterConverter<float>(frame->getDimensionT(FilterFrame::Coefficients).mResolution - 1);
 
-                mAreasFrame.setMaxVectorsT(frame->getDimensionT(FilterFrame::Coefficients).mResolution - 1);
-                mAreasFrame.setMaxSamplesT(frame->getDimensionT(FilterFrame::Time).mResolution);
+                mAreasFrame.setMaxVectors(frame->getDimensionT(FilterFrame::Time).mResolution);
+                mAreasFrame.setVectorSizeT(frame->getDimensionT(FilterFrame::Coefficients).mResolution - 1);
 
                 int point[FilterFrame::Dimensions] = {0, 0, 0};
                 point[FilterFrame::Polynomial] = FilterFrame::Denominator;

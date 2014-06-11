@@ -1,11 +1,11 @@
 #ifndef MEDIA_FILTERFRAME_H
 #define MEDIA_FILTERFRAME_H
 
-#include "matrixframe.h"
+#include "qubeframe.h"
 
 namespace media {
 
-class FilterFrame : public Matrix3DFrame
+class FilterFrame : public QubeFrame
     {
 public:
     enum
@@ -16,16 +16,16 @@ public:
 
     enum
         {
-        Time = SampleNo,
+        Time = PlaneNo,
         Coefficients = VectorNo,
-        Polynomial = PlaneNo,
+        Polynomial = ParamNo,
         Dimensions
         };
 
     explicit FilterFrame();
 
-    inline void setFrameSamples(int aSampleNo) { setMaxSamplesT(aSampleNo); }
-    inline void setResolution(int aResolution) { setMaxVectorsT(aResolution); }
+    inline void setFrameSamples(int aVectorNo) { setVectorSizeT(aVectorNo); }
+    inline void setResolution(int aResolution) { setVectorSizeT(aResolution); }
 
     void setSampleRate(int aSampleRate);
     inline void setTimeStamp(double aTimeStamp) { mDimensions[Time].mStartLocation = aTimeStamp; }

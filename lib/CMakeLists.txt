@@ -10,7 +10,6 @@ set(CMAKE_CXX_FLAGS "${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
 
 set(QMM_LIB_SRC
     exceptions.cpp
-    matrixframe.cpp
     modelcreator.cpp
     elementbase.cpp)
 
@@ -18,6 +17,7 @@ set(QMM_LIB_INC
     exceptions.h
     globaldefs.h
     matrixframe.h
+    qubeframe.h
     modelcreator.h
     elementbase.h
     framebase.h)

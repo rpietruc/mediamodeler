@@ -72,10 +72,10 @@ void SoundFrame::setFrameSize(int aBytesNo)
     mDimensions[Time].mResolution = 8*aBytesNo/mDimensions[Channels].mResolution/mSampleBits;
     }
 
-void SoundFrame::setFrameSamples(int aSampleNo)
+void SoundFrame::setFrameSamples(int aVectorNo)
     {
-    Q_ASSERT(aSampleNo <= 8*mSoundBuffer.size()/mSampleBits);
-    mDimensions[Time].mResolution = aSampleNo;
+    Q_ASSERT(aVectorNo <= 8*mSoundBuffer.size()/mSampleBits);
+    mDimensions[Time].mResolution = aVectorNo;
     }
 
 int SoundFrame::getFrameSize() const

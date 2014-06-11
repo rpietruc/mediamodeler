@@ -10,22 +10,20 @@ class SpectrumFrame : public MatrixFrame
 public:
     enum
         {
-        Time = SampleNo, // 0
-        Frequency = VectorNo, // 1
+        Time = VectorNo, // 0
+        Frequency = ParamNo, // 1
         Dimensions
         };
 
-    explicit SpectrumFrame();
-
-    inline void setFrameSamples(int aSampleNo) { setMaxSamplesT(aSampleNo); }
-    void setSampleRate(int aSampleRate);
-    inline void setTimeStamp(double aTimeStamp) { mDimensions[Time].mStartLocation = aTimeStamp; }
-    inline void incrementTimeStamp() { mDimensions[Time].mStartLocation += mDimensions[Time].mDelta * mDimensions[Time].mResolution; }
-
-    void setResolution(int aResolution, qreal aMaxFrequency);
-    int getResolution() const { return mDimensions[VectorNo].mResolution; }
-
+    explicit SpectrumFrame() {}
     void operator+=(const FrameBase &aFrame);
+
+    void setFrameSamples(int aSamplesNo) { setMaxVectors(aSamplesNo); }
+    void setSampleRate(int aSampleRate);
+    void setTimeStamp(double aTimeStamp) { mDimensions[Time].mStartLocation = aTimeStamp; }
+    void incrementTimeStamp() { mDimensions[Time].mStartLocation += mDimensions[Time].mDelta * mDimensions[Time].mResolution; }
+    void setFrequencyResolution(int aResolution, qreal aMaxFrequency);
+    int getFrequencyResolution() const { return mDimensions[Frequency].mResolution; }
     };
 
 } // namespace media

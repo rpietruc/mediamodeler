@@ -32,7 +32,7 @@ void SpectrogramDestination::process()
                     Q_ASSERT(frame->getDimensionT(SpectrumFrame::Time).mDelta);
                     mSpectrumFrame.setSampleRate(1.0/frame->getDimensionT(SpectrumFrame::Time).mDelta);
                     mSpectrumFrame.setTimeStamp(frame->getDimensionT(SpectrumFrame::Time).mStartLocation);
-                    mSpectrumFrame.setResolution(frame->getDimensionT(SpectrumFrame::Frequency).mResolution, frame->getDimensionT(SpectrumFrame::Frequency).mResolution*frame->getDimensionT(SpectrumFrame::Frequency).mDelta);
+                    mSpectrumFrame.setFrequencyResolution(frame->getDimensionT(SpectrumFrame::Frequency).mResolution, frame->getDimensionT(SpectrumFrame::Frequency).mResolution*frame->getDimensionT(SpectrumFrame::Frequency).mDelta);
                     mSpectrumFrame.setFrameSamples(512);
                     mSpectrogram = new SpectrogramWindow(mSpectrumFrame);
                     mSpectrogram->resize(600, 400);

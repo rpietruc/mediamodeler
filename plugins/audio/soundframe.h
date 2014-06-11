@@ -24,7 +24,7 @@ public:
     inline char* getSoundBuffer() { return mSoundBuffer.data(); }
 
     void setFrameSize(int aBytesNo);
-    void setFrameSamples(int aSampleNo);
+    void setFrameSamples(int aVectorNo);
     bool incrementFrameTime();
     int getFrameSize() const ;
     int getBytesFree() const { return mSoundBuffer.size() - getFrameSize(); }
