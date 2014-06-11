@@ -17,8 +17,8 @@ public:
     const MatrixFrame& operator=(const Matrix& aMatrix)
         {
         mMatrix = aMatrix;
-        mDimensions[ParamNo].mResolution = mMatrix.size();
-        mDimensions[VectorNo].mResolution = mMatrix[0].size();
+        mDimensions[VectorNo].mResolution = mMatrix.size();
+        mDimensions[ParamNo].mResolution = mMatrix[0].size();
         return *this;
         }
 
