@@ -17,12 +17,12 @@ CvScalar randomColor()
     return color;
     }
 
-EllipseDrawTransform::EllipseDrawTransform(ElementFactory *aFactory, const QString &aObjectName) :
+VectorDrawTransform::VectorDrawTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
     }
 
-void EllipseDrawTransform::process()
+void VectorDrawTransform::process()
     {
     QVector<EllipseFrame> ellipses;
     QVector<LineSegmentFrame> lineSegments;

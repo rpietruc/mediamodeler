@@ -1,25 +1,25 @@
-#ifndef MEDIA_ELLIPSEDRAWTRANSFORM_H
-#define MEDIA_ELLIPSEDRAWTRANSFORM_H
+#ifndef MEDIA_VECTORDRAWTRANSFORM_H
+#define MEDIA_VECTORDRAWTRANSFORM_H
 
 #include <pictureframes.h>
 #include "elementbase.h"
 #include <opencv/cv.h>
 #include <QtCore/qglobal.h>
 
-#if defined(ellipsedrawtransform_EXPORTS)
-#  define ELLIPSEDRAWTRANSFORMSHARED_EXPORT Q_DECL_EXPORT
+#if defined(vectordrawtransform_EXPORTS)
+#  define VECTORDRAWTRANSFORMSHARED_EXPORT Q_DECL_EXPORT
 #else
-#  define ELLIPSEDRAWTRANSFORMSHARED_EXPORT Q_DECL_IMPORT
+#  define VECTORDRAWTRANSFORMSHARED_EXPORT Q_DECL_IMPORT
 #endif
 
 namespace media {
 
-class ELLIPSEDRAWTRANSFORMSHARED_EXPORT EllipseDrawTransform : public ElementBase
+class VECTORDRAWTRANSFORMSHARED_EXPORT VectorDrawTransform : public ElementBase
     {
     Q_OBJECT
 
 public:
-    explicit EllipseDrawTransform(ElementFactory *aFactory, const QString &aObjectName);
+    explicit VectorDrawTransform(ElementFactory *aFactory, const QString &aObjectName);
 
     int getFramesNo() const { return 1; }
     const FrameBase *getFrame(int) const { return &mPictureFrame; }
@@ -31,17 +31,17 @@ private:
     IplImageFrame mPictureFrame;
     };
 
-class ELLIPSEDRAWTRANSFORMSHARED_EXPORT EllipseDrawTransformFactory : public ElementFactory
+class VECTORDRAWTRANSFORMSHARED_EXPORT VectorDrawTransformFactory : public ElementFactory
     {
     Q_OBJECT
     Q_INTERFACES(media::ElementFactory)
     Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QCustomPlugin")
 
 protected:
-    const char* getElementName() const { return "EllipseDrawTransform"; }
-    ElementBase* createElement(const QString &aObjectName) { return new EllipseDrawTransform(this, aObjectName); }
+    const char* getElementName() const { return "VectorDrawTransform"; }
+    ElementBase* createElement(const QString &aObjectName) { return new VectorDrawTransform(this, aObjectName); }
     };
 
 } // namespace media
 
-#endif // MEDIA_ELLIPSEDRAWTRANSFORM_H
+#endif // MEDIA_VECTORDRAWTRANSFORM_H
