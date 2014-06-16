@@ -5,12 +5,15 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Svg REQUIRED)
 find_package(OpenCV REQUIRED)
 include_directories(${Qt5Core_INCLUDES})
 include_directories(${Qt5Widgets_INCLUDES})
+include_directories(${Qt5Svg_INCLUDES})
 include_directories(${OpenCV_INCLUDE_DIRS})
 add_definitions(${Qt5Core_DEFINITIONS})
 add_definitions(${Qt5Widgets_DEFINITIONS})
+add_definitions(${Qt5Svg_DEFINITIONS})
 add_definitions(-DQT_PLUGIN)
 add_definitions(-DQT_SHARED)
 #set(CMAKE_CXX_FLAGS "${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
@@ -47,7 +50,9 @@ set(QMM_OPENCV_SRC
     picturethresholdtransform.cpp
     picturewatershedtransform.cpp
     videocamerasource.cpp
-    videofilesource.cpp)
+    videofilesource.cpp
+    vectorfiledestination.cpp
+    vectordrawtransform.cpp)
 
 set(QMM_OPENCV_INC
     pictureframes.h
@@ -66,7 +71,9 @@ set(QMM_OPENCV_INC
     picturethresholdtransform.h
     picturewatershedtransform.h
     videocamerasource.h
-    videofilesource.h)
+    videofilesource.h
+    vectorfiledestination.h
+    vectordrawtransform.h)
 
 add_library(pictureframes STATIC pictureframes.cpp pictureframes.h)
 target_link_libraries(pictureframes ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
@@ -148,3 +155,10 @@ add_library(videofilesource SHARED videofilesource.cpp videofilesource.h)
 target_link_libraries(videofilesource modelcore pictureframes ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
 install(TARGETS videofilesource LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 
+add_library(vectorfiledestination SHARED vectorfiledestination.cpp vectorfiledestination.h)
+target_link_libraries(vectorfiledestination pictureframes ellipseframe linesegmentframe ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Svg_LIBRARIES})
+install(TARGETS vectorfiledestination LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
+
+add_library(vectordrawtransform SHARED vectordrawtransform.cpp vectordrawtransform.h)
+target_link_libraries(vectordrawtransform pictureframes ellipseframe linesegmentframe ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
+install(TARGETS vectordrawtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
