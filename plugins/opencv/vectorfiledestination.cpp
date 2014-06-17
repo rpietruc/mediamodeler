@@ -84,15 +84,17 @@ void VectorFileDestination::process()
     painter.setBrush(Qt::transparent);
     painter.setPen(Qt::SolidLine);
 
+    int ellipsesNo = 0;
     foreach (EllipseFrame frame, ellipses)
-        for (int i = 0; i < frame.getDimensionT(EllipseFrame::VectorNo).mResolution; ++i)
+        for (int i = 0; i < frame.getDimensionT(EllipseFrame::VectorNo).mResolution; ++i, ++ellipsesNo)
             paintEllipticalArc(painter, frame.getRect(i), frame.getStartAngleT(i), frame.getEndAngle(i));
 
+    int linesNo = 0;
     foreach (LineSegmentFrame frame, lineSegments)
-        for (int i = 0; i < frame.getDimensionT(LineSegmentFrame::VectorNo).mResolution; ++i)
+        for (int i = 0; i < frame.getDimensionT(LineSegmentFrame::VectorNo).mResolution; ++i, ++linesNo)
             paintLineSegment(painter, frame.getStartPointT(i), frame.getEndPointT(i));
 
-    emit logMessage(Qt::red, QString("total: %1 ellipses and %2 line segments").arg(ellipses.size()).arg(lineSegments.size()));
+    emit logMessage(Qt::red, QString("total: %1 ellipses and %2 line segments").arg(ellipsesNo).arg(linesNo));
 
 //    paintEllipticalArc(painter, RotatedRect(Point2f(200, 150), Size2f(400, 300), 30), 0, 360);
 //    paintLineSegment(painter, QPointF(0, 0), QPointF(400, 300));
