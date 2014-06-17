@@ -44,6 +44,7 @@ void PictureWatershedTransform::process()
         return;
 
     IplImage *markers = cvCreateImage(cvGetSize(srcImg), IPL_DEPTH_32S, 1);
+    cvZero(markers);
 
     //draws contours on the markers image from CvSeq* contours
     for (size_t i = 0; i < contours.size(); ++i)
