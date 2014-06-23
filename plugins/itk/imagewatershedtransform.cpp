@@ -1,7 +1,7 @@
 #include "imagewatershedtransform.h"
-#include "itkScalarToRGBColormapImageFilter.h"
-#include "itkGradientMagnitudeImageFilter.h"
-#include "itkWatershedImageFilter.h"
+#include <itkScalarToRGBColormapImageFilter.h>
+#include <itkGradientMagnitudeImageFilter.h>
+#include <itkWatershedImageFilter.h>
 
 using namespace itk;
 

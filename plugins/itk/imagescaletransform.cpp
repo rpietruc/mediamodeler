@@ -1,6 +1,6 @@
 #include "imagescaletransform.h"
-#include "itkScaleTransform.h"
-#include "itkResampleImageFilter.h"
+#include <itkScaleTransform.h>
+#include <itkResampleImageFilter.h>
 
 using namespace itk;
 

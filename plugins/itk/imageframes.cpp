@@ -116,6 +116,11 @@ GrayImageFrame::GrayImageFrame() :
     mDimensions[Width].mResolution = mDimensions[Height].mResolution = 0;
     }
 
+void GrayImageFrame::clear()
+    {
+    mImage->FillBuffer(0);
+    }
+
 double GrayImageFrame::getSampleT(const int *aPoint) const
     {
     Q_ASSERT(mImage.IsNotNull());
