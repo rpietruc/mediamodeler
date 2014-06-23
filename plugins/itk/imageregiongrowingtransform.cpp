@@ -11,6 +11,9 @@ ImageRegionGrowingTransform::ImageRegionGrowingTransform(ElementFactory *aFactor
     {
     setProperty("seedX", 0);
     setProperty("seedY", 0);
+    setProperty("multiplier", 2.5);
+    setProperty("iterations", 5);
+    setProperty("radius", 2);
     }
 
 void ImageRegionGrowingTransform::process()
@@ -33,24 +36,24 @@ void ImageRegionGrowingTransform::process()
                 typedef GrayImageFrame::PixelType OutputPixelType;
                 typedef Image<OutputPixelType, Dimension> OutputImageType;
 
-                typedef CastImageFilter<InternalImageType, OutputImageType> CastingFilterType;
-                CastingFilterType::Pointer caster = CastingFilterType::New();
-
                 typedef ConfidenceConnectedImageFilter<InternalImageType, InternalImageType> ConnectedFilterType;
                 ConnectedFilterType::Pointer confidenceConnected = ConnectedFilterType::New();
+
+                typedef CastImageFilter<InternalImageType, OutputImageType> CastingFilterType;
+                CastingFilterType::Pointer caster = CastingFilterType::New();
 
                 confidenceConnected->SetInput(srcImg);
                 caster->SetInput(confidenceConnected->GetOutput());
 
-                confidenceConnected->SetMultiplier(2.5);
-                confidenceConnected->SetNumberOfIterations(5);
+                confidenceConnected->SetMultiplier(property("multiplier").toInt());
+                confidenceConnected->SetNumberOfIterations(property("iterations").toInt());
                 confidenceConnected->SetReplaceValue(255);
 
                 InternalImageType::IndexType index;
                 index[0] = property("seedX").toInt();
                 index[1] = property("seedY").toInt();
                 confidenceConnected->SetSeed(index);
-                confidenceConnected->SetInitialNeighborhoodRadius(2);
+                confidenceConnected->SetInitialNeighborhoodRadius(property("radius").toInt());
 
                 confidenceConnected->Update();
                 caster->Update();
