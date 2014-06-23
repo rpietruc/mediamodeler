@@ -5,7 +5,7 @@
 #include "elementbase.h"
 #include <QtCore/qglobal.h>
 
-#if defined(imagewatershed_EXPORTS)
+#if defined(imageregiongrowing_EXPORTS)
 #  define IMAGEREGIONGROWINGSHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define IMAGEREGIONGROWINGSHARED_EXPORT Q_DECL_IMPORT
@@ -27,7 +27,7 @@ private:
     void process();
 
 private:
-    GrayImageFrame mSrcFrame;
+    FloatImageFrame mSrcFrame;
     GrayImageFrame mImageFrame;
     };
 

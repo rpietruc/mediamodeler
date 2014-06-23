@@ -27,6 +27,7 @@ set(QMM_ITK_SRC
     imagegeneratorsource.cpp
     imagescaletransform.cpp
     imagesmoothingtransform.cpp
+    imagecurvatureflowtransform.cpp
     imagethinningtransform.cpp
     imagewatershedtransform.cpp
     imageregiongrowingtransform.cpp)
@@ -40,6 +41,7 @@ set(QMM_ITK_INC
     imagegeneratorsource.h
     imagescaletransform.h
     imagesmoothingtransform.h
+    imagecurvatureflowtransform.h
     imagethinningtransform.h
     imagewatershedtransform.h
     imageregiongrowingtransform.h)
@@ -76,6 +78,10 @@ install(TARGETS imagescaletransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 add_library(imagesmoothingtransform SHARED imagesmoothingtransform.cpp imagesmoothingtransform.h)
 target_link_libraries(imagesmoothingtransform modelcore imageframes ${Qt5Core_LIBRARIES} ITKCommon)
 install(TARGETS imagesmoothingtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
+
+add_library(imagecurvatureflowtransform SHARED imagecurvatureflowtransform.cpp imagecurvatureflowtransform.h)
+target_link_libraries(imagecurvatureflowtransform modelcore imageframes ${Qt5Core_LIBRARIES} ITKCommon)
+install(TARGETS imagecurvatureflowtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 
 add_library(imagethinningtransform SHARED imagethinningtransform.cpp imagethinningtransform.h)
 target_link_libraries(imagethinningtransform modelcore imageframes ${Qt5Core_LIBRARIES} ITKCommon)

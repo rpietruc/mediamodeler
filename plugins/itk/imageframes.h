@@ -62,6 +62,31 @@ private:
     ImageType::Pointer mImage;
     };
 
+class FloatImageFrame : public FrameBase
+    {
+public:
+    enum { Width, Height, Dimensions };
+
+    typedef float PixelType;
+    typedef itk::Image<PixelType> ImageType;
+
+    explicit FloatImageFrame();
+
+    qreal getSampleT(const int *aPoint) const;
+
+    operator ImageType::Pointer() const { return mImage; }
+
+    void resize(int aWidth, int aHeight);
+    void clear();
+
+    void resizeAndCopyFrame(const FrameBase &aFrame);
+    void resizeAndCopyImage(const ImageType::Pointer aImage);
+    void resizeAndCopy(const FloatImageFrame& aImageColorFrame);
+
+private:
+    ImageType::Pointer mImage;
+    };
+
 class PointsFrame : public FrameBase
     {
 public:

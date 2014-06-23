@@ -199,6 +199,97 @@ void GrayImageFrame::resizeAndCopy(const GrayImageFrame& aImageColorFrame)
     resizeAndCopyImage(aImageColorFrame);
     }
 
+FloatImageFrame::FloatImageFrame() :
+    FrameBase(Dimensions),
+    mImage(ImageType::New())
+    {
+    mDimensions[Width].mDelta = mDimensions[Height].mDelta = 1;
+    mDimensions[Width].mResolution = mDimensions[Height].mResolution = 0;
+    }
+
+void FloatImageFrame::clear()
+    {
+    mImage->FillBuffer(0);
+    }
+
+double FloatImageFrame::getSampleT(const int *aPoint) const
+    {
+    Q_ASSERT(mImage.IsNotNull());
+
+    Q_ASSERT(aPoint[Width] < (int)mImage->GetLargestPossibleRegion().GetSize()[Width]);
+    Q_ASSERT(aPoint[Height] < (int)mImage->GetLargestPossibleRegion().GetSize()[Height]);
+
+    Index<> index;
+    index[Width] = aPoint[Width];
+    index[Height] = aPoint[Height];
+    return mImage->GetPixel(index);
+    }
+
+void FloatImageFrame::resize(int aWidth, int aHeight)
+    {
+    if ((mDimensions[Width].mResolution != aWidth) || (mDimensions[Height].mResolution != aHeight))
+        {
+        mDimensions[Width].mResolution = aWidth;
+        mDimensions[Height].mResolution = aHeight;
+
+        Index<> index;
+        index.Fill(0);
+        Size<> size;
+        size[Width] = aWidth;
+        size[Height] = aHeight;
+        ImageType::RegionType region(index, size);
+        mImage->SetRegions(region);
+        mImage->Allocate();
+        PixelType pixel = 0;
+        mImage->FillBuffer(pixel);
+        }
+    }
+
+void FloatImageFrame::resizeAndCopyFrame(const FrameBase &aFrame)
+    {
+    if (((aFrame.getMaxDimension() == Dimensions) || (aFrame.getMaxDimension() == ColorImageFrame::Dimensions)) && !aFrame.isEmpty())
+        {
+        resize(aFrame.getDimensionT(Width).mResolution, aFrame.getDimensionT(Height).mResolution);
+
+        int point[ColorImageFrame::Dimensions];
+        Index<> index;
+        PixelType pixel;
+        for (point[Height] = 0; point[Height] < (int)mImage->GetLargestPossibleRegion().GetSize()[Height]; ++point[Height])
+            {
+            index[Height] = point[Height];
+            for (point[Width] = 0; point[Width] < (int)mImage->GetLargestPossibleRegion().GetSize()[Width]; ++point[Width])
+                {
+                index[Width] = point[Width];
+                point[ColorImageFrame::Channels] = 0;
+                pixel = aFrame.getSampleT(point);
+                if ((aFrame.getMaxDimension() == ColorImageFrame::Dimensions) && (aFrame.getDimensionT(ColorImageFrame::Channels).mResolution > 1))
+                    {
+                    double sum = pixel;
+                    for (point[ColorImageFrame::Channels] = 1; point[ColorImageFrame::Channels] < aFrame.getDimensionT(ColorImageFrame::Channels).mResolution; ++point[ColorImageFrame::Channels])
+                        sum += aFrame.getSampleT(point);
+                    pixel = sum / aFrame.getDimensionT(ColorImageFrame::Channels).mResolution;
+                    }
+                mImage->SetPixel(index, pixel);
+                }
+            }
+        }
+    }
+
+void FloatImageFrame::resizeAndCopyImage(const ImageType::Pointer aImage)
+    {
+    resize((int)aImage->GetLargestPossibleRegion().GetSize()[0], (int)aImage->GetLargestPossibleRegion().GetSize()[1]);
+
+    Index<> index;
+    for (index[Width] = 0; index[Width] < (int)mImage->GetLargestPossibleRegion().GetSize()[Width]; ++index[Width])
+        for (index[Height] = 0; index[Height] < (int)mImage->GetLargestPossibleRegion().GetSize()[Height]; ++index[Height])
+            mImage->SetPixel(index, aImage->GetPixel(index));
+    }
+
+void FloatImageFrame::resizeAndCopy(const FloatImageFrame& aImageColorFrame)
+    {
+    resizeAndCopyImage(aImageColorFrame);
+    }
+
 PointsFrame::PointsFrame() :
     FrameBase(Dimensions)
     {
