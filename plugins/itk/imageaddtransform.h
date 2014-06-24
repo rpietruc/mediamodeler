@@ -27,7 +27,6 @@ private:
     void process();
 
 private:
-    QVector<GrayImageFrame> mSrcFrames;
     GrayImageFrame mImageFrame;
     };
 

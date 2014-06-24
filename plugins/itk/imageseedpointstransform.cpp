@@ -8,9 +8,11 @@ namespace media {
 ImageSeedPointsTransform::ImageSeedPointsTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
+    setProperty("seedGridX", 1);
+    setProperty("seedGridY", 1);
     }
 
-vector< Point<int> > ImageSeedPointsTransform::getGridPoints(const GrayImageFrame::ImageType::SizeType& aSize, const Point<int>& aResolution)
+vector< Point<int> > ImageSeedPointsTransform::getGridPoints(const GrayImageFrame::ImageType::SizeType& aSize, const Point<int, 2>& aResolution)
     {
     vector< Point<int> > points;
     for (int w = 0; w < aResolution[0]; ++w)
@@ -38,8 +40,9 @@ void ImageSeedPointsTransform::process()
                 GrayImageFrame::ImageType::RegionType region = image->GetLargestPossibleRegion();
                 GrayImageFrame::ImageType::SizeType size = region.GetSize();
 
-                Point<int> resolution;
-                resolution[0] = resolution[1] = 2;
+                Point<int, 2> resolution;
+                resolution[0] = property("seedGridX").toInt();
+                resolution[1] = property("seedGridY").toInt();
                 mPointsFrame = getGridPoints(size, resolution);
                 emit framesReady();
                 break;

@@ -48,11 +48,10 @@ void ImageRegionGrowingTransform::process()
         FloatImageFrame::ImageType::Pointer srcImg = mSrcFrame;
 
         typedef FloatImageFrame::PixelType InternalPixelType;
-        const unsigned int Dimension = 2;
-        typedef Image<InternalPixelType, Dimension> InternalImageType;
+        typedef Image<InternalPixelType, 2> InternalImageType;
 
         typedef GrayImageFrame::PixelType OutputPixelType;
-        typedef Image<OutputPixelType, Dimension> OutputImageType;
+        typedef Image<OutputPixelType, 2> OutputImageType;
 
         typedef ConfidenceConnectedImageFilter<InternalImageType, InternalImageType> ConnectedFilterType;
         ConnectedFilterType::Pointer confidenceConnected = ConnectedFilterType::New();
@@ -65,7 +64,7 @@ void ImageRegionGrowingTransform::process()
 
         confidenceConnected->SetMultiplier(property("multiplier").toInt());
         confidenceConnected->SetNumberOfIterations(property("iterations").toInt());
-        confidenceConnected->SetReplaceValue(255);
+        confidenceConnected->SetReplaceValue(rand()%255);
 
         InternalImageType::IndexType index;
         index[0] = seedPoints.at(i)[0];
@@ -77,7 +76,7 @@ void ImageRegionGrowingTransform::process()
         confidenceConnected->Update();
         caster->Update();
 
-//        mImageFrames.at(i).clear();
+//        mImageFrames[i].clear();
         mImageFrames[i].setSourceName(mSrcFrame.getSourceName());
         mImageFrames[i].resizeAndCopyImage(caster->GetOutput());
         emit framesReady();
