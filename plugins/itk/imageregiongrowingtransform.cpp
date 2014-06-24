@@ -3,7 +3,6 @@
 #include <itkCastImageFilter.h>
 
 using namespace itk;
-using namespace std;
 
 namespace media {
 
@@ -17,7 +16,7 @@ ImageRegionGrowingTransform::ImageRegionGrowingTransform(ElementFactory *aFactor
 
 void ImageRegionGrowingTransform::process()
     {
-    vector< Point<int> > seedPoints;
+    QVector< Point<int> > seedPoints;
     foreach (const ElementBase *source, mSourceElementsReadySet)
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
@@ -38,13 +37,13 @@ void ImageRegionGrowingTransform::process()
                 }
             else if ((frame->getMaxDimension() == ColorImageFrame::Dimensions) || (frame->getMaxDimension() == GrayImageFrame::Dimensions))
                 {
-                mImageFrame.clear();
-                mImageFrame.setSourceName(frame->getSourceName());
+                mSrcFrame.setSourceName(frame->getSourceName());
                 mSrcFrame.resizeAndCopyFrame(*frame);
                 }
             }
 
-    if (seedPoints.size() > 0)
+    mImageFrames.resize(seedPoints.size());
+    for (int i = 0; i < seedPoints.size(); ++i)
         {
         FloatImageFrame::ImageType::Pointer srcImg = mSrcFrame;
 
@@ -69,9 +68,8 @@ void ImageRegionGrowingTransform::process()
         confidenceConnected->SetReplaceValue(255);
 
         InternalImageType::IndexType index;
-        Point<int> seedPoint = seedPoints.at(0);
-        index[0] = seedPoint[0];
-        index[1] = seedPoint[1];
+        index[0] = seedPoints.at(i)[0];
+        index[1] = seedPoints.at(i)[1];
         emit logMessage(Qt::black, QString("point (%1, %2)").arg(index[0]).arg(index[1]));
         confidenceConnected->SetSeed(index);
         confidenceConnected->SetInitialNeighborhoodRadius(property("radius").toInt());
@@ -79,7 +77,9 @@ void ImageRegionGrowingTransform::process()
         confidenceConnected->Update();
         caster->Update();
 
-        mImageFrame.resizeAndCopyImage(caster->GetOutput());
+//        mImageFrames.at(i).clear();
+        mImageFrames[i].setSourceName(mSrcFrame.getSourceName());
+        mImageFrames[i].resizeAndCopyImage(caster->GetOutput());
         emit framesReady();
         }
     }

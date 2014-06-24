@@ -10,6 +10,21 @@ ImageSeedPointsTransform::ImageSeedPointsTransform(ElementFactory *aFactory, con
     {
     }
 
+vector< Point<int> > ImageSeedPointsTransform::getGridPoints(const GrayImageFrame::ImageType::SizeType& aSize, const Point<int>& aResolution)
+    {
+    vector< Point<int> > points;
+    for (int w = 0; w < aResolution[0]; ++w)
+        for (int h = 0; h < aResolution[1]; ++h)
+            {
+            Point<int> point;
+            point[0] = (w + 1)*(double)aSize[0]/(double)(aResolution[0] + 1);
+            point[1] = (h + 1)*(double)aSize[1]/(double)(aResolution[1] + 1);
+            emit logMessage(Qt::black, QString("point (%1, %2)").arg(point[0]).arg(point[1]));
+            points.push_back(point);
+            }
+    return points;
+    }
+
 void ImageSeedPointsTransform::process()
     {
     foreach (const ElementBase *source, mSourceElementsReadySet)
@@ -19,16 +34,13 @@ void ImageSeedPointsTransform::process()
             if ((frame->getMaxDimension() == ColorImageFrame::Dimensions) || (frame->getMaxDimension() == GrayImageFrame::Dimensions))
                 {
                 mSrcFrame.resizeAndCopyFrame(*frame);
+                GrayImageFrame::ImageType::Pointer image = mSrcFrame;
+                GrayImageFrame::ImageType::RegionType region = image->GetLargestPossibleRegion();
+                GrayImageFrame::ImageType::SizeType size = region.GetSize();
 
-                Point<int> point;
-                point[0] = mSrcFrame.getDimensionT(GrayImageFrame::Width).mResolution/2;
-                point[1] = mSrcFrame.getDimensionT(GrayImageFrame::Height).mResolution/2;
-                vector< Point<int> > points;
-                points.push_back(point);
-                mPointsFrame.operator =(points);
-
-                emit logMessage(Qt::black, QString("point (%1, %2)").arg(point[0]).arg(point[1]));
-
+                Point<int> resolution;
+                resolution[0] = resolution[1] = 2;
+                mPointsFrame = getGridPoints(size, resolution);
                 emit framesReady();
                 break;
                 }

@@ -26,6 +26,8 @@ public:
 private:
     void process();
 
+    std::vector< itk::Point<int> > getGridPoints(const GrayImageFrame::ImageType::SizeType& aSize, const itk::Point<int>& aResolution);
+
 private:
     GrayImageFrame mSrcFrame;
     PointsFrame mPointsFrame;

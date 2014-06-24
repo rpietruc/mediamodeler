@@ -20,15 +20,15 @@ class IMAGEREGIONGROWINGSHARED_EXPORT ImageRegionGrowingTransform : public Eleme
 public:
     explicit ImageRegionGrowingTransform(ElementFactory *aFactory, const QString &aObjectName);
 
-    int getFramesNo() const { return 1; }
-    const FrameBase *getFrame(int) const { return &mImageFrame; }
+    int getFramesNo() const { return mImageFrames.size(); }
+    const FrameBase *getFrame(int aIndex) const { return &mImageFrames.at(aIndex); }
 
 private:
     void process();
 
 private:
     FloatImageFrame mSrcFrame;
-    GrayImageFrame mImageFrame;
+    QVector<GrayImageFrame> mImageFrames;
     };
 
 class IMAGEREGIONGROWINGSHARED_EXPORT ImageRegionGrowingTransformFactory : public ElementFactory
