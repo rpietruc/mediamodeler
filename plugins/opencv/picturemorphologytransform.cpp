@@ -28,7 +28,7 @@ void PictureMorphologyTransform::process()
                 IplImage* srcImg = mSrcFrame;
                 mPictureFrame.resize(srcImg->width, srcImg->height);
 
-                Q_ASSERT(mStructuringElement);
+                Exc::throwExcCodeIfFalse(mStructuringElement, 0, __FILE__, __LINE__);
                 if (mStructuringElement->nCols != (property("morphologySize").toInt()*2 + 1))
                     {
                     cvReleaseStructuringElement(&mStructuringElement);

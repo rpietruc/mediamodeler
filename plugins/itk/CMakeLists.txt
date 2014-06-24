@@ -30,7 +30,8 @@ set(QMM_ITK_SRC
     imagecurvatureflowtransform.cpp
     imagethinningtransform.cpp
     imagewatershedtransform.cpp
-    imageregiongrowingtransform.cpp)
+    imageregiongrowingtransform.cpp
+    imageseedpointstransform.cpp)
 
 set(QMM_ITK_INC
     imageframes.h 
@@ -44,7 +45,8 @@ set(QMM_ITK_INC
     imagecurvatureflowtransform.h
     imagethinningtransform.h
     imagewatershedtransform.h
-    imageregiongrowingtransform.h)
+    imageregiongrowingtransform.h
+    imageseedpointstransform.cpp)
 
 add_library(imageframes STATIC imageframes.cpp imageframes.h)
 target_link_libraries(imageframes ${Qt5Core_LIBRARIES} ITKCommon)
@@ -94,3 +96,7 @@ install(TARGETS imagewatershedtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 add_library(imageregiongrowingtransform SHARED imageregiongrowingtransform.cpp imageregiongrowingtransform.h)
 target_link_libraries(imageregiongrowingtransform modelcore imageframes ${Qt5Core_LIBRARIES} ITKCommon ITKWatersheds)
 install(TARGETS imageregiongrowingtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
+
+add_library(imageseedpointstransform SHARED imageseedpointstransform.cpp imageseedpointstransform.h)
+target_link_libraries(imageseedpointstransform modelcore imageframes ${Qt5Core_LIBRARIES} ITKCommon ITKWatersheds)
+install(TARGETS imageseedpointstransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
