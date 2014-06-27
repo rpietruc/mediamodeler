@@ -1,23 +1,28 @@
 #include "potraceframes.h"
 #include "exceptions.h"
 
-/* macros for writing individual bitmap pixels */
-//#define BM_WORDBITS (8*BM_WORDSIZE)
-//#define BM_HIBIT (((potrace_word)1)<<(BM_WORDBITS-1))
-//#define bm_scanline(bm, y) ((bm)->map + (y)*(bm)->dy)
-//#define bm_index(bm, x, y) (&bm_scanline(bm, y)[(x)/BM_WORDBITS])
-//#define bm_mask(x) (BM_HIBIT >> ((x) & (BM_WORDBITS-1)))
-//#define bm_range(x, a) ((int)(x) >= 0 && (int)(x) < (a))
-//#define bm_safe(bm, x, y) (bm_range(x, (bm)->w) && bm_range(y, (bm)->h))
-//#define BM_USET(bm, x, y) (*bm_index(bm, x, y) |= bm_mask(x))
-//#define BM_UCLR(bm, x, y) (*bm_index(bm, x, y) &= ~bm_mask(x))
-//#define BM_UPUT(bm, x, y, b) ((b) ? BM_USET(bm, x, y) : BM_UCLR(bm, x, y))
-//#define BM_PUT(bm, x, y, b) (bm_safe(bm, x, y) ? BM_UPUT(bm, x, y, b) : 0)
+// macros for writing individual bitmap pixels
+#define BM_WORDSIZE ((int)sizeof(potrace_word))
+#define BM_WORDBITS (8*BM_WORDSIZE)
+#define BM_HIBIT (((potrace_word)1)<<(BM_WORDBITS-1))
+#define bm_scanline(bm, y) ((bm)->map + (y)*(bm)->dy)
+#define bm_index(bm, x, y) (&bm_scanline(bm, y)[(x)/BM_WORDBITS])
+#define bm_mask(x) (BM_HIBIT >> ((x) & (BM_WORDBITS-1)))
+#define bm_range(x, a) ((int)(x) >= 0 && (int)(x) < (a))
+#define bm_safe(bm, x, y) (bm_range(x, (bm)->w) && bm_range(y, (bm)->h))
+#define BM_USET(bm, x, y) (*bm_index(bm, x, y) |= bm_mask(x))
+#define BM_UCLR(bm, x, y) (*bm_index(bm, x, y) &= ~bm_mask(x))
+#define BM_UPUT(bm, x, y, b) ((b) ? BM_USET(bm, x, y) : BM_UCLR(bm, x, y))
+#define BM_PUT(bm, x, y, b) (bm_safe(bm, x, y) ? BM_UPUT(bm, x, y, b) : 0)
+
+#define BM_UGET(bm, x, y) (*bm_index(bm, x, y) & bm_mask(x))
+#define BM_UPICK(bm, x, y) (BM_UGET(bm, x, y) ? 1 : 0)
+#define BM_PICK(bm, x, y) (bm_safe(bm, x, y) ? BM_UPICK(bm, x, y) : 0)
 
 static int bm_size(potrace_bitmap_t *bm) { return bm->dy * bm->h * (int)sizeof(potrace_word); }
 static int bm_wordbits() { return 8 * (int)sizeof(potrace_word); }
 
-/* return new un-initialized bitmap. NULL with errno on error */
+// return new un-initialized bitmap. NULL with errno on error
 static potrace_bitmap_t *bm_new(int w, int h)
     {
     potrace_bitmap_t *bm;
@@ -53,8 +58,7 @@ PotraceImageFrame::PotraceImageFrame() :
     FrameBase(Dimensions),
     mBitmap(NULL)
     {
-    mDimensions[Channels].mResolution = 1;
-    mDimensions[Width].mDelta = mDimensions[Height].mDelta = mDimensions[Channels].mDelta = 1;
+    mDimensions[Width].mDelta = mDimensions[Height].mDelta = 1;
     mDimensions[Width].mResolution = mDimensions[Height].mResolution = 0;
     }
 
@@ -64,11 +68,12 @@ PotraceImageFrame::~PotraceImageFrame()
 
 qreal PotraceImageFrame::getSampleT(const int *aPoint) const
     {
-    return 0;
+    return BM_PICK(mBitmap, aPoint[Width], aPoint[Height])*255;
     }
 
 void PotraceImageFrame::setSampleT(const int *aPoint, qreal aValue)
     {
+    BM_PUT(mBitmap, aPoint[Width], aPoint[Height], aValue > 0);
     }
 
 void PotraceImageFrame::resize(int aWidth, int aHeight)
@@ -80,6 +85,9 @@ void PotraceImageFrame::resize(int aWidth, int aHeight)
         }
     if (mBitmap == NULL)
         mBitmap = bm_new(aWidth, aHeight);
+
+    mDimensions[Width].mResolution = aWidth;
+    mDimensions[Height].mResolution = aHeight;
     }
 
 void PotraceImageFrame::clear()

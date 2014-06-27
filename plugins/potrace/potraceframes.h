@@ -9,7 +9,7 @@ namespace media {
 class PotraceImageFrame : public FrameBase
     {
 public:
-    enum { Width, Height, Channels, Dimensions };
+    enum { Width, Height, Dimensions };
 
     explicit PotraceImageFrame();
     ~PotraceImageFrame();
