@@ -19,7 +19,9 @@ public:
     virtual ~VideoFrame();
 
     qreal getSampleT(const int *aPoint) const;
+    void setSampleT(const int *aPoint, qreal aValue);
 
+    void resize(const int *aSize);
     void allocateData(const AVCodecContext& aCodecContext);
     bool copyData(const AVFrame& aFrame);
 

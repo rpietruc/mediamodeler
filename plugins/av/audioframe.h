@@ -19,7 +19,9 @@ public:
     explicit AudioFrame();
     virtual ~AudioFrame();
 
+    void resize(const int *aSize);
     qreal getSampleT(const int *aPoint) const;
+    void setSampleT(const int *aPoint, qreal aValue);
 
     void allocateData(const AVCodecContext& aCodecContext);
     bool copyData(const AVFrame& aFrame);

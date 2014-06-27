@@ -18,7 +18,7 @@ void ImageSmoothingTransform::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if ((frame->getMaxDimension() == ColorImageFrame::Dimensions) || (frame->getMaxDimension() == GrayImageFrame::Dimensions))
+            if (mSrcFrame.isCopyable(*frame))
                 {
                 mImageFrame.setSourceName(frame->getSourceName());
                 mSrcFrame.resizeAndCopyFrame(*frame);

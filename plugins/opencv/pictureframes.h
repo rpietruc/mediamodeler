@@ -9,7 +9,7 @@
 
 namespace media {
 
-class IplImageFrame : public FrameBase
+class IplImageFrame : public MultiChannelFrame
     {
 public:
     enum { Width, Height, Channels, Dimensions };
@@ -18,16 +18,16 @@ public:
     virtual ~IplImageFrame();
 
     qreal getSampleT(const int *aPoint) const;
+    void setSampleT(const int *aPoint, qreal aValue);
 
     operator IplImage*() const { return mIplImage; }
 
-    void resize(int aWidth, int aHeight);
+    void resize(const int *aSize) { resize(aSize[Width], aSize[Height], aSize[Channels]); }
+    void resize(int aWidth, int aHeight, int aChannels);
     void release();
     void clear();
 
-    void resizeAndCopyImage(const IplImage &aIplImage);
-    void resizeAndCopyFrame(const FrameBase &aFrame);
-    void resizeAndCopy(const IplImageFrame &aPictureFrame);
+    const IplImageFrame& operator=(const IplImage &aIplImage);
 
 private:
     int mDepth;
@@ -46,6 +46,13 @@ public:
     explicit PointsFrame();
 
     qreal getSampleT(const int *aPoint) const;
+    void setSampleT(const int *aPoint, qreal aValue);
+
+    void resize(const int* aPoint)
+        {
+        mPoints.resize(aPoint[Index]);
+        }
+
     const PointsFrame& operator=(const std::vector<cv::Point> aPoints)
         {
         mPoints = aPoints;

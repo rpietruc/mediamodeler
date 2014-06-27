@@ -23,8 +23,8 @@ void PictureEdgeDetectionTransform::process()
                 mPictureFrame.setSourceName(frame->getSourceName());
                 mSrcFrame.resizeAndCopyFrame(*frame);
                 IplImage* srcImg = mSrcFrame;
-                mGrayFrame.resizeAndCopyImage(*srcImg);
-                mPictureFrame.resize(srcImg->width, srcImg->height);
+                mGrayFrame = *srcImg;
+                mPictureFrame.resize(srcImg->width, srcImg->height, srcImg->nChannels);
 
                 cvCanny(srcImg, mPictureFrame, property("threshold1").toDouble(), property("threshold2").toDouble(), property("apertureSize").toInt());
 

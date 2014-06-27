@@ -9,7 +9,7 @@
 
 namespace media {
 
-class ColorImageFrame : public FrameBase
+class ColorImageFrame : public MultiChannelFrame
     {
 public:
     enum { Width, Height, Channels, Dimensions };
@@ -21,23 +21,23 @@ public:
     ~ColorImageFrame();
 
     qreal getSampleT(const int *aPoint) const;
+    void setSampleT(const int *aPoint, qreal aValue);
 
     operator ImageType::Pointer() const { return mImage; }
 
+    void resize(const int *aSize) { resize(aSize[Width], aSize[Height]); }
     void resize(int aWidth, int aHeight);
     void resize(const ImageType::SizeType& aSize);
     void release();
     void clear();
 
-    void resizeAndCopyFrame(const FrameBase &aFrame);
-    void resizeAndCopyImage(const ImageType::Pointer aImage);
-    void resizeAndCopy(const ColorImageFrame& aImageColorFrame);
+    const ColorImageFrame& operator=(const ImageType::Pointer aImage);
 
 private:
     ImageType::Pointer mImage;
     };
 
-class GrayImageFrame : public FrameBase
+class GrayImageFrame : public MonoChannelFrame
     {
 public:
     enum { Width, Height, Dimensions };
@@ -48,21 +48,21 @@ public:
     explicit GrayImageFrame();
 
     qreal getSampleT(const int *aPoint) const;
+    void setSampleT(const int *aPoint, qreal aValue);
 
     operator ImageType::Pointer() const { return mImage; }
 
+    void resize(const int *aSize) { resize(aSize[Width], aSize[Height]); }
     void resize(int aWidth, int aHeight);
     void clear();
 
-    void resizeAndCopyFrame(const FrameBase &aFrame);
     void resizeAndCopyImage(const ImageType::Pointer aImage);
-    void resizeAndCopy(const GrayImageFrame& aImageColorFrame);
 
 private:
     ImageType::Pointer mImage;
     };
 
-class FloatImageFrame : public FrameBase
+class FloatImageFrame : public MonoChannelFrame
     {
 public:
     enum { Width, Height, Dimensions };
@@ -73,15 +73,15 @@ public:
     explicit FloatImageFrame();
 
     qreal getSampleT(const int *aPoint) const;
+    void setSampleT(const int *aPoint, qreal aValue);
 
     operator ImageType::Pointer() const { return mImage; }
 
+    void resize(const int *aSize) { resize(aSize[Width], aSize[Height]); }
     void resize(int aWidth, int aHeight);
     void clear();
 
-    void resizeAndCopyFrame(const FrameBase &aFrame);
     void resizeAndCopyImage(const ImageType::Pointer aImage);
-    void resizeAndCopy(const FloatImageFrame& aImageColorFrame);
 
 private:
     ImageType::Pointer mImage;
@@ -95,11 +95,17 @@ public:
     explicit PointsFrame();
 
     qreal getSampleT(const int *aPoint) const;
-    const PointsFrame& operator=(const std::vector< itk::Point<int> > aPoints)
+    void setSampleT(const int *aPoint, qreal aValue);
+
+    void resize(const int *aSize)
+        {
+        mPoints.resize(aSize[Index]);
+        }
+
+    void setPoints(const std::vector< itk::Point<int> > aPoints)
         {
         mPoints = aPoints;
         mDimensions[Index].mResolution = mPoints.size();
-        return *this;
         }
 
 private:

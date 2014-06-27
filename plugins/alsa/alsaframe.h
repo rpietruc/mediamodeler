@@ -22,8 +22,14 @@ public:
     virtual ~AlsaFrame();
 
     qreal getSampleT(const int *aPoint) const;
-
     void setSampleT(const int *aPoint, qreal aValue);
+
+    void resize(const int *aSize)
+        {
+        mDimensions[Time].mResolution = aSize[Time];
+        setChannelsNo(aSize[Channels]);
+        }
+
     void operator+=(const FrameBase &aFrame);
     const qint16 *getSoundBuffer() const { return mSoundBuffer; }
     qint16 *getSoundBuffer() { return mSoundBuffer; }

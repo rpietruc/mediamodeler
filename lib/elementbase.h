@@ -8,7 +8,7 @@
 #include <QDir>
 #include <QString>
 #include <QPluginLoader>
-#include <QMap>
+#include <QSet>
 #include <QVariant>
 
 class SettingsDialog;

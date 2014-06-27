@@ -46,7 +46,7 @@ void ImageWatershedTransform::process()
                 colormapImageFilter->SetColormap(RGBFilterType::Jet);
                 colormapImageFilter->Update();
 
-                mImageFrame.resizeAndCopyImage(colormapImageFilter->GetOutput());
+                mImageFrame = colormapImageFilter->GetOutput();
                 emit framesReady();
                 break;
                 }

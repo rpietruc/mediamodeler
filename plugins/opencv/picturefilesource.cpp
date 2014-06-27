@@ -41,7 +41,7 @@ void PictureFileSource::process()
 
     if (img)
         {
-        mPictureFrame.resizeAndCopyImage(*img);
+        mPictureFrame = *img;
         cvReleaseImage(&img);
         mPictureFrame.setSourceName(mPathList.at(mNextFileIndex - 1));
         emit framesReady();

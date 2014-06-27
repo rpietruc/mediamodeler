@@ -30,6 +30,22 @@ VideoFrame::~VideoFrame()
         av_free(mVideoDataBuffer);
     }
 
+void VideoFrame::resize(const int* aPoint)
+    {
+    // allocate image where the decoded image will be put
+    if (mVideoDataBuffer)
+        av_free(mVideoDataBuffer);
+
+    mVideoBufferSize = avpicture_get_size(mPixelFormat, aPoint[Width], aPoint[Height]);
+    mVideoDataBuffer = reinterpret_cast<uint8_t *>(av_malloc(mVideoBufferSize*sizeof(uint8_t)));
+    mDimensions[Width].mResolution = aPoint[Width];
+    mDimensions[Height].mResolution = aPoint[Height];
+    avpicture_fill(reinterpret_cast<AVPicture *>(mRgbFrame), mVideoDataBuffer, mPixelFormat, mDimensions[Width].mResolution, mDimensions[Height].mResolution);
+    Q_ASSERT(0 && "decide  pix format");
+    //mSwsContext = sws_getContext(mDimensions[Width].mResolution, mDimensions[Height].mResolution, /*aCodecContext.pix_fmt*/,
+      //                           mDimensions[Width].mResolution, mDimensions[Height].mResolution, mPixelFormat, SWS_BICUBIC, NULL, NULL, NULL);
+    }
+
 void VideoFrame::allocateData(const AVCodecContext& aCodecContext)
     {
     // allocate image where the decoded image will be put
@@ -52,7 +68,7 @@ bool VideoFrame::copyData(const AVFrame& aFrame)
     return ret > 0;
     }
 
-double VideoFrame::getSampleT(const int *aPoint) const
+qreal VideoFrame::getSampleT(const int *aPoint) const
     {
     double value = 0.0;
     int offset = (aPoint[Width] + aPoint[Height]*mDimensions[Width].mResolution)*mDimensions[Channels].mResolution + aPoint[Channels];
@@ -60,5 +76,13 @@ double VideoFrame::getSampleT(const int *aPoint) const
     value = mVideoDataBuffer[offset];
     return value;
     }
+
+void VideoFrame::setSampleT(const int *aPoint, qreal aValue)
+    {
+    int offset = (aPoint[Width] + aPoint[Height]*mDimensions[Width].mResolution)*mDimensions[Channels].mResolution + aPoint[Channels];
+    Q_ASSERT(offset < mVideoBufferSize);
+    mVideoDataBuffer[offset] = aValue;
+    }
+
 
 } // namespace media

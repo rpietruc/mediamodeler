@@ -74,7 +74,7 @@ void ImageContourTransform::process()
                                 ++vertexIterator;
                                 }
                             PointsFrame frame;
-                            frame.operator=(points);
+                            frame.setPoints(points);
                             mPointsFrameSet.push_back(frame);
                             cout << endl;
                             }

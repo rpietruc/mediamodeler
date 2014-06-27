@@ -15,12 +15,12 @@ void PictureSmoothingTransform::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if (frame->getMaxDimension() == IplImageFrame::Dimensions)
+            if (mSrcFrame.isCopyable(*frame))
                 {
+                Q_ASSERT(mSrcFrame.resizeAndCopyFrame(*frame));
                 mPictureFrame.setSourceName(frame->getSourceName());
-                mSrcFrame.resizeAndCopyFrame(*frame);
                 IplImage* srcImg = mSrcFrame;
-                mPictureFrame.resize(srcImg->width, srcImg->height);
+                mPictureFrame.resize(srcImg->width, srcImg->height, srcImg->nChannels);
 
                 cvPyrMeanShiftFiltering(srcImg, mPictureFrame, property("spatialRadius").toDouble(), property("colorRadius").toDouble());
 
@@ -31,4 +31,3 @@ void PictureSmoothingTransform::process()
     }
 
 } // namespace media
-

@@ -71,7 +71,7 @@ void VideoCameraSource::process()
     if (img)
         {
         ++mFrameIndex;
-        mPictureFrame.resizeAndCopyImage(*img);
+        mPictureFrame = *img;
         //cvReleaseImage(&img);
         emit framesReady();
         }

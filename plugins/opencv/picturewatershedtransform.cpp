@@ -87,7 +87,7 @@ void PictureWatershedTransform::process()
 //    cvCvtColor(img, img_bw, CV_BGR2GRAY);
 //    cvCvtColor(img_bw, img_gray, CV_GRAY2BGR);
 //    cvAddWeighted(wshed, 0.5, img_gray, 0.5, 0, wshed);
-    mPictureFrame.resizeAndCopyImage(*wshed);
+    mPictureFrame = *wshed;
 
     cvReleaseMat(&color_tab);
     cvReleaseImage(&wshed);

@@ -19,7 +19,7 @@ void PictureContourTransform::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if ((frame->getMaxDimension() == IplImageFrame::Dimensions) || (frame->getMaxDimension() == (IplImageFrame::Dimensions - 1)))
+            if (mSrcFrame.isCopyable(*frame))
                 {
                 mSrcFrame.resizeAndCopyFrame(*frame);
                 vector<vector<Point> > contours;

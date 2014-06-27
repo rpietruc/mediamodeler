@@ -23,6 +23,7 @@ public:
 
     inline char* getSoundBuffer() { return mSoundBuffer.data(); }
 
+    void resize(const int *aSize) {}
     void setFrameSize(int aBytesNo);
     void setFrameSamples(int aVectorNo);
     bool incrementFrameTime();
@@ -38,7 +39,6 @@ public:
     inline void setTimeStamp(double aTimeStamp) { mDimensions[Time].mStartLocation = aTimeStamp; }
     void eatBytes(int aSize);
     void operator+=(const FrameBase &aFrame);
-    const SoundFrame& operator=(const FrameBase &aFrame);
 
 signals:
     void bufferFilled();

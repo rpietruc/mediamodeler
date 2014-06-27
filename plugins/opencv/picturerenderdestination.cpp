@@ -55,7 +55,7 @@ void PictureRenderDestination::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if ((frame->getMaxDimension() == IplImageFrame::Dimensions) || (frame->getMaxDimension() == (IplImageFrame::Dimensions - 1)))
+            if (mPictureFrame.isCopyable(*frame))
                 {
                 mPictureFrame.setSourceName(QString("%1::%2").arg(source->objectName()).arg(frame->getSourceName()));
                 mPictureFrame.resizeAndCopyFrame(*frame);

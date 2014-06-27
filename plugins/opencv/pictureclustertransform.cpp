@@ -16,12 +16,12 @@ void PictureClusterTransform::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if (frame->getMaxDimension() == IplImageFrame::Dimensions)
+            if (mSrcFrame.isCopyable(*frame))
                 {
                 mPictureFrame.setSourceName(frame->getSourceName());
                 mSrcFrame.resizeAndCopyFrame(*frame);
                 IplImage* srcImg = mSrcFrame;
-                mPictureFrame.resize(srcImg->width, srcImg->height);
+                mPictureFrame.resize(srcImg->width, srcImg->height, srcImg->nChannels);
 
                 CvMat *pictureMat = createMatFromImage(srcImg);
                 CvMat *clustersMat = cvCreateMat(srcImg->width*srcImg->height, 1, CV_32SC1);

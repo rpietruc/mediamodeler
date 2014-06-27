@@ -1,4 +1,5 @@
 #include "soundframe.h"
+#include <QDebug>
 
 namespace media {
 
@@ -133,26 +134,4 @@ void SoundFrame::operator+=(const FrameBase &aFrame)
         }
     }
 
-const SoundFrame& SoundFrame::operator=(const FrameBase &aFrame)
-    {
-    Q_ASSERT(aFrame.getMaxDimension() == SoundFrame::Dimensions);
-
-    mDimensions[Time].mDelta = aFrame.getDimensionT(Time).mDelta;
-    mDimensions[Time].mResolution = aFrame.getDimensionT(Time).mResolution;
-    mDimensions[Time].mStartLocation = aFrame.getDimensionT(Time).mStartLocation;
-    setSourceName(aFrame.getSourceName());
-
-    int point[Dimensions] = {0, 0};
-    for (;point[Time] < aFrame.getDimensionT(Time).mResolution; ++point[Time])
-        {
-        for (point[Channels] = 0; point[Channels] < mDimensions[Channels].mResolution; ++point[Channels])
-            {
-            double sample = 0;
-            if (point[Channels] < aFrame.getDimensionT(Channels).mResolution)
-                sample = aFrame.getSampleT(point);
-            setSampleT(point, sample);
-            }
-        }
-    return *this;
-    }
 } // namespace media

@@ -1,4 +1,5 @@
 #include "alsaframe.h"
+#include <QDebug>
 
 namespace media {
 

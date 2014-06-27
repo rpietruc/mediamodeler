@@ -56,7 +56,7 @@ void VideoFileSource::process()
     IplImage* img = cvQueryFrame(mCapture);
     if (img)
         {
-        mPictureFrame.resizeAndCopyImage(*img);
+        mPictureFrame = *img;
         //cvReleaseImage(&img);
         emit framesReady();
         }

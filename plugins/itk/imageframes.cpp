@@ -8,7 +8,7 @@ using namespace itk;
 namespace media {
 
 ColorImageFrame::ColorImageFrame() :
-    FrameBase(Dimensions),
+    MultiChannelFrame(Dimensions),
     mImage(ImageType::New())
     {
     mDimensions[Channels].mResolution = PixelType::Length;
@@ -21,7 +21,7 @@ ColorImageFrame::~ColorImageFrame()
 //    mImage->Delete();
     }
 
-double ColorImageFrame::getSampleT(const int *aPoint) const
+qreal ColorImageFrame::getSampleT(const int *aPoint) const
     {
     Q_ASSERT(mImage.IsNotNull());
 
@@ -33,6 +33,20 @@ double ColorImageFrame::getSampleT(const int *aPoint) const
     index[Width] = aPoint[Width];
     index[Height] = aPoint[Height];
     return mImage->GetPixel(index)[aPoint[Channels]];
+    }
+
+void ColorImageFrame::setSampleT(const int *aPoint, qreal aValue)
+    {
+    Q_ASSERT(mImage.IsNotNull());
+
+    Q_ASSERT(aPoint[Width] < (int)mImage->GetLargestPossibleRegion().GetSize()[Width]);
+    Q_ASSERT(aPoint[Height] < (int)mImage->GetLargestPossibleRegion().GetSize()[Height]);
+    Q_ASSERT(aPoint[Channels] < PixelType::Length);
+
+    Index<> index;
+    index[Width] = aPoint[Width];
+    index[Height] = aPoint[Height];
+    mImage->GetPixel(index)[aPoint[Channels]] = aValue;
     }
 
 void ColorImageFrame::resize(int aWidth, int aHeight)
@@ -70,30 +84,7 @@ void ColorImageFrame::clear()
     mImage->FillBuffer(pixel);
     }
 
-void ColorImageFrame::resizeAndCopyFrame(const FrameBase &aFrame)
-    {
-    if ((aFrame.getMaxDimension() == Dimensions) && !aFrame.isEmpty())
-        {
-        resize(aFrame.getDimensionT(Width).mResolution, aFrame.getDimensionT(Height).mResolution);
-
-        int point[Dimensions];
-        Index<> index;
-        PixelType pixel;
-        for (point[Height] = 0; point[Height] < (int)mImage->GetLargestPossibleRegion().GetSize()[Height]; ++point[Height])
-            {
-            index[Height] = point[Height];
-            for (point[Width] = 0; point[Width] < (int)mImage->GetLargestPossibleRegion().GetSize()[Width]; ++point[Width])
-                {
-                index[Width] = point[Width];
-                for (point[Channels] = 0; point[Channels] < PixelType::Length; ++point[Channels])
-                    pixel[point[Channels]] = (aFrame.getDimensionT(Channels).mResolution > point[Channels] ? aFrame.getSampleT(point) : 0);
-                mImage->SetPixel(index, pixel);
-                }
-            }
-        }
-    }
-
-void ColorImageFrame::resizeAndCopyImage(const ImageType::Pointer aImage)
+const ColorImageFrame& ColorImageFrame::operator=(const ImageType::Pointer aImage)
     {
     resize((int)aImage->GetLargestPossibleRegion().GetSize()[0], (int)aImage->GetLargestPossibleRegion().GetSize()[1]);
 
@@ -103,13 +94,8 @@ void ColorImageFrame::resizeAndCopyImage(const ImageType::Pointer aImage)
             mImage->SetPixel(index, aImage->GetPixel(index));
     }
 
-void ColorImageFrame::resizeAndCopy(const ColorImageFrame& aImageColorFrame)
-    {
-    resizeAndCopyImage(aImageColorFrame);
-    }
-
 GrayImageFrame::GrayImageFrame() :
-    FrameBase(Dimensions),
+    MonoChannelFrame(Dimensions),
     mImage(ImageType::New())
     {
     mDimensions[Width].mDelta = mDimensions[Height].mDelta = 1;
@@ -121,7 +107,7 @@ void GrayImageFrame::clear()
     mImage->FillBuffer(0);
     }
 
-double GrayImageFrame::getSampleT(const int *aPoint) const
+qreal GrayImageFrame::getSampleT(const int *aPoint) const
     {
     Q_ASSERT(mImage.IsNotNull());
 
@@ -132,6 +118,19 @@ double GrayImageFrame::getSampleT(const int *aPoint) const
     index[Width] = aPoint[Width];
     index[Height] = aPoint[Height];
     return mImage->GetPixel(index);
+    }
+
+void GrayImageFrame::setSampleT(const int *aPoint, qreal aValue)
+    {
+    Q_ASSERT(mImage.IsNotNull());
+
+    Q_ASSERT(aPoint[Width] < (int)mImage->GetLargestPossibleRegion().GetSize()[Width]);
+    Q_ASSERT(aPoint[Height] < (int)mImage->GetLargestPossibleRegion().GetSize()[Height]);
+
+    Index<> index;
+    index[Width] = aPoint[Width];
+    index[Height] = aPoint[Height];
+    mImage->GetPixel(index) = aValue;
     }
 
 void GrayImageFrame::resize(int aWidth, int aHeight)
@@ -154,36 +153,6 @@ void GrayImageFrame::resize(int aWidth, int aHeight)
         }
     }
 
-void GrayImageFrame::resizeAndCopyFrame(const FrameBase &aFrame)
-    {
-    if (((aFrame.getMaxDimension() == Dimensions) || (aFrame.getMaxDimension() == ColorImageFrame::Dimensions)) && !aFrame.isEmpty())
-        {
-        resize(aFrame.getDimensionT(Width).mResolution, aFrame.getDimensionT(Height).mResolution);
-
-        int point[ColorImageFrame::Dimensions];
-        Index<> index;
-        PixelType pixel;
-        for (point[Height] = 0; point[Height] < (int)mImage->GetLargestPossibleRegion().GetSize()[Height]; ++point[Height])
-            {
-            index[Height] = point[Height];
-            for (point[Width] = 0; point[Width] < (int)mImage->GetLargestPossibleRegion().GetSize()[Width]; ++point[Width])
-                {
-                index[Width] = point[Width];
-                point[ColorImageFrame::Channels] = 0;
-                pixel = aFrame.getSampleT(point);
-                if ((aFrame.getMaxDimension() == ColorImageFrame::Dimensions) && (aFrame.getDimensionT(ColorImageFrame::Channels).mResolution > 1))
-                    {
-                    double sum = pixel;
-                    for (point[ColorImageFrame::Channels] = 1; point[ColorImageFrame::Channels] < aFrame.getDimensionT(ColorImageFrame::Channels).mResolution; ++point[ColorImageFrame::Channels])
-                        sum += aFrame.getSampleT(point);
-                    pixel = sum / aFrame.getDimensionT(ColorImageFrame::Channels).mResolution;
-                    }
-                mImage->SetPixel(index, pixel);
-                }
-            }
-        }
-    }
-
 void GrayImageFrame::resizeAndCopyImage(const ImageType::Pointer aImage)
     {
     resize((int)aImage->GetLargestPossibleRegion().GetSize()[0], (int)aImage->GetLargestPossibleRegion().GetSize()[1]);
@@ -194,13 +163,8 @@ void GrayImageFrame::resizeAndCopyImage(const ImageType::Pointer aImage)
             mImage->SetPixel(index, aImage->GetPixel(index));
     }
 
-void GrayImageFrame::resizeAndCopy(const GrayImageFrame& aImageColorFrame)
-    {
-    resizeAndCopyImage(aImageColorFrame);
-    }
-
 FloatImageFrame::FloatImageFrame() :
-    FrameBase(Dimensions),
+    MonoChannelFrame(Dimensions),
     mImage(ImageType::New())
     {
     mDimensions[Width].mDelta = mDimensions[Height].mDelta = 1;
@@ -212,7 +176,7 @@ void FloatImageFrame::clear()
     mImage->FillBuffer(0);
     }
 
-double FloatImageFrame::getSampleT(const int *aPoint) const
+qreal FloatImageFrame::getSampleT(const int *aPoint) const
     {
     Q_ASSERT(mImage.IsNotNull());
 
@@ -223,6 +187,19 @@ double FloatImageFrame::getSampleT(const int *aPoint) const
     index[Width] = aPoint[Width];
     index[Height] = aPoint[Height];
     return mImage->GetPixel(index);
+    }
+
+void FloatImageFrame::setSampleT(const int *aPoint, qreal aValue)
+    {
+    Q_ASSERT(mImage.IsNotNull());
+
+    Q_ASSERT(aPoint[Width] < (int)mImage->GetLargestPossibleRegion().GetSize()[Width]);
+    Q_ASSERT(aPoint[Height] < (int)mImage->GetLargestPossibleRegion().GetSize()[Height]);
+
+    Index<> index;
+    index[Width] = aPoint[Width];
+    index[Height] = aPoint[Height];
+    mImage->GetPixel(index) = aValue;
     }
 
 void FloatImageFrame::resize(int aWidth, int aHeight)
@@ -245,36 +222,6 @@ void FloatImageFrame::resize(int aWidth, int aHeight)
         }
     }
 
-void FloatImageFrame::resizeAndCopyFrame(const FrameBase &aFrame)
-    {
-    if (((aFrame.getMaxDimension() == Dimensions) || (aFrame.getMaxDimension() == ColorImageFrame::Dimensions)) && !aFrame.isEmpty())
-        {
-        resize(aFrame.getDimensionT(Width).mResolution, aFrame.getDimensionT(Height).mResolution);
-
-        int point[ColorImageFrame::Dimensions];
-        Index<> index;
-        PixelType pixel;
-        for (point[Height] = 0; point[Height] < (int)mImage->GetLargestPossibleRegion().GetSize()[Height]; ++point[Height])
-            {
-            index[Height] = point[Height];
-            for (point[Width] = 0; point[Width] < (int)mImage->GetLargestPossibleRegion().GetSize()[Width]; ++point[Width])
-                {
-                index[Width] = point[Width];
-                point[ColorImageFrame::Channels] = 0;
-                pixel = aFrame.getSampleT(point);
-                if ((aFrame.getMaxDimension() == ColorImageFrame::Dimensions) && (aFrame.getDimensionT(ColorImageFrame::Channels).mResolution > 1))
-                    {
-                    double sum = pixel;
-                    for (point[ColorImageFrame::Channels] = 1; point[ColorImageFrame::Channels] < aFrame.getDimensionT(ColorImageFrame::Channels).mResolution; ++point[ColorImageFrame::Channels])
-                        sum += aFrame.getSampleT(point);
-                    pixel = sum / aFrame.getDimensionT(ColorImageFrame::Channels).mResolution;
-                    }
-                mImage->SetPixel(index, pixel);
-                }
-            }
-        }
-    }
-
 void FloatImageFrame::resizeAndCopyImage(const ImageType::Pointer aImage)
     {
     resize((int)aImage->GetLargestPossibleRegion().GetSize()[0], (int)aImage->GetLargestPossibleRegion().GetSize()[1]);
@@ -285,11 +232,6 @@ void FloatImageFrame::resizeAndCopyImage(const ImageType::Pointer aImage)
             mImage->SetPixel(index, aImage->GetPixel(index));
     }
 
-void FloatImageFrame::resizeAndCopy(const FloatImageFrame& aImageColorFrame)
-    {
-    resizeAndCopyImage(aImageColorFrame);
-    }
-
 PointsFrame::PointsFrame() :
     FrameBase(Dimensions)
     {
@@ -297,7 +239,7 @@ PointsFrame::PointsFrame() :
     mDimensions[Axis].mResolution = MaxAxis;
     }
 
-double PointsFrame::getSampleT(const int *aPoint) const
+qreal PointsFrame::getSampleT(const int *aPoint) const
     {
     Q_ASSERT(aPoint[Axis] < MaxAxis);
     Q_ASSERT(aPoint[Index] < (int)mPoints.size());
@@ -305,4 +247,16 @@ double PointsFrame::getSampleT(const int *aPoint) const
     return (aPoint[Axis] == XAxis ? mPoints[aPoint[Index]][0] : mPoints[aPoint[Index]][1]);
     }
 
+void PointsFrame::setSampleT(const int *aPoint, qreal aValue)
+    {
+    Q_ASSERT(aPoint[Axis] < MaxAxis);
+    Q_ASSERT(aPoint[Index] < (int)mPoints.size());
+
+    if (aPoint[Axis] == XAxis)
+        mPoints[aPoint[Index]][0] = aValue;
+    else
+        mPoints[aPoint[Index]][1] = aValue;
+    }
+
 } // namespace media
+

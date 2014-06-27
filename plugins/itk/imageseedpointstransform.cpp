@@ -43,7 +43,7 @@ void ImageSeedPointsTransform::process()
                 Point<int, 2> resolution;
                 resolution[0] = property("seedGridX").toInt();
                 resolution[1] = property("seedGridY").toInt();
-                mPointsFrame = getGridPoints(size, resolution);
+                mPointsFrame.setPoints(getGridPoints(size, resolution));
                 emit framesReady();
                 break;
                 }

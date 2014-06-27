@@ -36,7 +36,7 @@ void ImageAddTransform::process()
                     addFilter->SetInput2((GrayImageFrame::ImageType::Pointer)srcFrame);
                     addFilter->Update();
                     mImageFrame.resizeAndCopyImage(addFilter->GetOutput());
-//                    mImageFrame.resizeAndCopyImage(srcFrame);
+//                    mImageFrame = srcFrame;
                     }
                 }
             }

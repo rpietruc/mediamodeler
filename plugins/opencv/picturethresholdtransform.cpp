@@ -23,7 +23,7 @@ void PictureThresholdTransform::process()
                 mPictureFrame.setSourceName(frame->getSourceName());
                 mSrcFrame.resizeAndCopyFrame(*frame);
                 IplImage* srcImg = mSrcFrame;
-                mPictureFrame.resize(srcImg->width, srcImg->height);
+                mPictureFrame.resize(srcImg->width, srcImg->height, srcImg->nChannels);
 
                 cvThreshold(srcImg, mPictureFrame, property("threshold").toDouble(), property("maxValue").toDouble(), property("type").toInt());
 

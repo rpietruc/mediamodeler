@@ -18,7 +18,7 @@ void ImageCurvatureFlowTransform::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if ((frame->getMaxDimension() == ColorImageFrame::Dimensions) || (frame->getMaxDimension() == GrayImageFrame::Dimensions))
+            if (mSrcFrame.isCopyable(*frame))
                 {
                 mImageFrame.clear();
                 mImageFrame.setSourceName(frame->getSourceName());

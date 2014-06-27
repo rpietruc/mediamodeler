@@ -42,7 +42,7 @@ void ImageScaleTransform::process()
                 resampleFilter->SetInput(srcImg);
                 resampleFilter->SetSize(srcImg->GetLargestPossibleRegion().GetSize());
                 resampleFilter->Update();
-                mImageFrame.resizeAndCopyImage(resampleFilter->GetOutput());
+                mImageFrame = resampleFilter->GetOutput();
 
                 emit framesReady();
                 break;

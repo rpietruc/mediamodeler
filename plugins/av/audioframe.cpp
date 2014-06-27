@@ -1,5 +1,4 @@
 #include "audioframe.h"
-#include <QDebug>
 
 extern "C" {
     #include <libavutil/opt.h>
@@ -41,6 +40,14 @@ double AudioFrame::getSampleT(const int *aPoint) const
     return ptr[aPoint[Time]];
     }
 
+void AudioFrame::setSampleT(const int *aPoint, qreal aValue)
+    {
+    Q_ASSERT(aPoint[Channels] < mDimensions[Channels].mResolution);
+    Q_ASSERT(aPoint[Time] < mMaxSamples);
+    float *ptr = reinterpret_cast<float *>(mBuffers[aPoint[Channels]]);
+    ptr[aPoint[Time]] = aValue;
+    }
+
 void AudioFrame::allocateData(const AVCodecContext& aCodecContext)
     {
     Q_ASSERT(aCodecContext.sample_rate);
@@ -62,6 +69,16 @@ void AudioFrame::allocateData(const AVCodecContext& aCodecContext)
 
     int ret = swr_init(mSwrContext);
     Q_ASSERT(ret >= 0);
+    }
+
+void AudioFrame::resize(const int *aSize)
+    {
+    freeBuffers();
+    av_freep(&mBuffers);
+    av_samples_alloc(mBuffers, &mLineSize, aSize[Channels], aSize[Time], mSampleFormat, 1);
+    mMaxSamples = aSize[Time];
+    mBufferSize = av_samples_get_buffer_size(&mLineSize, aSize[Channels], aSize[Time], mSampleFormat, 1);
+    mBuffers = reinterpret_cast<uint8_t **>(av_mallocz(sizeof(uint8_t *) * aSize[Channels]));
     }
 
 bool AudioFrame::copyData(const AVFrame& aFrame)
