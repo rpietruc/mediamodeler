@@ -60,6 +60,12 @@ public:
         return *this;
         }
 
+    bool isCopyable(const FrameBase& aFrame) const
+        {
+        return FrameBase::isCopyable(aFrame)
+            && (aFrame.getDimensionT(Axis).mResolution == MaxAxis);
+        }
+
 private:
     bool readFromFile(const QString& aFileName);
     void writeToFile(const QString& aFileName) const;

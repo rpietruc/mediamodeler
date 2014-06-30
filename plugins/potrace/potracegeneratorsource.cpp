@@ -1,13 +1,12 @@
 #include "potracegeneratorsource.h"
-#include <math.h>
 
 namespace media {
 
 PotraceGeneratorSource::PotraceGeneratorSource(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
-    setProperty("width", 800);
-    setProperty("height", 600);
+    setProperty("width", 250);
+    setProperty("height", 250);
     mImageFrame.setSourceName(objectName());
     }
 
@@ -26,8 +25,7 @@ void PotraceGeneratorSource::process()
             for (int y = 0; y < mImageFrame.getDimensionT(PotraceImageFrame::Height).mResolution; ++y)
                 {
                 int point[PotraceImageFrame::Dimensions] = {x, y};
-                bool func = ((x*x + y*y*y) % 10000 < 5000);
-                mImageFrame.setSampleT(point, func ? 1 : 0);
+                mImageFrame.setSampleT(point, ((x*x + y*y*y) % 10000 < 5000) ? 1 : 0);
                 }
         emit framesReady();
         }

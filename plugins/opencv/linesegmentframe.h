@@ -32,6 +32,12 @@ public:
         {
         return QVector<double>() << aStartPoint.x() << aStartPoint.y() << aEndPoint.x() << aEndPoint.y();
         }
+
+    bool isCopyable(const FrameBase& aFrame) const
+        {
+        return FrameBase::isCopyable(aFrame) &&
+            (aFrame.getDimensionT(ParamNo).mResolution == VectorSize);
+        }
     };
 
 } // namespace media

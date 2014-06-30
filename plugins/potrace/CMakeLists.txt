@@ -13,10 +13,12 @@ if(Qt5Core_FOUND)
 endif(Qt5Core_FOUND)
 
 set(QMM_POTRACE_SRC
-    potracegeneratorsource.cpp)
+    potracegeneratorsource.cpp
+    potracetracetransform.cpp)
 
 set(QMM_POTRACE_INC
-    potracegeneratorsource.h)
+    potracegeneratorsource.h
+    potracetracetransform.h)
 
 add_library(potraceframes STATIC potraceframes.cpp potraceframes.h)
 target_link_libraries(potraceframes ${Qt5Core_LIBRARIES} potrace)
@@ -27,3 +29,6 @@ add_library(potracegeneratorsource SHARED potracegeneratorsource.cpp potracegene
 target_link_libraries(potracegeneratorsource modelcore potraceframes ${Qt5Core_LIBRARIES} potrace)
 install(TARGETS potracegeneratorsource LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 
+add_library(potracetracetransform SHARED potracetracetransform.cpp potracetracetransform.h)
+target_link_libraries(potracetracetransform modelcore potraceframes ${Qt5Core_LIBRARIES} potrace)
+install(TARGETS potracetracetransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})

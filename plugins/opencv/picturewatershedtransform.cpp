@@ -17,8 +17,7 @@ void PictureWatershedTransform::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if ((frame->getMaxDimension() == PointsFrame::Dimensions) &&
-                (frame->getDimensionT(PointsFrame::Axis).mResolution == PointsFrame::MaxAxis))
+            if (PointsFrame().isCopyable(*frame))
                 {
                 vector<Point> contour;
                 contour.resize(frame->getDimensionT(PointsFrame::Index).mResolution);
@@ -32,7 +31,7 @@ void PictureWatershedTransform::process()
                     }
                 contours.push_back(contour);
                 }
-            else if (frame->getMaxDimension() == IplImageFrame::Dimensions)
+            else if (mSrcFrame.isCopyable(*frame))
                 {
                 mSrcFrame.resizeAndCopyFrame(*frame);
                 mPictureFrame.setSourceName(frame->getSourceName());

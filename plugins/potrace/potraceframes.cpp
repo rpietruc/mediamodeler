@@ -64,6 +64,7 @@ PotraceImageFrame::PotraceImageFrame() :
 
 PotraceImageFrame::~PotraceImageFrame()
     {
+    bm_free(mBitmap);
     }
 
 qreal PotraceImageFrame::getSampleT(const int *aPoint) const

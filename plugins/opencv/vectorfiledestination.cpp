@@ -55,16 +55,15 @@ void VectorFileDestination::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if ((frame->getMaxDimension() == EllipseFrame::Dimensions) &&
-                (frame->getDimensionT(EllipseFrame::ParamNo).mResolution == EllipseFrame::VectorSize))
+            if (EllipseFrame().isCopyable(*frame))
                 ellipses.push_back(EllipseFrame(*frame));
 
-            else if ((frame->getMaxDimension() == LineSegmentFrame::Dimensions) &&
-                (frame->getDimensionT(LineSegmentFrame::ParamNo).mResolution == LineSegmentFrame::VectorSize))
+            else if (LineSegmentFrame().isCopyable(*frame))
                 lineSegments.push_back(LineSegmentFrame(*frame));
 
-            else if (frame->getMaxDimension() == IplImageFrame::Dimensions)
-                size = QSize(frame->getDimensionT(IplImageFrame::Width).mResolution, frame->getDimensionT(IplImageFrame::Height).mResolution);
+            else if (IplImageFrame().isCopyable(*frame))
+                size = QSize(frame->getDimensionT(IplImageFrame::Width).mResolution,
+                             frame->getDimensionT(IplImageFrame::Height).mResolution);
             }
 //    size = QSize(600, 450);
 
