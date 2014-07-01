@@ -26,6 +26,9 @@ public:
 private:
     void process();
 
+    friend void printProgress(double progress, void *privdata);
+    void logProgress(double progress);
+
 private:
     PotracePathFrame mPathFrame;
     };
