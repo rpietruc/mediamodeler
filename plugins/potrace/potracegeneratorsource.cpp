@@ -26,6 +26,7 @@ void PotraceGeneratorSource::process()
                 {
                 int point[PotraceImageFrame::Dimensions] = {x, y};
                 mImageFrame.setSampleT(point, ((x*x + y*y*y) % 10000 < 5000) ? 1 : 0);
+//                mImageFrame.setSampleT(point, ((x - 100)*(x - 100) + (y - 100)*(y - 100) < 2500) ? 1 : 0);
                 }
         emit framesReady();
         }

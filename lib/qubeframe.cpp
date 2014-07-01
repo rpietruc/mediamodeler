@@ -49,7 +49,7 @@ void QubeFrame::setVectorSizeT(int aSize)
 qreal QubeFrame::getSampleT(const int *aPoint) const
     {
     Q_ASSERT(inRange(aPoint));
-    return mQube.at(aPoint[PlaneNo]).at(aPoint[ParamNo]).at(aPoint[VectorNo]);
+    return mQube.at(aPoint[PlaneNo]).at(aPoint[VectorNo]).at(aPoint[ParamNo]);
     }
 
 void QubeFrame::setSampleT(const int *aPoint, qreal aValue)

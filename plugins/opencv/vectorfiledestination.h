@@ -5,15 +5,15 @@
 //#include <QString>
 #include <QtCore/qglobal.h>
 
-#if defined(picturefiledestination_EXPORTS)
-#  define PICTUREFILEDESTINATIONSHARED_EXPORT Q_DECL_EXPORT
+#if defined(vectorfiledestination_EXPORTS)
+#  define VECTORFILEDESTINATIONSHARED_EXPORT Q_DECL_EXPORT
 #else
-#  define PICTUREFILEDESTINATIONSHARED_EXPORT Q_DECL_IMPORT
+#  define VECTORFILEDESTINATIONSHARED_EXPORT Q_DECL_IMPORT
 #endif
 
 namespace media {
 
-class PICTUREFILEDESTINATIONSHARED_EXPORT VectorFileDestination : public ElementBase
+class VECTORFILEDESTINATIONSHARED_EXPORT VectorFileDestination : public ElementBase
     {
     Q_OBJECT
 

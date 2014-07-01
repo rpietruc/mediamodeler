@@ -97,4 +97,128 @@ void PotraceImageFrame::clear()
     memset(mBitmap->map, 0, bm_size(mBitmap));
     }
 
+PotracePathFrame::PotracePathFrame()
+    {
+    mDimensions[Index].mDelta = mDimensions[Point].mDelta = mDimensions[Axis].mDelta = 1;
+    mDimensions[Index].mResolution = mDimensions[Point].mResolution = 0;
+    mDimensions[Axis].mResolution = 2;
+    }
+
+PotracePathFrame::~PotracePathFrame()
+    {
+    }
+
+void PotracePathFrame::resize(const int* aSize)
+    {
+    setMaxPlanes(aSize[PlaneNo]);
+
+    Q_ASSERT(aSize[VectorNo] == PathSize);
+    setMaxVectorsT(PathSize);
+
+    Q_ASSERT(aSize[ParamNo] == MaxAxis);
+    setVectorSizeT(MaxAxis);
+    }
+
+void PotracePathFrame::resizeAndCopy(const potrace_path_t* aPath)
+    {
+    resize(aPath);
+    copy(aPath);
+    }
+
+void PotracePathFrame::resize(const potrace_path_t* aPath)
+    {
+    int pointNo = 0;
+    while (aPath != NULL)
+        {
+        int n = aPath->curve.n;
+        int *tag = aPath->curve.tag;
+        for (int i = 0; i < n; ++i)
+            {
+            switch (tag[i])
+                {
+            case POTRACE_CORNER:
+                pointNo += 2;
+                break;
+
+            case POTRACE_CURVETO:
+                ++pointNo;
+                break;
+                }
+            }
+        aPath = aPath->next;
+        }
+    int aSize[] = {pointNo, PathSize, MaxAxis};
+    resize(aSize);
+    }
+
+void PotracePathFrame::copy(const potrace_path_t* aPath)
+    {
+    potrace_dpoint_t points[PathSize];
+    int pointIndex = 0;
+
+    while (aPath != NULL)
+        {
+        int n = aPath->curve.n;
+        int *tag = aPath->curve.tag;
+        potrace_dpoint_t (*c)[3] = aPath->curve.c;
+
+        points[StartPoint].x = c[n-1][2].x;
+        points[StartPoint].y = c[n-1][2].y;
+
+        for (int i = 0; i < n; ++i)
+            {
+            switch (tag[i])
+                {
+            case POTRACE_CORNER:
+
+                points[FirstPoint].x = points[FirstPoint].y = points[SecondPoint].x = points[SecondPoint].y = 0;
+
+                points[EndPoint].x = c[i][1].x;
+                points[EndPoint].y = c[i][1].y;
+                setCurve(pointIndex++, points);
+                points[StartPoint].x = c[i][1].x;
+                points[StartPoint].y = c[i][1].y;
+
+                points[EndPoint].x = c[i][2].x;
+                points[EndPoint].y = c[i][2].y;
+                setCurve(pointIndex++, points);
+                points[StartPoint].x = c[i][2].x;
+                points[StartPoint].y = c[i][2].y;
+
+                break;
+
+            case POTRACE_CURVETO:
+                points[FirstPoint].x = c[i][0].x;
+                points[FirstPoint].y = c[i][0].y;
+                points[SecondPoint].x = c[i][1].x;
+                points[SecondPoint].y = c[i][1].y;
+                points[EndPoint].x = c[i][2].x;
+                points[EndPoint].y = c[i][2].y;
+                setCurve(pointIndex++, points);
+                points[StartPoint].x = c[i][2].x;
+                points[StartPoint].y = c[i][2].y;
+                break;
+                }
+
+            if (aPath->next == NULL || aPath->next->sign == '+')
+                {
+                //next stroke
+                }
+            }
+        aPath = aPath->next;
+        }
+    }
+
+void PotracePathFrame::setCurve(int aIndex, const potrace_dpoint_t (&aPoints)[PathSize])
+    {
+    int point[Dimensions] = {aIndex, 0, 0};
+    for (point[Point] = 0; point[Point] < PathSize; ++point[Point])
+        {
+        point[Axis] = XAxis;
+        setSampleT(point, aPoints[point[Point]].x);
+        point[Axis] = YAxis;
+        setSampleT(point, aPoints[point[Point]].y);
+        }
+    }
+
 } // namespace media

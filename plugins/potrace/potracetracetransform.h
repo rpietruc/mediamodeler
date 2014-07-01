@@ -2,6 +2,7 @@
 #define MEDIA_POTRACETRACETRANSFORM_H
 
 #include "elementbase.h"
+#include "potraceframes.h"
 #include <QtCore/qglobal.h>
 
 #if defined(potracetrace_EXPORTS)
@@ -19,11 +20,14 @@ class POTRACEGENERATORSHARED_EXPORT PotraceTraceTransform : public ElementBase
 public:
     explicit PotraceTraceTransform(ElementFactory *aFactory, const QString &aObjectName);
 
-//    int getFramesNo() const { return 1; }
-//    const FrameBase *getFrame(int) const { return &mImageFrame; }
+    int getFramesNo() const { return 1; }
+    const FrameBase *getFrame(int) const { return &mPathFrame; }
 
 private:
     void process();
+
+private:
+    PotracePathFrame mPathFrame;
     };
 
 class POTRACEGENERATORSHARED_EXPORT PotraceTraceTransformFactory : public ElementFactory
