@@ -22,15 +22,13 @@ public:
     explicit PictureEdgeDetectionTransform(ElementFactory *aFactory, const QString &aObjectName);
 
     int getFramesNo() const { return 1; }
-    const FrameBase *getFrame(int) const { return &mPictureFrame; }
+    const FrameBase *getFrame(int) const { return &mGrayImg; }
 
 private:
     void process();
 
 private:
-    IplImageFrame mSrcFrame;
-    IplImageFrame mGrayFrame;
-    IplImageFrame mPictureFrame;
+    PictureGrayFrame mGrayImg;
     };
 
 class PICTUREEDGEDETECTIONTRANSFORMSHARED_EXPORT PictureEdgeDetectionTransformFactory : public ElementFactory

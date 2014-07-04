@@ -96,7 +96,7 @@ void MainWindow::loadModel(const QString& aFilePath)
         QObject::connect(box, SIGNAL(settingChanged(QString, QString, QVariant)), this, SLOT(saveSetting(QString, QString, QVariant)));
         QObject::connect(elem, SIGNAL(logMessage(int, QString)), box, SLOT(logMessage(int, QString)));
 
-        static const int cols = 4;
+        static const int cols = 6;
         mUi->gridLayout->addWidget(box, i/cols, i%cols);
         mElemBoxes.push_back(box);
 

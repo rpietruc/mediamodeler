@@ -11,8 +11,9 @@ class EllipseFrame : public MatrixFrame
 public:
     enum { CenterX = 0, CenterY, SizeWidth, SizeHeight, AngleRotate, AngleFrom, AngleTo, VectorSize };
 
+    explicit EllipseFrame() {}
     explicit EllipseFrame(const FrameBase& aFrame);
-    explicit EllipseFrame(const Matrix& aMatrix = Matrix()) { MatrixFrame::operator=(aMatrix); }
+    explicit EllipseFrame(const Matrix& aMatrix) { MatrixFrame::operator=(aMatrix); }
 
     double getStartAngleT(int aIndex) const
         {

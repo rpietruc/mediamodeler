@@ -3,9 +3,7 @@
 namespace media {
 
 PictureEdgeDetectionTransform::PictureEdgeDetectionTransform(ElementFactory *aFactory, const QString &aObjectName) :
-    ElementBase(aFactory, aObjectName),
-    mGrayFrame(1),
-    mPictureFrame(1)
+    ElementBase(aFactory, aObjectName)
     {
     setProperty("threshold1", 50);
     setProperty("threshold2", 100);
@@ -18,15 +16,19 @@ void PictureEdgeDetectionTransform::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if (frame->getMaxDimension() == IplImageFrame::Dimensions)
+            if (mGrayImg.isCopyable(*frame))
                 {
-                mPictureFrame.setSourceName(frame->getSourceName());
-                mSrcFrame.resizeAndCopyFrame(*frame);
-                IplImage* srcImg = mSrcFrame;
-                mGrayFrame = *srcImg;
-                mPictureFrame.resize(srcImg->width, srcImg->height, srcImg->nChannels);
+                PictureGrayFrame srcFrame;
+                srcFrame.resizeAndCopyFrame(*frame);
 
-                cvCanny(srcImg, mPictureFrame, property("threshold1").toDouble(), property("threshold2").toDouble(), property("apertureSize").toInt());
+                mGrayImg.setSourceName(frame->getSourceName());
+                mGrayImg.resize(srcFrame.getDimensionT(PictureGrayFrame::Width).mResolution,
+                                srcFrame.getDimensionT(PictureGrayFrame::Height).mResolution);
+
+                cvCanny(srcFrame, mGrayImg,
+                        property("threshold1").toDouble(),
+                        property("threshold2").toDouble(),
+                        property("apertureSize").toInt());
 
                 emit framesReady();
                 break;

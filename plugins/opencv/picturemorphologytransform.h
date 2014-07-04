@@ -30,9 +30,7 @@ private:
     void process();
 
 private:
-    IplImageFrame mSrcFrame;
-    IplImageFrame mPictureFrame;
-    IplImageFrame mTempFrame;
+    PictureRGBFrame mPictureFrame;
     IplConvKernel* mStructuringElement;
     };
 

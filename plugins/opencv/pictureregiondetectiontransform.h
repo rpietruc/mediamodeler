@@ -31,7 +31,7 @@ private:
     void process();
 
 private:
-    IplImageFrame mPictureFrame;
+    PictureGrayFrame mPictureFrame;
     cv::CascadeClassifier mCascadeClassifier;
     std::vector<cv::Rect> mRectVector;
     };

@@ -30,8 +30,7 @@ private:
     static void imageFromMat(IplImage* img, const CvMat *mtx);
     static void cvKMeansTest(const CvMat *pic, CvMat *cls, int dim);
 
-    IplImageFrame mSrcFrame;
-    IplImageFrame mPictureFrame;
+    PictureGrayFrame mPictureFrame;
     };
 
 class PICTURECLUSTERTRANSFORMSHARED_EXPORT PictureClusterTransformFactory : public ElementFactory

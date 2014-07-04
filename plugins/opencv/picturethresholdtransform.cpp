@@ -3,9 +3,7 @@
 namespace media {
 
 PictureThresholdTransform::PictureThresholdTransform(ElementFactory *aFactory, const QString &aObjectName) :
-    ElementBase(aFactory, aObjectName),
-    mSrcFrame(1),
-    mPictureFrame(1)
+    ElementBase(aFactory, aObjectName)
     {
     setProperty("threshold", 127);
     setProperty("maxValue", 255);
@@ -18,14 +16,19 @@ void PictureThresholdTransform::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if (frame->getMaxDimension() == IplImageFrame::Dimensions)
+            if (mPictureFrame.isCopyable(*frame))
                 {
-                mPictureFrame.setSourceName(frame->getSourceName());
-                mSrcFrame.resizeAndCopyFrame(*frame);
-                IplImage* srcImg = mSrcFrame;
-                mPictureFrame.resize(srcImg->width, srcImg->height, srcImg->nChannels);
+                PictureGrayFrame srcFrame;
+                srcFrame.resizeAndCopyFrame(*frame);
 
-                cvThreshold(srcImg, mPictureFrame, property("threshold").toDouble(), property("maxValue").toDouble(), property("type").toInt());
+                mPictureFrame.setSourceName(frame->getSourceName());
+                mPictureFrame.resize(srcFrame.getDimensionT(PictureGrayFrame::Width).mResolution,
+                                     srcFrame.getDimensionT(PictureGrayFrame::Height).mResolution);
+
+                cvThreshold(srcFrame, mPictureFrame,
+                            property("threshold").toDouble(),
+                            property("maxValue").toDouble(),
+                            property("type").toInt());
 
                 emit framesReady();
                 break;

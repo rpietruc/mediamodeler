@@ -28,7 +28,7 @@ private:
     void process();
 
 private:
-    IplImageFrame mPictureFrame;
+    PictureRGBFrame mPictureFrame;
     };
 
 class PICTUREDRAWTRANSFORMSHARED_EXPORT PictureDrawTransformFactory : public ElementFactory

@@ -30,14 +30,14 @@ void PictureRegionDetectionTransform::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if (frame->getMaxDimension() == IplImageFrame::Dimensions)
+            if (mPictureFrame.isCopyable(*frame))
                 {
                 mPictureFrame.setSourceName(frame->getSourceName());
                 mPictureFrame.resizeAndCopyFrame(*frame);
-                cv::Mat mat((IplImage*)mPictureFrame);
+                cv::Mat mat(mPictureFrame);
                 mCascadeClassifier.detectMultiScale(mat, mRectVector, 1.1, 2, CV_HAAR_FIND_BIGGEST_OBJECT|CV_HAAR_DO_ROUGH_SEARCH|CV_HAAR_DO_CANNY_PRUNING|CV_HAAR_SCALE_IMAGE, cv::Size(30, 30));
                 for (size_t i = 0; i < mRectVector.size(); ++i)
-                    cvRectangleR((IplImage*)mPictureFrame, mRectVector[i], CV_RGB(255,255,255));
+                    cvRectangleR(mPictureFrame, mRectVector[i], cvScalar(255));
 
                 emit framesReady();
                 break;

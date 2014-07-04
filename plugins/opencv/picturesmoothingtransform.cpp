@@ -15,14 +15,18 @@ void PictureSmoothingTransform::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if (mSrcFrame.isCopyable(*frame))
+            if (mPictureFrame.isCopyable(*frame))
                 {
-                Q_ASSERT(mSrcFrame.resizeAndCopyFrame(*frame));
-                mPictureFrame.setSourceName(frame->getSourceName());
-                IplImage* srcImg = mSrcFrame;
-                mPictureFrame.resize(srcImg->width, srcImg->height, srcImg->nChannels);
+                PictureRGBFrame srcFrame;
+                srcFrame.resizeAndCopyFrame(*frame);
 
-                cvPyrMeanShiftFiltering(srcImg, mPictureFrame, property("spatialRadius").toDouble(), property("colorRadius").toDouble());
+                mPictureFrame.setSourceName(frame->getSourceName());
+                mPictureFrame.resize(srcFrame.getDimensionT(PictureRGBFrame::Width).mResolution,
+                                     srcFrame.getDimensionT(PictureRGBFrame::Height).mResolution);
+
+                cvPyrMeanShiftFiltering(srcFrame, mPictureFrame,
+                                        property("spatialRadius").toDouble(),
+                                        property("colorRadius").toDouble());
 
                 emit framesReady();
                 break;

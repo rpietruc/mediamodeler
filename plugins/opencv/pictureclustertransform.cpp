@@ -4,8 +4,7 @@
 namespace media {
 
 PictureClusterTransform::PictureClusterTransform(ElementFactory *aFactory, const QString &aObjectName) :
-    ElementBase(aFactory, aObjectName),
-    mPictureFrame(1)
+    ElementBase(aFactory, aObjectName)
     {
     setProperty("clustersNo", 10);
     }
@@ -16,19 +15,21 @@ void PictureClusterTransform::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if (mSrcFrame.isCopyable(*frame))
+            if (mPictureFrame.isCopyable(*frame))
                 {
+                PictureRGBFrame srcFrame;
+                srcFrame.resizeAndCopyFrame(*frame);
+
                 mPictureFrame.setSourceName(frame->getSourceName());
-                mSrcFrame.resizeAndCopyFrame(*frame);
-                IplImage* srcImg = mSrcFrame;
-                mPictureFrame.resize(srcImg->width, srcImg->height, srcImg->nChannels);
+                mPictureFrame.resize(srcFrame.getDimensionT(PictureRGBFrame::Width).mResolution,
+                                     srcFrame.getDimensionT(PictureRGBFrame::Height).mResolution);
 
-                CvMat *pictureMat = createMatFromImage(srcImg);
-                CvMat *clustersMat = cvCreateMat(srcImg->width*srcImg->height, 1, CV_32SC1);
+                CvMat *pictureMat = createMatFromImage(srcFrame);
+                CvMat *clustersMat = cvCreateMat(srcFrame.getDimensionT(PictureRGBFrame::Width).mResolution*srcFrame.getDimensionT(PictureRGBFrame::Height).mResolution, 1, CV_32SC1);
 
-                //cvKMeansTest(pictureMat, clustersMat, pictureFrame->mIplImage->nChannels);
+//                cvKMeansTest(pictureMat, clustersMat, mPictureFrame.getDimensionT(IplImageFrame::Channels).mResolution);
                 cvKMeans2(pictureMat, property("clustersNo").toInt(), clustersMat, cvTermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 50, 0.1));
-                imageFromMat((IplImage*)mPictureFrame, clustersMat);
+                imageFromMat(mPictureFrame, clustersMat);
 
                 cvReleaseMat(&clustersMat);
                 cvReleaseMat(&pictureMat);

@@ -4,7 +4,6 @@
 #include "elementbase.h"
 #include <QString>
 #include <QtCore/qglobal.h>
-#include "pictureframes.h"
 
 #if defined(picturefiledestination_EXPORTS)
 #  define PICTUREFILEDESTINATIONSHARED_EXPORT Q_DECL_EXPORT
@@ -25,7 +24,6 @@ private:
     void process();
 
 private:
-    IplImageFrame mPictureFrame;
     int mFileIndex;
     };
 

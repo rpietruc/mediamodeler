@@ -36,7 +36,7 @@ private:
 
 private:
     QTimer *mTimer;
-    IplImageFrame mPictureFrame;
+    PictureRGBFrame mPictureFrame;
     bool mImageReady;
 
     static const int DefaultDelay = 25;

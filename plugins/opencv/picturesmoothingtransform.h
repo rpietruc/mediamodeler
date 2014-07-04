@@ -30,8 +30,7 @@ public:
 private:
     void process();
 
-    IplImageFrame mSrcFrame;
-    IplImageFrame mPictureFrame;
+    PictureRGBFrame mPictureFrame;
     };
 
 class PICTURESMOOTHINGSHARED_EXPORT PictureSmoothingTransformFactory : public ElementFactory

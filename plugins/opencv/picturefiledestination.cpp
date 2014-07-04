@@ -1,4 +1,5 @@
 #include "picturefiledestination.h"
+#include "pictureframes.h"
 #include <QDebug>
 
 namespace media {
@@ -16,14 +17,14 @@ void PictureFileDestination::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if (frame->getMaxDimension() == IplImageFrame::Dimensions)
+            PictureRGBFrame rgbImg;
+            if (rgbImg.isCopyable(*frame))
                 {
-                mPictureFrame.resizeAndCopyFrame(*frame);
-                mPictureFrame.setSourceName(property("fileName").toString());
-                QString fileName(mPictureFrame.getSourceName());
+                rgbImg.resizeAndCopyFrame(*frame);
+                QString fileName(property("fileName").toString());
                 if (mFileIndex > 0)
                     fileName.replace(QString(".png"), QString(".%1.png").arg(mFileIndex));
-                cvSaveImage(qPrintable(fileName), (IplImage*)mPictureFrame);
+                cvSaveImage(qPrintable(fileName), (IplImage*)rgbImg);
                 ++mFileIndex;
                 emit framesProcessed();
                 }

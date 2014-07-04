@@ -35,7 +35,7 @@ private:
     int getCamIndex(const QString &aFileName);
 
 private:
-    IplImageFrame mPictureFrame;
+    PictureRGBFrame mPictureFrame;
     CvCapture* mCapture;
     int mFrameIndex;
     };

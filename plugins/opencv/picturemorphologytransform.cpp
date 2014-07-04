@@ -21,12 +21,14 @@ void PictureMorphologyTransform::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if (frame->getMaxDimension() == IplImageFrame::Dimensions)
+            if (mPictureFrame.isCopyable(*frame))
                 {
+                PictureRGBFrame srcFrame;
+                srcFrame.resizeAndCopyFrame(*frame);
+
                 mPictureFrame.setSourceName(frame->getSourceName());
-                mSrcFrame.resizeAndCopyFrame(*frame);
-                IplImage* srcImg = mSrcFrame;
-                mPictureFrame.resize(srcImg->width, srcImg->height, srcImg->nChannels);
+                mPictureFrame.resize(srcFrame.getDimensionT(PictureRGBFrame::Width).mResolution,
+                                     srcFrame.getDimensionT(PictureRGBFrame::Height).mResolution);
 
                 Q_ASSERT(mStructuringElement);
                 if (mStructuringElement->nCols != (property("morphologySize").toInt()*2 + 1))
@@ -34,7 +36,10 @@ void PictureMorphologyTransform::process()
                     cvReleaseStructuringElement(&mStructuringElement);
                     mStructuringElement = cvCreateStructuringElementEx(property("morphologySize").toInt()*2 + 1, property("morphologySize").toInt()*2 + 1, property("morphologySize").toInt(), property("morphologySize").toInt(), CV_SHAPE_RECT, 0);
                     }
-                cvMorphologyEx(srcImg, mPictureFrame, mTempFrame, mStructuringElement, property("operation").toInt(), 1);
+                PictureRGBFrame tempFrame;
+                tempFrame.resize(srcFrame.getDimensionT(PictureRGBFrame::Width).mResolution,
+                                 srcFrame.getDimensionT(PictureRGBFrame::Height).mResolution);
+                cvMorphologyEx(srcFrame, mPictureFrame, tempFrame, mStructuringElement, property("operation").toInt(), 1);
 
                 emit framesReady();
                 break;

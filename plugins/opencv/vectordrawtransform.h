@@ -28,7 +28,7 @@ private:
     void process();
 
 private:
-    IplImageFrame mPictureFrame;
+    PictureRGBFrame mPictureFrame;
     };
 
 class VECTORDRAWTRANSFORMSHARED_EXPORT VectorDrawTransformFactory : public ElementFactory

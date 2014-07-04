@@ -13,6 +13,7 @@ PictureWatershedTransform::PictureWatershedTransform(ElementFactory *aFactory, c
 void PictureWatershedTransform::process()
     {
     vector<vector<Point> > contours;
+    PictureRGBFrame srcFrame;
     foreach (const ElementBase *source, mSourceElementsReadySet)
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
@@ -31,14 +32,14 @@ void PictureWatershedTransform::process()
                     }
                 contours.push_back(contour);
                 }
-            else if (mSrcFrame.isCopyable(*frame))
+            else if (srcFrame.isCopyable(*frame))
                 {
-                mSrcFrame.resizeAndCopyFrame(*frame);
+                srcFrame.resizeAndCopyFrame(*frame);
                 mPictureFrame.setSourceName(frame->getSourceName());
                 }
             }
 
-    IplImage *srcImg = (IplImage*)mSrcFrame;
+    IplImage *srcImg = (IplImage*)srcFrame;
     if (!srcImg || !contours.size())
         return;
 

@@ -63,43 +63,38 @@ void PictureDrawDestination::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if ((frame->getMaxDimension() == IplImageFrame::Dimensions) ||
-                (frame->getMaxDimension() == (IplImageFrame::Dimensions - 1)))
+            if (PictureRGBFrame().isCopyable(*frame))
                 {
-                if ((frame->getDimensionT(IplImageFrame::Width).mResolution) &&
-                    (frame->getDimensionT(IplImageFrame::Height).mResolution))
+                if (mImage &&
+                  ((mImage->width() != frame->getDimensionT(PictureRGBFrame::Width).mResolution) ||
+                   (mImage->height() != frame->getDimensionT(PictureRGBFrame::Height).mResolution)))
                     {
-                    if (mImage &&
-                      ((mImage->width() != frame->getDimensionT(IplImageFrame::Width).mResolution) ||
-                       (mImage->height() != frame->getDimensionT(IplImageFrame::Height).mResolution)))
+                    delete mImage;
+                    mImage = NULL;
+                    }
+
+                if (!mImage)
+                    mImage = new QImage(frame->getDimensionT(PictureRGBFrame::Width).mResolution, frame->getDimensionT(PictureRGBFrame::Height).mResolution, QImage::Format_RGB32);
+
+                int point[PictureRGBFrame::Dimensions] = {0};
+                for (point[PictureRGBFrame::Height] = 0; point[PictureRGBFrame::Height] < frame->getDimensionT(PictureRGBFrame::Height).mResolution; ++point[PictureRGBFrame::Height])
+                    for (point[PictureRGBFrame::Width] = 0; point[PictureRGBFrame::Width] < frame->getDimensionT(PictureRGBFrame::Width).mResolution; ++point[PictureRGBFrame::Width])
                         {
-                        delete mImage;
-                        mImage = NULL;
+                        int rgb[3] = {0};
+                        if (frame->getMaxDimension() == (PictureRGBFrame::Dimensions - 1))
+                            rgb[0] = rgb[1] = rgb[2] = frame->getSampleT(point);
+                        else // if (frame->getMaxDimension() == PictureRGBFrame::Dimensions)
+                            for (point[PictureRGBFrame::Channels] = 0; point[PictureRGBFrame::Channels] < frame->getDimensionT(PictureRGBFrame::Channels).mResolution; ++point[PictureRGBFrame::Channels])
+                                rgb[point[PictureRGBFrame::Channels]] = frame->getSampleT(point);
+                        mImage->setPixel(point[PictureRGBFrame::Width], point[PictureRGBFrame::Height], qRgb(rgb[2], rgb[1], rgb[0]));
                         }
 
-                    if (!mImage)
-                        mImage = new QImage(frame->getDimensionT(IplImageFrame::Width).mResolution, frame->getDimensionT(IplImageFrame::Height).mResolution, QImage::Format_RGB32);
+                mWindow->setWindowTitle(frame->getSourceName());
+                mImageReady = true;
 
-                    int point[IplImageFrame::Dimensions] = {0};
-                    for (point[IplImageFrame::Height] = 0; point[IplImageFrame::Height] < frame->getDimensionT(IplImageFrame::Height).mResolution; ++point[IplImageFrame::Height])
-                        for (point[IplImageFrame::Width] = 0; point[IplImageFrame::Width] < frame->getDimensionT(IplImageFrame::Width).mResolution; ++point[IplImageFrame::Width])
-                            {
-                            int rgb[3] = {0};
-                            if (frame->getMaxDimension() == (IplImageFrame::Dimensions - 1))
-                                rgb[0] = rgb[1] = rgb[2] = frame->getSampleT(point);
-                            else // if (frame->getMaxDimension() == IplImageFrame::Dimensions)
-                                for (point[IplImageFrame::Channels] = 0; point[IplImageFrame::Channels] < frame->getDimensionT(IplImageFrame::Channels).mResolution; ++point[IplImageFrame::Channels])
-                                    rgb[point[IplImageFrame::Channels]] = frame->getSampleT(point);
-                            mImage->setPixel(point[IplImageFrame::Width], point[IplImageFrame::Height], qRgb(rgb[2], rgb[1], rgb[0]));
-                            }
-
-                    mWindow->setWindowTitle(frame->getSourceName());
-                    mImageReady = true;
-
-                    //color frames have priority
-                    if (frame->getMaxDimension() == IplImageFrame::Dimensions)
-                        return;
-                    }
+                //color frames have priority
+                if (frame->getMaxDimension() == PictureRGBFrame::Dimensions)
+                    return;
                 }
             }
     }

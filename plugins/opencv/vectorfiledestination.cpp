@@ -61,9 +61,9 @@ void VectorFileDestination::process()
             else if (LineSegmentFrame().isCopyable(*frame))
                 lineSegments.push_back(LineSegmentFrame(*frame));
 
-            else if (IplImageFrame().isCopyable(*frame))
-                size = QSize(frame->getDimensionT(IplImageFrame::Width).mResolution,
-                             frame->getDimensionT(IplImageFrame::Height).mResolution);
+            else if (PictureRGBFrame().isCopyable(*frame))
+                size = QSize(frame->getDimensionT(PictureRGBFrame::Width).mResolution,
+                             frame->getDimensionT(PictureRGBFrame::Height).mResolution);
             }
 //    size = QSize(600, 450);
 

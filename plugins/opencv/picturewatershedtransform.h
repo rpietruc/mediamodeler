@@ -28,8 +28,7 @@ public:
 private:
     void process();
 
-    IplImageFrame mSrcFrame;
-    IplImageFrame mPictureFrame;
+    PictureRGBFrame mPictureFrame;
     };
 
 class PICTUREWATERSHEDSHARED_EXPORT PictureWatershedTransformFactory : public ElementFactory

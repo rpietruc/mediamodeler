@@ -33,7 +33,7 @@ bool PictureFileSource::event(QEvent *aEvent)
 void PictureFileSource::process()
     {
     //if (mNextFileIndex >= mPathList.size())
-    //    mPictureFrame.releaseImage();
+    //    mRGBImg.releaseImage();
 
     IplImage* img = NULL;
     for (; !img && (mNextFileIndex < mPathList.size()); ++mNextFileIndex)
@@ -41,14 +41,14 @@ void PictureFileSource::process()
 
     if (img)
         {
-        mPictureFrame = *img;
+        mRGBImg = *img;
         cvReleaseImage(&img);
-        mPictureFrame.setSourceName(mPathList.at(mNextFileIndex - 1));
+        mRGBImg.setSourceName(mPathList.at(mNextFileIndex - 1));
         emit framesReady();
         }
     else //if (mNextFileIndex >= mPathList.size())
         {
-        mPictureFrame.release();
+        mRGBImg.release();
         mNextFileIndex = 0;
         emit processingCompleted();
         }

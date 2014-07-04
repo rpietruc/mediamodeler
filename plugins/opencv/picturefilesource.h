@@ -22,7 +22,7 @@ public:
     explicit PictureFileSource(ElementFactory *aFactory, const QString &aObjectName);
 
     int getFramesNo() const { return 1; }
-    const FrameBase *getFrame(int) const { return &mPictureFrame; }
+    const FrameBase *getFrame(int) const { return &mRGBImg; }
 
     bool event(QEvent *aEvent);
 
@@ -30,7 +30,7 @@ private:
     void process();
 
 private:
-    IplImageFrame mPictureFrame;
+    PictureRGBFrame mRGBImg;
     QStringList mPathList;
     int mNextFileIndex;
     };

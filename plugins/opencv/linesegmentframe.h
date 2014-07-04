@@ -11,8 +11,9 @@ class LineSegmentFrame : public MatrixFrame
 public:
     enum { StartPointX = 0, StartPointY, EndPointX, EndPointY, VectorSize };
 
+    explicit LineSegmentFrame() {}
     explicit LineSegmentFrame(const FrameBase& aFrame);
-    explicit LineSegmentFrame(const Matrix& aMatrix = Matrix()) { MatrixFrame::operator=(aMatrix); }
+    explicit LineSegmentFrame(const Matrix& aMatrix) { MatrixFrame::operator=(aMatrix); }
 
     QPointF getStartPointT(int aIndex) const
         {

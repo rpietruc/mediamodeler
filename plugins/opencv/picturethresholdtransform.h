@@ -30,8 +30,7 @@ private:
     void process();
 
 private:
-    IplImageFrame mSrcFrame;
-    IplImageFrame mPictureFrame;
+    PictureGrayFrame mPictureFrame;
     };
 
 class PICTURETHRESHOLDSHARED_EXPORT PictureThresholdTransformFactory : public ElementFactory

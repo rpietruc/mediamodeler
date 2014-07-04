@@ -32,15 +32,13 @@ void VectorDrawTransform::process()
             {
             const FrameBase *frame = source->getFrame(i);
 
-            if ((frame->getMaxDimension() == EllipseFrame::Dimensions) &&
-                (frame->getDimensionT(EllipseFrame::ParamNo).mResolution == EllipseFrame::VectorSize))
+            if (EllipseFrame().isCopyable(*frame))
                 ellipses.push_back(EllipseFrame(*frame));
 
-            else if ((frame->getMaxDimension() == LineSegmentFrame::Dimensions) &&
-                (frame->getDimensionT(LineSegmentFrame::ParamNo).mResolution == LineSegmentFrame::VectorSize))
+            else if (LineSegmentFrame().isCopyable(*frame))
                 lineSegments.push_back(LineSegmentFrame(*frame));
 
-            else if (frame->getMaxDimension() == IplImageFrame::Dimensions)
+            else if (mPictureFrame.isCopyable(*frame))
                 {
                 mPictureFrame.resizeAndCopyFrame(*frame);
                 mPictureFrame.clear();

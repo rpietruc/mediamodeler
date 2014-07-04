@@ -30,7 +30,6 @@ private:
     void setMethod(int aMethod);
 
 private:
-    IplImageFrame mSrcFrame;
     QVector<PointsFrame> mPointsFrameSet;
     };
 

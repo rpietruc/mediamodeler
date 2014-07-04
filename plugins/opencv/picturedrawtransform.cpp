@@ -19,12 +19,12 @@ void PictureDrawTransform::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if (frame->getMaxDimension() == IplImageFrame::Dimensions)
+            if (mPictureFrame.isCopyable(*frame))
                 {
                 mPictureFrame.resizeAndCopyFrame(*frame);
                 mPictureFrame.setSourceName(frame->getSourceName());
                 }
-            else if ((frame->getMaxDimension() == PointsFrame::Dimensions) &&
+            else if (PointsFrame().isCopyable(*frame) &&
                 (frame->getDimensionT(PointsFrame::Axis).mResolution == PointsFrame::MaxAxis))
                 {
                 vector<Point> contour;

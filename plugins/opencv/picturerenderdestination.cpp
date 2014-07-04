@@ -43,7 +43,7 @@ void PictureRenderDestination::showPicture()
     if (mImageReady)
         {
         if (!mPictureFrame.getSourceName().isEmpty())
-            cvShowImage(qPrintable(mPictureFrame.getSourceName()), (IplImage*)mPictureFrame);
+            cvShowImage(qPrintable(mPictureFrame.getSourceName()), mPictureFrame);
         mImageReady = false;
         emit framesProcessed();
         }

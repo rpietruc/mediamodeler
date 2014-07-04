@@ -6,8 +6,7 @@ using namespace std;
 namespace media {
 
 PictureContourTransform::PictureContourTransform(ElementFactory *aFactory, const QString &aObjectName) :
-    ElementBase(aFactory, aObjectName),
-    mSrcFrame(1)
+    ElementBase(aFactory, aObjectName)
     {
     setProperty("method", CV_CHAIN_APPROX_SIMPLE);
     setProperty("minlen", 30);
@@ -19,11 +18,12 @@ void PictureContourTransform::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if (mSrcFrame.isCopyable(*frame))
+            PictureGrayFrame grayImg;
+            if (grayImg.isCopyable(*frame))
                 {
-                mSrcFrame.resizeAndCopyFrame(*frame);
+                grayImg.resizeAndCopyFrame(*frame);
                 vector<vector<Point> > contours;
-                findContours(Mat(mSrcFrame), contours, CV_RETR_LIST, qBound((int)CV_CHAIN_APPROX_NONE, property("method").toInt(), (int)CV_LINK_RUNS));
+                findContours(Mat(grayImg), contours, CV_RETR_LIST, qBound((int)CV_CHAIN_APPROX_NONE, property("method").toInt(), (int)CV_LINK_RUNS));
 
                 mPointsFrameSet.clear();
                 foreach (vector<Point> contour, contours)

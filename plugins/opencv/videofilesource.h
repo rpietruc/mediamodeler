@@ -34,7 +34,7 @@ private:
     void open();
 
 private:
-    IplImageFrame mPictureFrame;
+    PictureRGBFrame mPictureFrame;
     CvCapture* mCapture;
     };
 
