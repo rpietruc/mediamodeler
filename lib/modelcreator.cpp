@@ -1,4 +1,5 @@
 #include "modelcreator.h"
+#include "exceptions.h"
 #include <QDebug>
 
 namespace media {
@@ -22,20 +23,6 @@ int ModelCreator::loadFactories(const QDir& aDir)
     return mFactoryList.size() - size; //new elements no
     }
 
-int ModelCreator::createElement(const QString &aName)
-    {
-    int index = -1;
-    foreach (ElementFactory* factory, mFactoryList)
-        if (aName == factory->getElementName())
-            {
-            index = mElements.size();
-            mElements.push_back(factory->createElement(aName));
-            mElements[index]->setObjectName(QString("%1%2").arg(aName).arg(index));
-            break;
-            }
-    return index;
-    }
-
 ElementBase* ModelCreator::getElement(int aIndex)
     {
     if ((aIndex < mElements.size()) && (aIndex >= 0))
@@ -49,6 +36,20 @@ void ModelCreator::deleteAllElements()
     foreach (ElementBase* e, mElements)
         delete e;
     mElements.clear();
+    }
+
+void ModelCreator::createElement(int aIndex, const QString &aName)
+    {
+    int index = -1;
+    foreach (ElementFactory* factory, mFactoryList)
+        if (aName == factory->getElementName())
+            {
+            index = mElements.size();
+            mElements.push_back(factory->createElement(aName));
+            mElements[index]->setObjectName(QString("%1%2").arg(aName).arg(index));
+            break;
+            }
+    ThrowExcCodeIfFalse(index == aIndex, QString("ModelCreator::createElement(): Cannot load %1").arg(aName), __FILE__, __LINE__);
     }
 
 void ModelCreator::connectElements(int aSrcIdx, int aDstIdx)

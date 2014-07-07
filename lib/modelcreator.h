@@ -17,9 +17,12 @@ public:
     ~ModelCreator();
 
     int loadFactories(const QDir& aDir);
-    int createElement(const QString &aName);
+    int getElementsNo() const { return mElements.size(); }
     ElementBase* getElement(int aIndex);
     void deleteAllElements();
+
+public slots:
+    void createElement(int aIndex, const QString &aName);
     void connectElements(int aSrcIdx, int aDstIdx);
 
 private:

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <modelcreator.h>
+#include <modelreader.h>
 #include <QFileDialog>
 #include <QThread>
 #include <QDebug>
@@ -62,28 +63,18 @@ void MainWindow::releaseModel()
 
 void MainWindow::loadModel(const QString& aFilePath)
     {
-    QSettings modelFile(aFilePath, QSettings::IniFormat);
     QFileInfo fileInfo(aFilePath);
     mModelFile = fileInfo.fileName();
     QSettings settings(QApplication::organizationName(), mModelFile);
 
     releaseModel();
 
-    int index;
-    for (index = 0;; ++index)
-        {
-        QString pluginName = modelFile.value(QString("nodes/%1").arg(index)).toString();
-        if (pluginName.isEmpty())
-            break;
+    ModelReader modelReader;
+    QObject::connect(&modelReader, SIGNAL(createElement(int, QString)), mCreator, SLOT(createElement(int, QString)));
+    QObject::connect(&modelReader, SIGNAL(connectElements(int, int)), mCreator, SLOT(connectElements(int, int)));
+    modelReader.readFile(aFilePath);
 
-        if (index != mCreator->createElement(pluginName))
-            {
-            QMessageBox::warning(this, "loadModel", QString("Cannot load %1").arg(pluginName));
-            return;
-            }
-        }
-
-    for (int i = 0; i < index; ++i)
+    for (int i = 0; i < mCreator->getElementsNo(); ++i)
         {
         ElementBase* elem = mCreator->getElement(i);
         settings.beginGroup(elem->objectName());
@@ -116,16 +107,6 @@ void MainWindow::loadModel(const QString& aFilePath)
 
     foreach (QThread* thread, mElemThreads)
         thread->start();
-
-    for (int i = 0;; ++i)
-        {
-        QString connectionPair = modelFile.value(QString("edges/%1").arg(i)).toString();
-        if (connectionPair.isEmpty())
-            break;
-
-        QStringList connectionList = connectionPair.split(" ");
-        mCreator->connectElements(connectionList.front().toInt(), connectionList.back().toInt());
-        }
 
     QSettings(QApplication::organizationName(), QApplication::applicationName()).setValue(QString("model/last"), aFilePath);
     mUi->groupBox->setTitle(aFilePath);

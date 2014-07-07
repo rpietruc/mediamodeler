@@ -12,6 +12,7 @@ set(QMM_LIB_SRC
     exceptions.cpp
     matrixframe.cpp
     qubeframe.cpp
+    modelreader.cpp
     modelcreator.cpp
     elementbase.cpp
     framebase.cpp)
@@ -21,6 +22,7 @@ set(QMM_LIB_INC
     globaldefs.h
     matrixframe.h
     qubeframe.h
+    modelreader.h
     modelcreator.h
     elementbase.h
     framebase.h)
