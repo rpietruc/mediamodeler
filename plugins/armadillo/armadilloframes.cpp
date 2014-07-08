@@ -5,35 +5,37 @@ using namespace arma;
 
 namespace media {
 
-MatrixFrame::MatrixFrame() :
+ArrayFrame::ArrayFrame() :
     FrameBase(Dimensions)
     {
     mDimensions[Width].mDelta = mDimensions[Height].mDelta = 1;
     mDimensions[Width].mResolution = mDimensions[Height].mResolution = 0;
     }
 
-MatrixFrame::~MatrixFrame()
+ArrayFrame::~ArrayFrame()
     {
     }
 
-qreal MatrixFrame::getSampleT(const int *aPoint) const
+qreal ArrayFrame::getSampleT(const int *aPoint) const
     {
-    return 0;
+    return mMatrix(aPoint[Width], aPoint[Height]);
     }
 
-void MatrixFrame::setSampleT(const int *aPoint, qreal aValue)
+void ArrayFrame::setSampleT(const int *aPoint, qreal aValue)
     {
+    mMatrix(aPoint[Width], aPoint[Height]) = aValue;
     }
 
-void MatrixFrame::resize(int aWidth, int aHeight)
+void ArrayFrame::resize(int aWidth, int aHeight)
     {
     mMatrix.resize(aWidth, aHeight);
     mDimensions[Width].mResolution = aWidth;
     mDimensions[Height].mResolution = aHeight;
     }
 
-void MatrixFrame::clear()
+void ArrayFrame::clear()
     {
+    mMatrix.zeros();
     }
 
 } // namespace media

@@ -1,9 +1,8 @@
 #ifndef MEDIA_PICTUREFILESOURCE_H
 #define MEDIA_PICTUREFILESOURCE_H
 
-#include "elementbase.h"
+#include "filelistsource.h"
 #include "pictureframes.h"
-#include <QStringList>
 #include <QtCore/qglobal.h>
 
 #if defined(picturefilesource_EXPORTS)
@@ -14,7 +13,7 @@
 
 namespace media {
 
-class PICTUREFILESOURCESHARED_EXPORT PictureFileSource : public ElementBase
+class PICTUREFILESOURCESHARED_EXPORT PictureFileSource : public FileListSource
     {
     Q_OBJECT
 
@@ -24,15 +23,11 @@ public:
     int getFramesNo() const { return 1; }
     const FrameBase *getFrame(int) const { return &mRGBImg; }
 
-    bool event(QEvent *aEvent);
-
 private:
     void process();
 
 private:
     PictureRGBFrame mRGBImg;
-    QStringList mPathList;
-    int mNextFileIndex;
     };
 
 class PictureFileSourceFactory : public ElementFactory

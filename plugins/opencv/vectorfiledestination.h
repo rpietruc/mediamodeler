@@ -1,7 +1,7 @@
 #ifndef MEDIA_VectorFileDestination_H
 #define MEDIA_VectorFileDestination_H
 
-#include "elementbase.h"
+#include "filedestination.h"
 //#include <QString>
 #include <QtCore/qglobal.h>
 
@@ -13,7 +13,7 @@
 
 namespace media {
 
-class VECTORFILEDESTINATIONSHARED_EXPORT VectorFileDestination : public ElementBase
+class VECTORFILEDESTINATIONSHARED_EXPORT VectorFileDestination : public FileDestination
     {
     Q_OBJECT
 
@@ -22,9 +22,6 @@ public:
 
 private:
     void process();
-
-private:
-    int mFileIndex;
     };
 
 class VectorFileDestinationFactory : public ElementFactory

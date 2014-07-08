@@ -7,14 +7,13 @@ using namespace mlpack;
 namespace media {
 
 MatrixFileDestination::MatrixFileDestination(ElementFactory *aFactory, const QString &aObjectName) :
-    ElementBase(aFactory, aObjectName)
+    FileDestination(aFactory, aObjectName)
     {
-    setProperty("fileName", "output.csv");
     }
 
 void MatrixFileDestination::process()
     {
-    MatrixFrame matrixFrame;
+    ArrayFrame matrixFrame;
 
     foreach (const ElementBase *source, mSourceElementsReadySet)
         for (int i = 0; i < source->getFramesNo(); ++i)
@@ -23,7 +22,7 @@ void MatrixFileDestination::process()
             if (matrixFrame.isCopyable(*frame))
                 {
                 matrixFrame.resizeAndCopyFrame(*frame);
-                data::Save(property("fileName").toString().toStdString(), (arma::mat&)matrixFrame, true);
+                data::Save(getNextFilePath().toStdString(), (arma::mat&)matrixFrame, true);
                 emit framesProcessed();
                 }
             }

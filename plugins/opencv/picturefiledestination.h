@@ -1,7 +1,7 @@
 #ifndef MEDIA_PictureFileDestination_H
 #define MEDIA_PictureFileDestination_H
 
-#include "elementbase.h"
+#include "filedestination.h"
 #include <QString>
 #include <QtCore/qglobal.h>
 
@@ -13,7 +13,7 @@
 
 namespace media {
 
-class PICTUREFILEDESTINATIONSHARED_EXPORT PictureFileDestination : public ElementBase
+class PICTUREFILEDESTINATIONSHARED_EXPORT PictureFileDestination : public FileDestination
     {
     Q_OBJECT
 
@@ -22,9 +22,6 @@ public:
 
 private:
     void process();
-
-private:
-    int mFileIndex;
     };
 
 class PictureFileDestinationFactory : public ElementFactory

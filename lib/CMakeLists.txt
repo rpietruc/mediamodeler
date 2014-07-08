@@ -15,7 +15,9 @@ set(QMM_LIB_SRC
     modelreader.cpp
     modelcreator.cpp
     elementbase.cpp
-    framebase.cpp)
+    framebase.cpp
+    filedestination.cpp
+    filelistsource.cpp)
 
 set(QMM_LIB_INC
     exceptions.h
@@ -25,7 +27,9 @@ set(QMM_LIB_INC
     modelreader.h
     modelcreator.h
     elementbase.h
-    framebase.h)
+    framebase.h
+    filedestination.h
+    filelistsource.h)
 
 add_library(modelcore SHARED ${QMM_LIB_SRC} ${QMM_LIB_INC})
 target_link_libraries(modelcore ${Qt5Core_LIBRARIES})

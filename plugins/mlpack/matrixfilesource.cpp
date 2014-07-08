@@ -1,5 +1,4 @@
 #include "matrixfilesource.h"
-#include "../armadillo/armadilloframes.h"
 
 #include <mlpack/core.hpp>
 
@@ -8,16 +7,25 @@ using namespace mlpack;
 namespace media {
 
 MatrixFileSource::MatrixFileSource(ElementFactory *aFactory, const QString &aObjectName) :
-    ElementBase(aFactory, aObjectName),
-    mMatrixFrame(new MatrixFrame)
+    FileListSource(aFactory, aObjectName)
     {
-    setProperty("fileName", "input.csv");
     }
 
 void MatrixFileSource::process()
     {
-    if (data::Load(property("fileName").toString().toStdString(), (arma::mat&)*mMatrixFrame, true))
-        emit framesReady();
+    QString filename = getNextFilePath();
+    if (filename.isEmpty())
+        emit processingCompleted();
+
+    else
+        {
+        arma::mat frame;
+        if (data::Load(filename.toStdString(), frame, true))
+            {
+            mMatrixFrame = frame;
+            emit framesReady();
+            }
+        }
     }
 
 } // namespace media

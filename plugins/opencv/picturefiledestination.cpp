@@ -5,10 +5,8 @@
 namespace media {
 
 PictureFileDestination::PictureFileDestination(ElementFactory *aFactory, const QString &aObjectName) :
-    ElementBase(aFactory, aObjectName),
-    mFileIndex(0)
+    FileDestination(aFactory, aObjectName)
     {
-    setProperty("fileName", "output.png");
     }
 
 void PictureFileDestination::process()
@@ -21,11 +19,7 @@ void PictureFileDestination::process()
             if (rgbImg.isCopyable(*frame))
                 {
                 rgbImg.resizeAndCopyFrame(*frame);
-                QString fileName(property("fileName").toString());
-                if (mFileIndex > 0)
-                    fileName.replace(QString(".png"), QString(".%1.png").arg(mFileIndex));
-                cvSaveImage(qPrintable(fileName), (IplImage*)rgbImg);
-                ++mFileIndex;
+                cvSaveImage(qPrintable(getNextFilePath()), (IplImage*)rgbImg);
                 emit framesProcessed();
                 }
             }

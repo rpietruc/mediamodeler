@@ -23,6 +23,8 @@ public:
         };
 
     explicit FrameBase(int aDimensions);
+    virtual ~FrameBase() {}
+
     int getMaxDimension() const { return mDimensions.size(); }
     const Dimension& getDimensionT(int aIndex) const;
 
@@ -33,6 +35,7 @@ public:
     void setSourceName(const QString& aSourceName) { mSourceName = aSourceName; }
 
     bool isEmpty() const;
+    virtual bool inRange(const int *aPoint) const;
 
     virtual void resize(const int *aSize) = 0;
 

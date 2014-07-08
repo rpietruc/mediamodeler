@@ -1,8 +1,7 @@
 #ifndef MEDIA_SNDFILESOURCE_H
 #define MEDIA_SNDFILESOURCE_H
 
-#include "elementbase.h"
-#include <QStringList>
+#include "filelistsource.h"
 #include <sndfile.h>
 #include "alsaframe.h"
 #include <QtCore/qglobal.h>
@@ -15,7 +14,7 @@
 
 namespace media {
 
-class SNDFILESOURCESHARED_EXPORT SndFileSource : public ElementBase
+class SNDFILESOURCESHARED_EXPORT SndFileSource : public FileListSource
     {
     Q_OBJECT
 
@@ -26,15 +25,11 @@ public:
     int getFramesNo() const { return 1; }
     const FrameBase *getFrame(int) const { return &mAlsaFrame; }
 
-    bool event(QEvent *aEvent);
-
 private:
     void process();
     bool openNextFile();
 
     AlsaFrame mAlsaFrame;
-    QStringList mPathList;
-    int mNextFileIndex;
     SNDFILE *mSoundFile;
     };
 

@@ -1,7 +1,7 @@
 #ifndef MEDIA_MatrixFileDestination_H
 #define MEDIA_MatrixFileDestination_H
 
-#include "elementbase.h"
+#include "filedestination.h"
 //#include <QString>
 #include <QtCore/qglobal.h>
 
@@ -13,7 +13,7 @@
 
 namespace media {
 
-class MATRIXFILEDESTINATIONSHARED_EXPORT MatrixFileDestination : public ElementBase
+class MATRIXFILEDESTINATIONSHARED_EXPORT MatrixFileDestination : public FileDestination
     {
     Q_OBJECT
 

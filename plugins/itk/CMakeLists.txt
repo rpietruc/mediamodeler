@@ -19,7 +19,7 @@ if(Qt5Core_FOUND)
 endif(Qt5Core_FOUND)
 
 set(QMM_ITK_SRC
-    imageframes.cpp   
+    imageframes.cpp
     imageaddtransform.cpp
     imageandtransform.cpp
     imagecontourtransform.cpp
@@ -34,9 +34,9 @@ set(QMM_ITK_SRC
     imageseedpointstransform.cpp)
 
 set(QMM_ITK_INC
-    imageframes.h 
+    imageframes.h
     imageaddtransform.h
-    imageandtransform.h 
+    imageandtransform.h
     imagecontourtransform.h
     imagedenoisingtransform.h
     imagegeneratorsource.h

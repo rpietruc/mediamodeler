@@ -1,8 +1,9 @@
 #ifndef MEDIA_MATRIXFILESOURCE_H
 #define MEDIA_MATRIXFILESOURCE_H
 
-#include "elementbase.h"
+#include "filelistsource.h"
 #include <QtCore/qglobal.h>
+#include "../armadillo/armadilloframes.h"
 
 #if defined(matrixfile_EXPORTS)
 #  define MATRIXFILESHARED_EXPORT Q_DECL_EXPORT
@@ -12,7 +13,7 @@
 
 namespace media {
 
-class MATRIXFILESHARED_EXPORT MatrixFileSource : public ElementBase
+class MATRIXFILESHARED_EXPORT MatrixFileSource : public FileListSource
     {
     Q_OBJECT
 
@@ -20,13 +21,13 @@ public:
     explicit MatrixFileSource(ElementFactory *aFactory, const QString &aObjectName);
 
     int getFramesNo() const { return 1; }
-    const FrameBase *getFrame(int) const { return mMatrixFrame; }
+    const FrameBase *getFrame(int) const { return &mMatrixFrame; }
 
 private:
     void process();
 
 private:
-    FrameBase *mMatrixFrame;
+    ArrayFrame mMatrixFrame;
     };
 
 class MATRIXFILESHARED_EXPORT MatrixFileSourceFactory : public ElementFactory

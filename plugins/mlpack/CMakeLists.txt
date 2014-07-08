@@ -12,6 +12,14 @@ if(Qt5Core_FOUND)
   add_definitions(-DQT_SHARED)
 endif(Qt5Core_FOUND)
 
+set(QMM_MLPACK_SRC
+    matrixfilesource.cpp
+    matrixfiledestination.cpp)
+
+set(QMM_MLPACK_INC
+    matrixfilesource.h
+    matrixfiledestination.h)
+
 find_package(LibXml2 2.6.0 REQUIRED)
 include_directories(${LIBXML2_INCLUDE_DIR})
 

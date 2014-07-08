@@ -43,6 +43,14 @@ bool FrameBase::isEmpty() const
     return false;
     }
 
+bool FrameBase::inRange(const int *aPoint) const
+    {
+    for (int i = 0; i < getMaxDimension(); ++i)
+        if ((aPoint[i] < 0) || (aPoint[i] >= getDimensionT(i).mResolution))
+            return false;
+    return true;
+    }
+
 void FrameBase::zeroPoint(int *aPoint)
     {
     for (int i = 0; i < getMaxDimension(); ++i)

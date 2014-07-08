@@ -6,18 +6,25 @@
 
 namespace media {
 
-class MatrixFrame : public FrameBase
+class ArrayFrame : public FrameBase
     {
 public:
     enum { Width, Height, Dimensions };
 
-    explicit MatrixFrame();
-    ~MatrixFrame();
+    explicit ArrayFrame();
+    virtual ~ArrayFrame();
 
     qreal getSampleT(const int *aPoint) const;
     void setSampleT(const int *aPoint, qreal aValue);
 
     operator arma::mat&()  { return mMatrix; }
+    const ArrayFrame& operator=(const arma::mat& aMatrix)
+        {
+        mMatrix = aMatrix;
+        mDimensions[Width].mResolution = aMatrix.n_rows;
+        mDimensions[Height].mResolution = aMatrix.n_cols;
+        return *this;
+        }
 
     void resize(const int* aSize) { resize(aSize[Width], aSize[Height]); }
     void resize(int aWidth, int aHeight);

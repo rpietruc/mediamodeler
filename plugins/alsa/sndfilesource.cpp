@@ -4,11 +4,9 @@
 namespace media {
 
 SndFileSource::SndFileSource(ElementFactory *aFactory, const QString &aObjectName) :
-    ElementBase(aFactory, aObjectName),
-    mNextFileIndex(0),
+    FileListSource(aFactory, aObjectName),
     mSoundFile(0)
     {
-    setProperty("fileList", QStringList());
     }
 
 SndFileSource::~SndFileSource()
@@ -17,55 +15,30 @@ SndFileSource::~SndFileSource()
         sf_close(mSoundFile);
     }
 
-bool SndFileSource::event(QEvent *aEvent)
-    {
-    if (aEvent->type() == QEvent::DynamicPropertyChange)
-        {
-        QDynamicPropertyChangeEvent *event = (QDynamicPropertyChangeEvent*)aEvent;
-        if (QString(event->propertyName().constData()) == "fileList")
-            {
-            if (mSoundFile != 0)
-                {
-                sf_close(mSoundFile);
-                mSoundFile = 0;
-                }
-            mPathList.clear();
-            foreach (QString path, property("fileList").toStringList())
-                {
-                QFileInfo fileInfo(path);
-                mPathList.append(fileInfo.filePath());
-                }
-            event->accept();
-            return true;
-            }
-        }
-    return ElementBase::event(aEvent);
-    }
-
 bool SndFileSource::openNextFile()
     {
-    while (mNextFileIndex < mPathList.size())
+    if (mSoundFile)
         {
-        if (mSoundFile)
-            {
-            sf_close(mSoundFile);
-            mSoundFile = 0;
-            }
-        SF_INFO fileInfo;
-        memset(&fileInfo, 0, sizeof(fileInfo));
-        mSoundFile = sf_open(qPrintable(mPathList.at(mNextFileIndex)), SFM_READ, &fileInfo);
-        if (mSoundFile)
-            {
-            Q_ASSERT(fileInfo.samplerate);
-            mAlsaFrame.setChannelsNo(fileInfo.channels);
-            mAlsaFrame.setSampleTime(1.0/fileInfo.samplerate);
-            mAlsaFrame.setFrameTime(AlsaFrame::DefaultFrameTime);
-            mAlsaFrame.setSourceName(mPathList.at(mNextFileIndex++));
-            return true;
-            }
-        ++mNextFileIndex;
+        sf_close(mSoundFile);
+        mSoundFile = 0;
         }
-    return false;
+
+    QString filename = getNextFilePath();
+    if (filename.isEmpty())
+        return false;
+
+    SF_INFO fileInfo;
+    memset(&fileInfo, 0, sizeof(fileInfo));
+    mSoundFile = sf_open(qPrintable(filename), SFM_READ, &fileInfo);
+    if (!mSoundFile)
+        return false;
+
+    Q_ASSERT(fileInfo.samplerate);
+    mAlsaFrame.setChannelsNo(fileInfo.channels);
+    mAlsaFrame.setSampleTime(1.0/fileInfo.samplerate);
+    mAlsaFrame.setFrameTime(AlsaFrame::DefaultFrameTime);
+    mAlsaFrame.setSourceName(filename);
+    return true;
     }
 
 void SndFileSource::process()
@@ -93,7 +66,6 @@ void SndFileSource::process()
         }
 
     //error openning file
-    mNextFileIndex = 0;
     emit processingCompleted();
     }
 

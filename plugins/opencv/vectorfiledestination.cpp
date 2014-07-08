@@ -10,10 +10,8 @@ using namespace cv;
 namespace media {
 
 VectorFileDestination::VectorFileDestination(ElementFactory *aFactory, const QString &aObjectName) :
-    ElementBase(aFactory, aObjectName),
-    mFileIndex(0)
+    FileDestination(aFactory, aObjectName)
     {
-    setProperty("fileName", "output.svg");
     }
 
 qreal arcLength(qreal aStartAngle, qreal aEndAngle) { return aEndAngle - aStartAngle; }
@@ -68,10 +66,7 @@ void VectorFileDestination::process()
 //    size = QSize(600, 450);
 
     QSvgGenerator generator;
-    QString fileName(property("fileName").toString());
-    if (mFileIndex > 0)
-        fileName.replace(QString(".svg"), QString(".%1.svg").arg(mFileIndex));
-    generator.setFileName(fileName);
+    generator.setFileName(getNextFilePath());
     generator.setTitle(tr("SVG Generator Ellipse Drawing"));
     generator.setDescription(tr("An SVG drawing created by VectorFileDestination."));
     generator.setSize(size);
@@ -98,7 +93,6 @@ void VectorFileDestination::process()
 //    paintEllipticalArc(painter, RotatedRect(Point2f(200, 150), Size2f(400, 300), 30), 0, 360);
 //    paintLineSegment(painter, QPointF(0, 0), QPointF(400, 300));
 
-    ++mFileIndex;
     painter.end();
     emit framesProcessed();
     }
