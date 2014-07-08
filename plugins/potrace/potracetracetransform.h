@@ -6,14 +6,14 @@
 #include <QtCore/qglobal.h>
 
 #if defined(potracetrace_EXPORTS)
-#  define POTRACEGENERATORSHARED_EXPORT Q_DECL_EXPORT
+#  define POTRACETRACESHARED_EXPORT Q_DECL_EXPORT
 #else
-#  define POTRACEGENERATORSHARED_EXPORT Q_DECL_IMPORT
+#  define POTRACETRACESHARED_EXPORT Q_DECL_IMPORT
 #endif
 
 namespace media {
 
-class POTRACEGENERATORSHARED_EXPORT PotraceTraceTransform : public ElementBase
+class POTRACETRACESHARED_EXPORT PotraceTraceTransform : public ElementBase
     {
     Q_OBJECT
 
@@ -33,7 +33,7 @@ private:
     PotracePathFrame mPathFrame;
     };
 
-class POTRACEGENERATORSHARED_EXPORT PotraceTraceTransformFactory : public ElementFactory
+class POTRACETRACESHARED_EXPORT PotraceTraceTransformFactory : public ElementFactory
     {
     Q_OBJECT
     Q_INTERFACES(media::ElementFactory)

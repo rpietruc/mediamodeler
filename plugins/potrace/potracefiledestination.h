@@ -5,7 +5,7 @@
 //#include <QString>
 #include <QtCore/qglobal.h>
 
-#if defined(picturefiledestination_EXPORTS)
+#if defined(potracefiledestination_EXPORTS)
 #  define POTRACEFILEDESTINATIONSHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define POTRACEFILEDESTINATIONSHARED_EXPORT Q_DECL_IMPORT

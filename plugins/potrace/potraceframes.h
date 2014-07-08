@@ -1,5 +1,5 @@
-#ifndef IMAGEFRAMES_H
-#define IMAGEFRAMES_H
+#ifndef POTRACEFRAMES_H
+#define POTRACEFRAMES_H
 
 #include "framebase.h"
 #include "qubeframe.h"
@@ -49,4 +49,4 @@ private:
 
 } // namespace media
 
-#endif // IMAGEFRAMES_H
+#endif // POTRACEFRAMES_H
