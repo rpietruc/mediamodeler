@@ -3,6 +3,7 @@
 #include <itkApproximateSignedDistanceMapImageFilter.h>
 #include <itkBinaryThresholdImageFilter.h>
 #include <QSet>
+#include <QDebug>
 
 using namespace itk;
 using namespace std;
@@ -31,8 +32,15 @@ void ImageContourTransform::process()
                     for (point[GrayImageFrame::Width] = 0; point[GrayImageFrame::Width] < mSrcFrame.getDimensionT(GrayImageFrame::Width).mResolution; ++point[GrayImageFrame::Width])
                         regions.insert(mSrcFrame.getSampleT(point));
 
-                mPointsFrameSet.clear();
-                foreach (int i, regions)
+                int randPoint[GrayImageFrame::Dimensions];
+                randPoint[GrayImageFrame::Width] = qrand()%mSrcFrame.getDimensionT(GrayImageFrame::Width).mResolution;
+                randPoint[GrayImageFrame::Height] = qrand()%mSrcFrame.getDimensionT(GrayImageFrame::Height).mResolution;
+                int i = mSrcFrame.getSampleT(randPoint);
+
+//                mPointsFrameSet.clear();
+//                int i = *(regions.begin() + qrand()%regions.size());
+
+//                foreach (int i, regions)
                     {
                     try {
                         typedef itk::Image<unsigned char, 2>  ImageType;
@@ -58,11 +66,11 @@ void ImageContourTransform::process()
                         contourExtractor2DImageFilter->SetContourValue(0);
                         contourExtractor2DImageFilter->Update();
 
-                        cout << i << " there are " << contourExtractor2DImageFilter->GetNumberOfOutputs() << " contours" << endl;
+//                        cout << i << " there are " << contourExtractor2DImageFilter->GetNumberOfOutputs() << " contours" << endl;
                         for (unsigned int i = 0; i < contourExtractor2DImageFilter->GetNumberOfOutputs(); ++i)
                             {
                             vector< Point<int> > points;
-                            cout << "Contour " << i << ": " << endl;
+//                            cout << "Contour " << i << ": " << endl;
                             ContourExtractor2DImageFilterType::VertexListType::ConstIterator vertexIterator = contourExtractor2DImageFilter->GetOutput(i)->GetVertexList()->Begin();
                             while (vertexIterator != contourExtractor2DImageFilter->GetOutput(i)->GetVertexList()->End())
                                 {
@@ -70,18 +78,18 @@ void ImageContourTransform::process()
                                 point[0] = vertexIterator->Value()[0];
                                 point[1] = vertexIterator->Value()[1];
                                 points.push_back(point);
-                                cout << vertexIterator->Value() << ", " << vertexIterator->Value()[0] << ": " << vertexIterator->Value()[1] << endl;
+//                                cout << vertexIterator->Value() << ", " << vertexIterator->Value()[0] << ": " << vertexIterator->Value()[1] << endl;
                                 ++vertexIterator;
                                 }
                             PointsFrame frame;
                             frame.setPoints(points);
                             mPointsFrameSet.push_back(frame);
-                            cout << endl;
+//                            cout << endl;
                             }
                         }
                     catch (...)
                         {
-                        // ignore
+                        qWarning() << "exception catched - ignored.";
                         }
                     }
                 emit framesReady();

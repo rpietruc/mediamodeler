@@ -10,8 +10,8 @@ namespace media {
 ImageWatershedTransform::ImageWatershedTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
-    setProperty("threshold", 0.005);
-    setProperty("level", 0.5);
+    setProperty("threshold", 0.05);
+    setProperty("level", 0.05);
     }
 
 void ImageWatershedTransform::process()

@@ -29,6 +29,8 @@ public:
         //else
         return mPathList.at(mNextFileIndex++);
         }
+protected slots:
+    void resetIndex(bool) { mNextFileIndex = 0; }
 
 private:
     QStringList mPathList;

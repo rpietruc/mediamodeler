@@ -8,6 +8,7 @@ FileListSource::FileListSource(ElementFactory *aFactory, const QString &aObjectN
     mNextFileIndex(0)
     {
     setProperty("fileList", QStringList());
+    QObject::connect(this, SIGNAL(processingCompleted(bool)), this, SLOT(resetIndex(bool)));
     }
 
 bool FileListSource::event(QEvent *aEvent)

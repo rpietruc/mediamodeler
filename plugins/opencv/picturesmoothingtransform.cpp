@@ -5,7 +5,7 @@ namespace media {
 PictureSmoothingTransform::PictureSmoothingTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
-    setProperty("spatialRadius", 2);
+    setProperty("spatialRadius", 20);
     setProperty("colorRadius", 40);
     }
 
