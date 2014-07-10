@@ -14,18 +14,13 @@ PictureDrawTransform::PictureDrawTransform(ElementFactory *aFactory, const QStri
 
 void PictureDrawTransform::process()
     {
+    mPictureFrame.clear();
     vector<vector<Point> > contours;
     foreach (const ElementBase *source, mSourceElementsReadySet)
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if (mPictureFrame.isCopyable(*frame))
-                {
-                mPictureFrame.resizeAndCopyFrame(*frame);
-                mPictureFrame.setSourceName(frame->getSourceName());
-                }
-            else if (PointsFrame().isCopyable(*frame) &&
-                (frame->getDimensionT(PointsFrame::Axis).mResolution == PointsFrame::MaxAxis))
+            if (PointsFrame().isCopyable(*frame))
                 {
                 vector<Point> contour;
                 contour.resize(frame->getDimensionT(PointsFrame::Index).mResolution);
@@ -39,8 +34,14 @@ void PictureDrawTransform::process()
                     }
                 contours.push_back(contour);
                 }
+            else if (mPictureFrame.isCopyable(*frame))
+                {
+                mPictureFrame.resizeAndCopyFrame(*frame);
+                mPictureFrame.setSourceName(frame->getSourceName());
+                }
             }
-    drawContours(Mat(mPictureFrame), contours, -1, Scalar(property("intensity").toDouble(), property("intensity").toDouble(), property("intensity").toDouble()), property("thickness").toInt(), 8, noArray());
+    if (!mPictureFrame.isEmpty())
+        drawContours(Mat(mPictureFrame), contours, -1, Scalar(property("intensity").toDouble(), property("intensity").toDouble(), property("intensity").toDouble()), property("thickness").toInt(), 8, noArray());
     emit framesReady();
     }
 

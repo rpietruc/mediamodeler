@@ -27,7 +27,6 @@ private:
     void process();
 
 private:
-    GrayImageFrame mSrcFrame;
     QVector<PointsFrame> mPointsFrameSet;
     };
 

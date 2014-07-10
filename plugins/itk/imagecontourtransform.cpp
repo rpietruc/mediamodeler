@@ -23,30 +23,30 @@ void ImageContourTransform::process()
             const FrameBase *frame = source->getFrame(i);
             if ((frame->getMaxDimension() == ColorImageFrame::Dimensions) || (frame->getMaxDimension() == GrayImageFrame::Dimensions))
                 {
-//                mContourFrame.setSourceName(frame->getSourceName());
-                mSrcFrame.resizeAndCopyFrame(*frame);
+                GrayImageFrame srcFrame;
+                srcFrame.setSourceName(frame->getSourceName());
+                srcFrame.resizeAndCopyFrame(*frame);
 
                 QSet<int> regions;
                 int point[GrayImageFrame::Dimensions];
-                for (point[GrayImageFrame::Height] = 0; point[GrayImageFrame::Height] < mSrcFrame.getDimensionT(GrayImageFrame::Height).mResolution; ++point[GrayImageFrame::Height])
-                    for (point[GrayImageFrame::Width] = 0; point[GrayImageFrame::Width] < mSrcFrame.getDimensionT(GrayImageFrame::Width).mResolution; ++point[GrayImageFrame::Width])
-                        regions.insert(mSrcFrame.getSampleT(point));
+                for (point[GrayImageFrame::Height] = 0; point[GrayImageFrame::Height] < srcFrame.getDimensionT(GrayImageFrame::Height).mResolution; ++point[GrayImageFrame::Height])
+                    for (point[GrayImageFrame::Width] = 0; point[GrayImageFrame::Width] < srcFrame.getDimensionT(GrayImageFrame::Width).mResolution; ++point[GrayImageFrame::Width])
+                        regions.insert(srcFrame.getSampleT(point));
 
-                int randPoint[GrayImageFrame::Dimensions];
-                randPoint[GrayImageFrame::Width] = qrand()%mSrcFrame.getDimensionT(GrayImageFrame::Width).mResolution;
-                randPoint[GrayImageFrame::Height] = qrand()%mSrcFrame.getDimensionT(GrayImageFrame::Height).mResolution;
-                int i = mSrcFrame.getSampleT(randPoint);
+                mPointsFrameSet.clear();
 
-//                mPointsFrameSet.clear();
+//                int randPoint[GrayImageFrame::Dimensions];
+//                randPoint[GrayImageFrame::Width] = qrand()%srcFrame.getDimensionT(GrayImageFrame::Width).mResolution;
+//                randPoint[GrayImageFrame::Height] = qrand()%srcFrame.getDimensionT(GrayImageFrame::Height).mResolution;
+//                int i = srcFrame.getSampleT(randPoint);
 //                int i = *(regions.begin() + qrand()%regions.size());
-
-//                foreach (int i, regions)
+                foreach (int i, regions)
                     {
                     try {
                         typedef itk::Image<unsigned char, 2>  ImageType;
                         typedef itk::BinaryThresholdImageFilter <ImageType, ImageType> BinaryThresholdImageFilterType;
                         BinaryThresholdImageFilterType::Pointer thresholdFilter = BinaryThresholdImageFilterType::New();
-                        thresholdFilter->SetInput((GrayImageFrame::ImageType::Pointer)mSrcFrame);
+                        thresholdFilter->SetInput((GrayImageFrame::ImageType::Pointer)srcFrame);
                         thresholdFilter->SetLowerThreshold(i);
                         thresholdFilter->SetUpperThreshold(i);
                         thresholdFilter->SetInsideValue(255);
@@ -66,6 +66,7 @@ void ImageContourTransform::process()
                         contourExtractor2DImageFilter->SetContourValue(0);
                         contourExtractor2DImageFilter->Update();
 
+                        emit logMessage(Qt::blue, QString("region %1 with %2 contours").arg(i).arg(contourExtractor2DImageFilter->GetNumberOfOutputs()));
 //                        cout << i << " there are " << contourExtractor2DImageFilter->GetNumberOfOutputs() << " contours" << endl;
                         for (unsigned int i = 0; i < contourExtractor2DImageFilter->GetNumberOfOutputs(); ++i)
                             {
@@ -81,9 +82,10 @@ void ImageContourTransform::process()
 //                                cout << vertexIterator->Value() << ", " << vertexIterator->Value()[0] << ": " << vertexIterator->Value()[1] << endl;
                                 ++vertexIterator;
                                 }
-                            PointsFrame frame;
-                            frame.setPoints(points);
-                            mPointsFrameSet.push_back(frame);
+                            PointsFrame pointsFrame;
+                            pointsFrame.setPoints(points);
+                            pointsFrame.setSourceName(frame->getSourceName());
+                            mPointsFrameSet.push_back(pointsFrame);
 //                            cout << endl;
                             }
                         }

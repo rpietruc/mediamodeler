@@ -20,6 +20,7 @@ CvScalar randomColor()
 VectorDrawTransform::VectorDrawTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
+    setProperty("thickness", 2);
     }
 
 void VectorDrawTransform::process()
@@ -51,14 +52,14 @@ void VectorDrawTransform::process()
         {
         CvScalar color = randomColor();
         for (int i = 0; i < frame.getDimensionT(EllipseFrame::VectorNo).mResolution; ++i, ++ellipsesNo)
-            cvEllipse(mPictureFrame, frame.getRect(i).center, cvSize(frame.getRect(i).size.width/2, frame.getRect(i).size.height/2), frame.getRect(i).angle, frame.getStartAngleT(i), frame.getEndAngle(i), color, 2);
+            cvEllipse(mPictureFrame, frame.getRect(i).center, cvSize(frame.getRect(i).size.width/2, frame.getRect(i).size.height/2), frame.getRect(i).angle, frame.getStartAngleT(i), frame.getEndAngle(i), color, property("thickness").toInt());
         }
     int linesNo = 0;
     foreach (LineSegmentFrame frame, lineSegments)
         {
         CvScalar color = randomColor();
         for (int i = 0; i < frame.getDimensionT(LineSegmentFrame::VectorNo).mResolution; ++i, ++linesNo)
-            cvLine(mPictureFrame, cvPoint(frame.getStartPointT(i).x(), frame.getStartPointT(i).y()), cvPoint(frame.getEndPointT(i).x(), frame.getEndPointT(i).y()), color, 1);
+            cvLine(mPictureFrame, cvPoint(frame.getStartPointT(i).x(), frame.getStartPointT(i).y()), cvPoint(frame.getEndPointT(i).x(), frame.getEndPointT(i).y()), color, property("thickness").toInt());
         }
     emit logMessage(Qt::red, QString("total: %1 ellipses and %2 line segments").arg(ellipsesNo).arg(linesNo));
     emit framesReady();
