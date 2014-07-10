@@ -18,22 +18,35 @@ void PictureContourTransform::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            PictureGrayFrame grayImg;
-            if (grayImg.isCopyable(*frame))
+            PictureGrayFrame srcGrayFrame;
+            if (srcGrayFrame.isCopyable(*frame))
                 {
-                grayImg.resizeAndCopyFrame(*frame);
-                vector<vector<Point> > contours;
-                findContours(Mat(grayImg), contours, CV_RETR_LIST, qBound((int)CV_CHAIN_APPROX_NONE, property("method").toInt(), (int)CV_LINK_RUNS));
+                srcGrayFrame.setSourceName(frame->getSourceName());
+                srcGrayFrame.resizeAndCopyFrame(*frame);
+
+                QSet<int> regions;
+                int point[PictureGrayFrame::Dimensions] = {0, 0, 0};
+                for (point[PictureGrayFrame::Height] = 0; point[PictureGrayFrame::Height] < srcGrayFrame.getDimensionT(PictureGrayFrame::Height).mResolution; ++point[PictureGrayFrame::Height])
+                    for (point[PictureGrayFrame::Width] = 0; point[PictureGrayFrame::Width] < srcGrayFrame.getDimensionT(PictureGrayFrame::Width).mResolution; ++point[PictureGrayFrame::Width])
+                        regions.insert(srcGrayFrame.getSampleT(point));
 
                 mPointsFrameSet.clear();
-                foreach (vector<Point> contour, contours)
+                foreach (int i, regions)
                     {
-                    if ((int)contour.size() > property("minlen").toInt())
+                    Mat region;
+                    inRange(Mat(srcGrayFrame), i, i, region);
+
+                    vector<vector<Point> > contours;
+                    findContours(region, contours, CV_RETR_LIST, qBound((int)CV_CHAIN_APPROX_NONE, property("method").toInt(), (int)CV_LINK_RUNS));
+                    foreach (vector<Point> contour, contours)
                         {
-                        PointsFrame pointsFrame;
-                        pointsFrame = contour;
-                        pointsFrame.setSourceName(frame->getSourceName());
-                        mPointsFrameSet.push_back(pointsFrame);
+                        if ((int)contour.size() > property("minlen").toInt())
+                            {
+                            PointsFrame pointsFrame;
+                            pointsFrame = contour;
+                            pointsFrame.setSourceName(frame->getSourceName());
+                            mPointsFrameSet.push_back(pointsFrame);
+                            }
                         }
                     }
                 emit framesReady();

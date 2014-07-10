@@ -21,24 +21,24 @@ void ImageContourTransform::process()
         for (int i = 0; i < source->getFramesNo(); ++i)
             {
             const FrameBase *frame = source->getFrame(i);
-            if ((frame->getMaxDimension() == ColorImageFrame::Dimensions) || (frame->getMaxDimension() == GrayImageFrame::Dimensions))
+            GrayImageFrame srcGrayFrame;
+            if (srcGrayFrame.isCopyable(*frame))
                 {
-                GrayImageFrame srcFrame;
-                srcFrame.setSourceName(frame->getSourceName());
-                srcFrame.resizeAndCopyFrame(*frame);
+                srcGrayFrame.setSourceName(frame->getSourceName());
+                srcGrayFrame.resizeAndCopyFrame(*frame);
 
                 QSet<int> regions;
                 int point[GrayImageFrame::Dimensions];
-                for (point[GrayImageFrame::Height] = 0; point[GrayImageFrame::Height] < srcFrame.getDimensionT(GrayImageFrame::Height).mResolution; ++point[GrayImageFrame::Height])
-                    for (point[GrayImageFrame::Width] = 0; point[GrayImageFrame::Width] < srcFrame.getDimensionT(GrayImageFrame::Width).mResolution; ++point[GrayImageFrame::Width])
-                        regions.insert(srcFrame.getSampleT(point));
+                for (point[GrayImageFrame::Height] = 0; point[GrayImageFrame::Height] < srcGrayFrame.getDimensionT(GrayImageFrame::Height).mResolution; ++point[GrayImageFrame::Height])
+                    for (point[GrayImageFrame::Width] = 0; point[GrayImageFrame::Width] < srcGrayFrame.getDimensionT(GrayImageFrame::Width).mResolution; ++point[GrayImageFrame::Width])
+                        regions.insert(srcGrayFrame.getSampleT(point));
 
                 mPointsFrameSet.clear();
 
 //                int randPoint[GrayImageFrame::Dimensions];
-//                randPoint[GrayImageFrame::Width] = qrand()%srcFrame.getDimensionT(GrayImageFrame::Width).mResolution;
-//                randPoint[GrayImageFrame::Height] = qrand()%srcFrame.getDimensionT(GrayImageFrame::Height).mResolution;
-//                int i = srcFrame.getSampleT(randPoint);
+//                randPoint[GrayImageFrame::Width] = qrand()%srcGrayFrame.getDimensionT(GrayImageFrame::Width).mResolution;
+//                randPoint[GrayImageFrame::Height] = qrand()%srcGrayFrame.getDimensionT(GrayImageFrame::Height).mResolution;
+//                int i = srcGrayFrame.getSampleT(randPoint);
 //                int i = *(regions.begin() + qrand()%regions.size());
                 foreach (int i, regions)
                     {
@@ -46,7 +46,7 @@ void ImageContourTransform::process()
                         typedef itk::Image<unsigned char, 2>  ImageType;
                         typedef itk::BinaryThresholdImageFilter <ImageType, ImageType> BinaryThresholdImageFilterType;
                         BinaryThresholdImageFilterType::Pointer thresholdFilter = BinaryThresholdImageFilterType::New();
-                        thresholdFilter->SetInput((GrayImageFrame::ImageType::Pointer)srcFrame);
+                        thresholdFilter->SetInput((GrayImageFrame::ImageType::Pointer)srcGrayFrame);
                         thresholdFilter->SetLowerThreshold(i);
                         thresholdFilter->SetUpperThreshold(i);
                         thresholdFilter->SetInsideValue(255);
