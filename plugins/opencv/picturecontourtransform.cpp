@@ -31,6 +31,7 @@ void PictureContourTransform::process()
                         regions.insert(srcGrayFrame.getSampleT(point));
 
                 mPointsFrameSet.clear();
+//                int i = *(regions.begin() + qrand()%regions.size());
                 foreach (int i, regions)
                     {
                     Mat region;
