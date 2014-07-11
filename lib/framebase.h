@@ -8,7 +8,15 @@
 
 namespace media {
 
-class MEDIAMODELSHARED_EXPORT FrameBase
+class MEDIAMODELSHARED_EXPORT FrameBaseInterface
+    {
+public:
+    virtual qreal getSampleT(const int *aPoint) const = 0;
+    virtual void setSampleT(const int *aPoint, qreal aValue) = 0;
+    virtual void resize(const int *aSize) = 0;
+    };
+
+class MEDIAMODELSHARED_EXPORT FrameBase : public FrameBaseInterface
     {
 public:
     struct Dimension
@@ -28,16 +36,11 @@ public:
     int getMaxDimension() const { return mDimensions.size(); }
     const Dimension& getDimensionT(int aIndex) const;
 
-    virtual qreal getSampleT(const int *aPoint) const = 0;
-    virtual void setSampleT(const int *aPoint, qreal aValue) = 0;
-
     QString getSourceName() const { return mSourceName; }
     void setSourceName(const QString& aSourceName) { mSourceName = aSourceName; }
 
     bool isEmpty() const;
     virtual bool inRange(const int *aPoint) const;
-
-    virtual void resize(const int *aSize) = 0;
 
     /**
      * @brief isCopyable checks if parameter frame can be copied to this frame
