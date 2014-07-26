@@ -5,6 +5,7 @@
 #include <QTextBrowser>
 #include <QTime>
 #include <QTimer>
+#include <QDebug>
 
 using namespace media;
 
@@ -19,12 +20,19 @@ PropertiesBox::PropertiesBox(QObject *aPropertiesObject, QWidget *aParent) :
     if (list.count() > 0)
         {
         GuiElementBase* gui = NULL;
-        if (list.count() == 1)
+        if (QString(list.first().constData()) == "fileName")
             {
-            if (QString(list.first().constData()) == "fileName")
+            if (list.count() == 1)
                 gui = new FileGuiElement(this);
-            else if (QString(list.first().constData()) == "fileList")
+            else
+                qWarning() << list.first().constData() << " property name reserved for single property box";
+            }
+        else if (QString(list.first().constData()) == "fileList")
+            {
+            if (list.count() == 1)
                 gui = new FilesGuiElement(this);
+            else
+                qWarning() << list.first().constData() << " property name reserved for single property box";
             }
         if (!gui)
             gui = new GuiElementList(this);

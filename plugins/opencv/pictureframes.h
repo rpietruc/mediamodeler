@@ -87,8 +87,10 @@ public:
             this->operator =(*(IplImage*)frame);
             }
         else
+            {
+            Q_ASSERT(0 && "channels no not supported");
             return false;
-
+            }
         return true;
         }
 

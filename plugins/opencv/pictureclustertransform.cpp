@@ -27,7 +27,7 @@ void PictureClusterTransform::process()
                 CvMat *pictureMat = createMatFromImage(srcFrame);
                 CvMat *clustersMat = cvCreateMat(srcFrame.getDimensionT(PictureRGBFrame::Width).mResolution*srcFrame.getDimensionT(PictureRGBFrame::Height).mResolution, 1, CV_32SC1);
 
-//                cvKMeansTest(pictureMat, clustersMat, mPictureFrame.getDimensionT(IplImageFrame::Channels).mResolution);
+//                cvKMeansTest(pictureMat, clustersMat, mPictureFrame.getDimensionT(PictureRGBFrame::Channels).mResolution);
                 cvKMeans2(pictureMat, property("clustersNo").toInt(), clustersMat, cvTermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 50, 0.1));
                 imageFromMat(mPictureFrame, clustersMat);
 
