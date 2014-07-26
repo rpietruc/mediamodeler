@@ -1,7 +1,7 @@
 #ifndef MEDIA_IMAGEEXTRACTROADTRANSFORM_H
 #define MEDIA_IMAGEEXTRACTROADTRANSFORM_H
 
-#include "imageframes.h"
+#include "otbframes.h"
 #include "elementbase.h"
 #include <QtCore/qglobal.h>
 
@@ -27,7 +27,7 @@ private:
     void process();
 
 private:
-    GrayImageFrame mImageFrame;
+    ImageOtbFrame mImageFrame;
     };
 
 class IMAGEEXTRACTROADSHARED_EXPORT ImageExtractRoadTransformFactory : public ElementFactory
