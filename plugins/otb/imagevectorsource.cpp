@@ -36,6 +36,15 @@ void ImageVectorSource::process()
             continue; //unsupported file type
         //else
 
+        try
+            {
+            reader->Update();
+            }
+        catch (itk::ExceptionObject & exp)
+            {  
+            qWarning() << "ITK::Exception catched : " << exp.what();
+            }
+
         mImageFrame = reader->GetOutput();
         mImageFrame.setSourceName(filename);
         emit framesReady();

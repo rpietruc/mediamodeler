@@ -1,6 +1,7 @@
 #include "imagefiledestination.h"
 #include <otbImageFileWriter.h>
 #include "otbframes.h"
+#include <QDebug>
 
 //using namespace otb;
 //using namespace itk;
@@ -27,7 +28,14 @@ void ImageFileDestination::process()
                 WriterType::Pointer writer = WriterType::New();
                 writer->SetFileName(getNextFilePath().toStdString());
                 writer->SetInput(rgbImg.operator ImageType::Pointer());
-                writer->Update();
+                try
+                    {
+                    writer->Update();
+                    }
+                catch (itk::ExceptionObject & exp)
+                    {
+                    qWarning() << "ITK::Exception catched : " << exp.what();
+                    }
                 emit framesProcessed();
                 }
             }

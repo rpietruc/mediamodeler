@@ -56,6 +56,7 @@ public:
 
     void resize(const int *aSize) { resize(aSize[Width], aSize[Height]); }
     void resize(int aWidth, int aHeight);
+    void resize(const ImageType::SizeType& aSize);
     void clear();
 
     void resizeAndCopyImage(const ImageType::Pointer aImage);
@@ -82,6 +83,7 @@ public:
 
     void resize(const int *aSize) { resize(aSize[Width], aSize[Height]); }
     void resize(int aWidth, int aHeight);
+    void resize(const ImageType::SizeType& aSize);
     void clear();
 
     void resizeAndCopyImage(const ImageType::Pointer aImage);

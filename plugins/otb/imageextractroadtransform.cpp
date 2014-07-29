@@ -7,8 +7,6 @@
 #include <otbDrawPathListFilter.h>
 #include <otbImage.h>
 #include <otbVectorImage.h>
-#include <otbImageFileReader.h>
-#include <otbImageFileWriter.h>
 #include <itkRescaleIntensityImageFilter.h>
 #include <otbMath.h>
 #include <itkInvertIntensityImageFilter.h>
@@ -26,7 +24,6 @@ namespace media {
 ImageExtractRoadTransform::ImageExtractRoadTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
-    setProperty("fileName", "qb_RoadExtract.tif");
     setProperty("referenceChannel0", 337);
     setProperty("referenceChannel1", 557);
     setProperty("referenceChannel2", 432);
@@ -43,41 +40,26 @@ ImageExtractRoadTransform::ImageExtractRoadTransform(ElementFactory *aFactory, c
 
 void ImageExtractRoadTransform::process()
     {
-//    foreach (const ElementBase *source, mSourceElementsReadySet)
-//        for (int i = 0; i < source-file:///home/rafal/devel/qmediamodeler/plugins/otb/imageextractroadtransform.cpp>getFramesNo(); ++i)
-//            {
-//            const FrameBase *frame = source->getFrame(i);
-//            ColorImageFrame srcColorFrame;
-//            if (srcColorFrame.isCopyable(*frame))
-//                {
-//                srcColorFrame.setSourceName(frame->getSourceName());
-//                srcColorFrame.resizeAndCopyFrame(*frame);
+    foreach (const ElementBase *source, mSourceElementsReadySet)
+        for (int i = 0; i < source->getFramesNo(); ++i)
+            {
+            const FrameBase *frame = source->getFrame(i);
+            VectorOtbFrame srcVectorFrame;
+            if (srcVectorFrame.isCopyable(*frame))
+                {
+                srcVectorFrame.setSourceName(frame->getSourceName());
+                srcVectorFrame.resizeAndCopyFrame(*frame);
 
-                const unsigned int Dimension = 2;
-                typedef double InputPixelType;
-                typedef unsigned char OutputPixelType;
-                typedef otb::VectorImage<InputPixelType, Dimension> InputVectorImageType;
-                typedef otb::Image<InputPixelType, Dimension> InputImageType;
-                typedef otb::Image<OutputPixelType, Dimension> OutputImageType;
-                typedef otb::PolyLineParametricPathWithValue<InputPixelType, Dimension> PathType;
-                typedef otb::RoadExtractionFilter<InputVectorImageType, PathType> RoadExtractionFilterType;
-                typedef otb::DrawPathListFilter<InputImageType, PathType, InputImageType> DrawPathFilterType;
-                typedef itk::RescaleIntensityImageFilter<InputImageType, OutputImageType> RescalerType;
-                typedef otb::ImageFileReader<InputVectorImageType> ReaderType;
-                typedef otb::ImageFileWriter<OutputImageType> WriterType;
+                typedef otb::PolyLineParametricPathWithValue<FloatOtbFrame::PixelType, FloatOtbFrame::Dimension> PathType;
+                typedef otb::RoadExtractionFilter<VectorOtbFrame::ImageType, PathType> RoadExtractionFilterType;
+                typedef otb::DrawPathListFilter<FloatOtbFrame::ImageType, PathType, FloatOtbFrame::ImageType> DrawPathFilterType;
+                typedef itk::RescaleIntensityImageFilter<FloatOtbFrame::ImageType, ImageOtbFrame::ImageType> RescalerType;
 
-                ReaderType::Pointer reader = ReaderType::New();
                 RoadExtractionFilterType::Pointer roadExtractionFilter = RoadExtractionFilterType::New();
                 DrawPathFilterType::Pointer drawingFilter = DrawPathFilterType::New();
                 RescalerType::Pointer rescaleFilter = RescalerType::New();
-                WriterType::Pointer writer = WriterType::New();
 
-                QString fileName = property("fileName").toString();
-                reader->SetFileName(fileName.toStdString());
-                reader->GenerateOutputInformation();
-
-                InputVectorImageType::PixelType ReferencePixel;
-                Q_ASSERT(reader->GetOutput()->GetNumberOfComponentsPerPixel() == 4);
+                VectorOtbFrame::ImageType::PixelType ReferencePixel;
                 ReferencePixel.SetSize(4);
                 ReferencePixel.SetElement(0, property("referenceChannel0").toDouble());
                 ReferencePixel.SetElement(1, property("referenceChannel1").toDouble());
@@ -94,27 +76,33 @@ void ImageExtractRoadTransform::process()
                 roadExtractionFilter->SetSecondMeanDistanceThreshold(property("secondMeanDistanceThreshold").toDouble());
                 roadExtractionFilter->SetDistanceThreshold(property("distanceThreshold").toDouble());
 
-                InputImageType::Pointer blackBackground = InputImageType::New();
-                blackBackground->SetRegions(reader->GetOutput()->GetLargestPossibleRegion());
-                //blackBackground->SetRegions(srcColorFrame.operator ImageType::Pointer()->GetLargestPossibleRegion());
+                FloatOtbFrame::ImageType::Pointer blackBackground = FloatOtbFrame::ImageType::New();
+                blackBackground->SetRegions(srcVectorFrame.operator ImageType::Pointer()->GetLargestPossibleRegion());
                 blackBackground->Allocate();
                 blackBackground->FillBuffer(0);
 
                 drawingFilter->UseInternalPathValueOn();
-                rescaleFilter->SetOutputMinimum(itk::NumericTraits<OutputPixelType>::min());
-                rescaleFilter->SetOutputMaximum(itk::NumericTraits<OutputPixelType>::max());
+                rescaleFilter->SetOutputMinimum(itk::NumericTraits<ImageOtbFrame::PixelType>::min());
+                rescaleFilter->SetOutputMaximum(itk::NumericTraits<ImageOtbFrame::PixelType>::max());
 
-                roadExtractionFilter->SetInput(reader->GetOutput());
-                //roadExtractionFilter->SetInput(srcColorFrame.operator ImageType::Pointer());
+                roadExtractionFilter->SetInput(srcVectorFrame.operator ImageType::Pointer());
                 drawingFilter->SetInput(blackBackground);
                 drawingFilter->SetInputPath(roadExtractionFilter->GetOutput());
                 rescaleFilter->SetInput(drawingFilter->GetOutput());
-                rescaleFilter->Update();
+
+                try
+                    {
+                    rescaleFilter->Update();
+                    }
+                catch (itk::ExceptionObject & exp)
+                    {
+                    qWarning() << "ITK::Exception catched : " << exp.what();
+                    }
 
                 // output image enhancement
-                typedef itk::BinaryBallStructuringElement<OutputPixelType, Dimension> StructuringElementType;
-                typedef itk::GrayscaleDilateImageFilter<OutputImageType, OutputImageType, StructuringElementType> DilateFilterType;
-                typedef itk::InvertIntensityImageFilter<OutputImageType, OutputImageType> InvertFilterType;
+                typedef itk::BinaryBallStructuringElement<ImageOtbFrame::PixelType, ImageOtbFrame::Dimension> StructuringElementType;
+                typedef itk::GrayscaleDilateImageFilter<ImageOtbFrame::ImageType, ImageOtbFrame::ImageType, StructuringElementType> DilateFilterType;
+                typedef itk::InvertIntensityImageFilter<ImageOtbFrame::ImageType, ImageOtbFrame::ImageType> InvertFilterType;
 
                 StructuringElementType se;
                 se.SetRadius(1);
@@ -128,16 +116,12 @@ void ImageExtractRoadTransform::process()
                 InvertFilterType::Pointer invertFilter = InvertFilterType::New();
                 invertFilter->SetInput(dilater->GetOutput());
 
-                //mImageFrame = invertFilter->GetOutput();
-                fileName += ".out.png";
-                writer->SetFileName(fileName.toStdString());
-                writer->SetInput(invertFilter->GetOutput());
-                writer->Update();
+                mImageFrame.resizeAndCopyImage(invertFilter->GetOutput());
 
-                emit framesProcessed();
-//                break;
-//                }
-//            }
+                emit framesReady();
+                break;
+                }
+            }
     }
 
 } // namespace media
