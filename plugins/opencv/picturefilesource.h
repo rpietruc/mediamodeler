@@ -3,7 +3,6 @@
 
 #include "filelistsource.h"
 #include "pictureframes.h"
-#include <QtCore/qglobal.h>
 
 #if defined(picturefilesource_EXPORTS)
 #  define PICTUREFILESOURCESHARED_EXPORT Q_DECL_EXPORT

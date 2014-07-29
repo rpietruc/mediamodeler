@@ -2,8 +2,6 @@
 #define MEDIA_FileDestination_H
 
 #include "elementbase.h"
-#include <QString>
-#include <QtCore/qglobal.h>
 
 #if defined(filedestination_EXPORTS)
 #  define FILEDESTINATIONSHARED_EXPORT Q_DECL_EXPORT

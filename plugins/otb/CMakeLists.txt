@@ -23,10 +23,14 @@ include_directories("../itk")
 
 set(QMM_OTB_SRC
 #    imageclustertransform.cpp
+    imagevectorsource.cpp
+    imagefiledestination.cpp
     imageroadextracttransform.cpp)
 
 set(QMM_OTB_INC
 #    imageclustertransform.h
+    imagevectorsource.h
+    imagefiledestination.h
     imageroadextracttransform.h)
 
 #add_library(imageclustertransform SHARED imageclustertransform.cpp imageclustertransform.h)
@@ -48,3 +52,25 @@ target_link_libraries(imageextractroadtransform
     OTBCommon
     OTBFeatureExtraction)
 install(TARGETS imageextractroadtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
+
+add_library(imagevectorsource SHARED imagevectorsource.cpp imagevectorsource.h)
+target_link_libraries(imagevectorsource
+    modelcore
+    otbframes
+    ${Qt5Core_LIBRARIES}
+    ITKCommon
+    OTBIO
+    OTBCommon
+    OTBFeatureExtraction)
+install(TARGETS imagevectorsource LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
+
+add_library(imagefiledestination SHARED imagefiledestination.cpp imagefiledestination.h)
+target_link_libraries(imagefiledestination
+    modelcore
+    otbframes
+    ${Qt5Core_LIBRARIES}
+    ITKCommon
+    OTBIO
+    OTBCommon
+    OTBFeatureExtraction)
+install(TARGETS imagefiledestination LIBRARY DESTINATION ${QMM_PLUGINS_PATH})

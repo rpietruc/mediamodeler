@@ -44,7 +44,7 @@ ImageExtractRoadTransform::ImageExtractRoadTransform(ElementFactory *aFactory, c
 void ImageExtractRoadTransform::process()
     {
 //    foreach (const ElementBase *source, mSourceElementsReadySet)
-//        for (int i = 0; i < source->getFramesNo(); ++i)
+//        for (int i = 0; i < source-file:///home/rafal/devel/qmediamodeler/plugins/otb/imageextractroadtransform.cpp>getFramesNo(); ++i)
 //            {
 //            const FrameBase *frame = source->getFrame(i);
 //            ColorImageFrame srcColorFrame;

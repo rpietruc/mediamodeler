@@ -2,8 +2,6 @@
 #define MEDIA_PictureFileDestination_H
 
 #include "filedestination.h"
-#include <QString>
-#include <QtCore/qglobal.h>
 
 #if defined(picturefiledestination_EXPORTS)
 #  define PICTUREFILEDESTINATIONSHARED_EXPORT Q_DECL_EXPORT
