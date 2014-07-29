@@ -46,6 +46,7 @@ add_library(imageextractroadtransform SHARED imageextractroadtransform.cpp image
 target_link_libraries(imageextractroadtransform
     modelcore
     otbframes
+    imageframes
     ${Qt5Core_LIBRARIES}
     ITKCommon
     OTBIO

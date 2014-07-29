@@ -50,15 +50,9 @@ void ImageExtractRoadTransform::process()
                 srcVectorFrame.setSourceName(frame->getSourceName());
                 srcVectorFrame.resizeAndCopyFrame(*frame);
 
-                typedef otb::PolyLineParametricPathWithValue<FloatOtbFrame::PixelType, FloatOtbFrame::Dimension> PathType;
-                typedef otb::RoadExtractionFilter<VectorOtbFrame::ImageType, PathType> RoadExtractionFilterType;
-                typedef otb::DrawPathListFilter<FloatOtbFrame::ImageType, PathType, FloatOtbFrame::ImageType> DrawPathFilterType;
-                typedef itk::RescaleIntensityImageFilter<FloatOtbFrame::ImageType, ImageOtbFrame::ImageType> RescalerType;
-
-                RoadExtractionFilterType::Pointer roadExtractionFilter = RoadExtractionFilterType::New();
-                DrawPathFilterType::Pointer drawingFilter = DrawPathFilterType::New();
-                RescalerType::Pointer rescaleFilter = RescalerType::New();
-
+                //
+                // Reference Pixel
+                //
                 VectorOtbFrame::ImageType::PixelType ReferencePixel;
                 ReferencePixel.SetSize(4);
                 ReferencePixel.SetElement(0, property("referenceChannel0").toDouble());
@@ -66,6 +60,13 @@ void ImageExtractRoadTransform::process()
                 ReferencePixel.SetElement(2, property("referenceChannel2").toDouble());
                 ReferencePixel.SetElement(3, property("referenceChannel3").toDouble());
 
+                //
+                // Road Extraction
+                //
+                typedef otb::PolyLineParametricPathWithValue<FloatOtbFrame::PixelType, FloatOtbFrame::Dimension> PathType;
+                typedef otb::RoadExtractionFilter<VectorOtbFrame::ImageType, PathType> RoadExtractionFilterType;
+
+                RoadExtractionFilterType::Pointer roadExtractionFilter = RoadExtractionFilterType::New();
                 roadExtractionFilter->SetReferencePixel(ReferencePixel);
                 roadExtractionFilter->SetAlpha(property("alpha").toDouble());
                 roadExtractionFilter->SetAmplitudeThreshold(property("amplitudeThreshold").toDouble());
@@ -75,48 +76,37 @@ void ImageExtractRoadTransform::process()
                 roadExtractionFilter->SetFirstMeanDistanceThreshold(property("firstMeanDistanceThreshold").toDouble());
                 roadExtractionFilter->SetSecondMeanDistanceThreshold(property("secondMeanDistanceThreshold").toDouble());
                 roadExtractionFilter->SetDistanceThreshold(property("distanceThreshold").toDouble());
-
-                FloatOtbFrame::ImageType::Pointer blackBackground = FloatOtbFrame::ImageType::New();
-                blackBackground->SetRegions(srcVectorFrame.operator ImageType::Pointer()->GetLargestPossibleRegion());
-                blackBackground->Allocate();
-                blackBackground->FillBuffer(0);
-
-                drawingFilter->UseInternalPathValueOn();
-                rescaleFilter->SetOutputMinimum(itk::NumericTraits<ImageOtbFrame::PixelType>::min());
-                rescaleFilter->SetOutputMaximum(itk::NumericTraits<ImageOtbFrame::PixelType>::max());
-
                 roadExtractionFilter->SetInput(srcVectorFrame.operator ImageType::Pointer());
-                drawingFilter->SetInput(blackBackground);
-                drawingFilter->SetInputPath(roadExtractionFilter->GetOutput());
-                rescaleFilter->SetInput(drawingFilter->GetOutput());
-
                 try
                     {
-                    rescaleFilter->Update();
+                    roadExtractionFilter->Update();
                     }
                 catch (itk::ExceptionObject & exp)
                     {
                     qWarning() << "ITK::Exception catched : " << exp.what();
                     }
 
-                // output image enhancement
-                typedef itk::BinaryBallStructuringElement<ImageOtbFrame::PixelType, ImageOtbFrame::Dimension> StructuringElementType;
-                typedef itk::GrayscaleDilateImageFilter<ImageOtbFrame::ImageType, ImageOtbFrame::ImageType, StructuringElementType> DilateFilterType;
-                typedef itk::InvertIntensityImageFilter<ImageOtbFrame::ImageType, ImageOtbFrame::ImageType> InvertFilterType;
+                RoadExtractionFilterType::OutputPathListConstPointerType pathList = roadExtractionFilter->GetOutput();
+                emit logMessage(Qt::blue, QString("found %1 paths").arg(pathList->Size()));
 
-                StructuringElementType se;
-                se.SetRadius(1);
-                se.CreateStructuringElement();
-
-                DilateFilterType::Pointer dilater = DilateFilterType::New();
-
-                dilater->SetInput(rescaleFilter->GetOutput());
-                dilater->SetKernel(se);
-
-                InvertFilterType::Pointer invertFilter = InvertFilterType::New();
-                invertFilter->SetInput(dilater->GetOutput());
-
-                mImageFrame.resizeAndCopyImage(invertFilter->GetOutput());
+                RoadExtractionFilterType::OutputPathListType::ConstIterator pathIter = pathList->Begin();
+                for (; pathIter != pathList->End(); ++pathIter)
+                    {
+                    vector< itk::Point<int> > points;
+                    RoadExtractionFilterType::OutputPathType::VertexListConstIteratorType vertexIter = pathIter.Get()->GetVertexList()->Begin();
+                    for (; vertexIter != pathIter.Get()->GetVertexList()->End(); ++vertexIter)
+                        {
+                        itk::Point<int> point;
+                        point[0] = vertexIter->Value()[0];
+                        point[1] = vertexIter->Value()[1];
+                        points.push_back(point);
+                        cout << vertexIter->Value() << ", " << vertexIter->Value()[0] << ": " << vertexIter->Value()[1] << endl;
+                        }
+                    PointsFrame pointsFrame;
+                    pointsFrame.setPoints(points);
+                    pointsFrame.setSourceName(frame->getSourceName());
+                    mPointsFrameSet.push_back(pointsFrame);
+                    }
 
                 emit framesReady();
                 break;

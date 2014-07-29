@@ -2,6 +2,7 @@
 #define MEDIA_IMAGEEXTRACTROADTRANSFORM_H
 
 #include "otbframes.h"
+#include "imageframes.h"
 #include "elementbase.h"
 #include <QtCore/qglobal.h>
 
@@ -20,14 +21,14 @@ class IMAGEEXTRACTROADSHARED_EXPORT ImageExtractRoadTransform : public ElementBa
 public:
     explicit ImageExtractRoadTransform(ElementFactory *aFactory, const QString &aObjectName);
 
-    int getFramesNo() const { return 1; }
-    const FrameBase *getFrame(int aIndex) const { return &mImageFrame; }
+    int getFramesNo() const { return mPointsFrameSet.size(); }
+    const FrameBase *getFrame(int aIndex) const { return &mPointsFrameSet.at(aIndex); }
 
 private:
     void process();
 
 private:
-    ImageOtbFrame mImageFrame;
+    QVector<PointsFrame> mPointsFrameSet;
     };
 
 class IMAGEEXTRACTROADSHARED_EXPORT ImageExtractRoadTransformFactory : public ElementFactory

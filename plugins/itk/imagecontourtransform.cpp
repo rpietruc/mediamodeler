@@ -73,14 +73,13 @@ void ImageContourTransform::process()
                             vector< Point<int> > points;
 //                            cout << "Contour " << i << ": " << endl;
                             ContourExtractor2DImageFilterType::VertexListType::ConstIterator vertexIterator = contourExtractor2DImageFilter->GetOutput(i)->GetVertexList()->Begin();
-                            while (vertexIterator != contourExtractor2DImageFilter->GetOutput(i)->GetVertexList()->End())
+                            for (; vertexIterator != contourExtractor2DImageFilter->GetOutput(i)->GetVertexList()->End(); ++vertexIterator)
                                 {
                                 Point<int> point;
                                 point[0] = vertexIterator->Value()[0];
                                 point[1] = vertexIterator->Value()[1];
                                 points.push_back(point);
 //                                cout << vertexIterator->Value() << ", " << vertexIterator->Value()[0] << ": " << vertexIterator->Value()[1] << endl;
-                                ++vertexIterator;
                                 }
                             PointsFrame pointsFrame;
                             pointsFrame.setPoints(points);
