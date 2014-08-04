@@ -21,17 +21,17 @@ endif(Qt5Core_FOUND)
 
 include_directories("../itk")
 
-set(QMM_OTB_SRC
+#set(QMM_OTB_SRC
 #    imageclustertransform.cpp
-    imagevectorsource.cpp
-    imagefiledestination.cpp
-    imageroadextracttransform.cpp)
+#    imagevectorsource.cpp
+#    imagefiledestination.cpp
+#    imageroadextracttransform.cpp)
 
-set(QMM_OTB_INC
+#set(QMM_OTB_INC
 #    imageclustertransform.h
-    imagevectorsource.h
-    imagefiledestination.h
-    imageroadextracttransform.h)
+#    imagevectorsource.h
+#    imagefiledestination.h
+#    imageroadextracttransform.h)
 
 #add_library(imageclustertransform SHARED imageclustertransform.cpp imageclustertransform.h)
 #target_link_libraries(imageclustertransform modelcore otbframes ${Qt5Core_LIBRARIES} ITKCommon)

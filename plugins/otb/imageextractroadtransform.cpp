@@ -92,6 +92,7 @@ void ImageExtractRoadTransform::process()
                 RoadExtractionFilterType::OutputPathListType::ConstIterator pathIter = pathList->Begin();
                 for (; pathIter != pathList->End(); ++pathIter)
                     {
+                    emit logMessage(Qt::gray, QString("path value %1").arg(pathIter.Get()->GetValue()));
                     vector< itk::Point<int> > points;
                     RoadExtractionFilterType::OutputPathType::VertexListConstIteratorType vertexIter = pathIter.Get()->GetVertexList()->Begin();
                     for (; vertexIter != pathIter.Get()->GetVertexList()->End(); ++vertexIter)
@@ -100,7 +101,6 @@ void ImageExtractRoadTransform::process()
                         point[0] = vertexIter->Value()[0];
                         point[1] = vertexIter->Value()[1];
                         points.push_back(point);
-                        cout << vertexIter->Value() << ", " << vertexIter->Value()[0] << ": " << vertexIter->Value()[1] << endl;
                         }
                     PointsFrame pointsFrame;
                     pointsFrame.setPoints(points);
