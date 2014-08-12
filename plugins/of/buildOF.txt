@@ -1,0 +1,8 @@
+pull from github
+cd scripts/linux
+run install_dependecies or pacman -S of-codecs-meta of-dependencies-meta
+run ./compileOF
+git submodule init
+git submodule update 
+run ./compilePG
+run ./buildAllExamples
