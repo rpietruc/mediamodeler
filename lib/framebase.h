@@ -16,6 +16,10 @@ public:
     virtual void resize(const int *aSize) = 0;
     };
 
+/**
+ * FrameBase represents an n-dimensional, regular sampling of data
+ * @todo use google/protobuf or openmpi for frame serialization over network
+ */
 class MEDIAMODELSHARED_EXPORT FrameBase : public FrameBaseInterface
     {
 public:
