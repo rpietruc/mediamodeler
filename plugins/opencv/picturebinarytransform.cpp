@@ -8,7 +8,6 @@ void PCNNTransform(IplImage *pOriImg, IplImage *pResult);
 PictureBinaryTransform::PictureBinaryTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
-    setProperty("clustersNo", 10);
     }
 
 void PictureBinaryTransform::process()
