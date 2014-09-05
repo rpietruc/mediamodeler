@@ -53,7 +53,8 @@ set(QMM_OPENCV_SRC
     videofilesource.cpp
     vectorfiledestination.cpp
     vectordrawtransform.cpp
-    picturesnaketransform.cpp)
+    picturesnaketransform.cpp
+    picturebinarytransform.cpp)
 
 set(QMM_OPENCV_INC
     pictureframes.h
@@ -75,7 +76,8 @@ set(QMM_OPENCV_INC
     videofilesource.h
     vectorfiledestination.h
     vectordrawtransform.h
-    picturesnaketransform.h)
+    picturesnaketransform.h
+    picturebinarytransform.h)
 
 add_library(pictureframes STATIC pictureframes.cpp pictureframes.h)
 target_link_libraries(pictureframes ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
@@ -168,3 +170,7 @@ install(TARGETS vectordrawtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 add_library(picturesnaketransform SHARED picturesnaketransform.cpp picturesnaketransform.h)
 target_link_libraries(picturesnaketransform modelcore pictureframes ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
 install(TARGETS picturesnaketransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
+
+add_library(picturebinarytransform SHARED picturebinarytransform.cpp picturebinarytransform.h)
+target_link_libraries(picturebinarytransform modelcore pictureframes ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
+install(TARGETS picturebinarytransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
