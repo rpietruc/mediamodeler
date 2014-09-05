@@ -142,13 +142,37 @@ public:
     void resize(const int* aPoint)
         {
         mPoints.resize(aPoint[Index]);
+        mDimensions[Index].mResolution = mPoints.size();
         }
 
     const PointsFrame& operator=(const std::vector<cv::Point> aPoints)
         {
+        int size[] = { (int)aPoints.size(), MaxAxis };
+        resize(size);
         mPoints = aPoints;
-        mDimensions[Index].mResolution = mPoints.size();
         return *this;
+        }
+
+    const PointsFrame& operator=(const std::vector<CvPoint> aPoints)
+        {
+        int size[] = { (int)aPoints.size(), MaxAxis };
+        resize(size);
+        for (int i = 0; i < (int)aPoints.size(); ++i)
+            {
+            mPoints[i].x = aPoints[i].x;
+            mPoints[i].y = aPoints[i].y;
+            }
+        return *this;
+        }
+
+    void copyTo(std::vector<CvPoint> aPoints)
+        {
+        aPoints.resize(mPoints.size());
+        for (int i = 0; i < (int)mPoints.size(); ++i)
+            {
+            aPoints[i].x = mPoints[i].x;
+            aPoints[i].y = mPoints[i].y;
+            }
         }
 
     bool isCopyable(const FrameBase& aFrame) const
@@ -163,24 +187,6 @@ private:
 
     std::vector<cv::Point> mPoints;
     };
-
-//class RegionFrame : public FrameBase
-//    {
-//public:
-//    enum { Width, Height, Channels, Dimensions };
-//    explicit RegionFrame(QObject *aParent = 0) :
-//        FrameBase(aParent),
-//        mPictureSize(cv::Size(1024,768))
-//        {
-//        }
-
-//    inline bool isValid() const { return !mRectVector.empty(); }
-//    virtual double getDuration() const { return 0; }
-
-//private:
-//    std::vector<cv::Rect> mRectVector;
-//    cv::Size mPictureSize;
-//    };
 
 } // namespace media
 

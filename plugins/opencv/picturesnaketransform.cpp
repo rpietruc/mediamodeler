@@ -1,87 +1,79 @@
 #include "picturesnaketransform.h"
-#include "pictureframes.h"
-#include <QtPlugin>
 #include <opencv2/legacy/legacy.hpp>
+#include <vector>
 
 #define pi 3.14159265358979
 
+using namespace std;
+
 namespace media {
 
-PictureSnakeTransform::PictureSnakeTransform(TransformFactory *aFactory, const QString &aObjectName) :
-    TransformBase(aFactory, aObjectName),
-    mPointsNo(0),
-    mNeighborhoodSize(11),
-    mContinuityEnergyWeight(0.35),
-    mCurvatureEnergyWeight(0.21),
-    mImageEnergyWeight(0.62)
-{
-}
-
-void PictureSnakeTransform::showSettingsDialog()
-{
-    setPointsNo(20);
-}
-
-void PictureSnakeTransform::setPointsNo(int aPointsNo)
-{
-    mPointsNo = aPointsNo;
-    emit settingsChanged(QString("%1").arg(aPointsNo));
-}
-
-void PictureSnakeTransform::initSettings(const QString& aSettings)
-{
-    setPointsNo(aSettings.toInt());
-}
-
-bool PictureSnakeTransform::process()
-{
-    const PictureFrame *pictureFrame = NULL;
-    const RegionFrame *regionFrame = NULL;
-    foreach (const FrameBase *frame, mCurrentFramesReadySet)
+PictureSnakeTransform::PictureSnakeTransform(ElementFactory *aFactory, const QString &aObjectName) :
+    ElementBase(aFactory, aObjectName)
     {
-        if (!pictureFrame)
-            pictureFrame = qobject_cast<const PictureFrame*>(frame);
-        if (!regionFrame)
-            regionFrame = qobject_cast<const RegionFrame*>(frame);
+    setProperty("neighborhoodSize", 11); // neighborhood size, must be odd
+
+    // weight of continuity energy
+    // continuity energy refers to the distance between a pixel
+    // and its neighboring snake point with respect to all the snake points;
+    // it is calculated by subtracting the average distance
+    // (between all snake points)
+    // from the distance between the pixel and the previous snake point
+    setProperty("continuityEnergyWeight", 0.35);
+
+    // weight of curvature energy
+    // curvature energy refers to the amount curvature between a pixel
+    // and the neighboring snake points
+    // this can be calculated using the second derivative, which corresponds to:
+    // (next snake point - pixel) - (pixel - previous snake point)
+    setProperty("curvatureEnergyWeight", 0.21);
+
+    // weight of image energy
+    // gradient energy merely refers to negative
+    // the size of the gradient of the pixel
+    setProperty("imageEnergyWeight", 0.62);
     }
-    Q_ASSERT(pictureFrame);
-    cv::Point center;
-    cv::Size radius;
-    if (regionFrame)
-    {
-        Q_ASSERT(regionFrame->mRectVector.size() > 0);
 
-        center.x = regionFrame->mRectVector[0].x + regionFrame->mRectVector[0].width/2;
-        center.y = regionFrame->mRectVector[0].y + regionFrame->mRectVector[0].height/2;
+void PictureSnakeTransform::process()
+    {
+    PictureRGBFrame srcFrame;
 
-        radius.width = regionFrame->mRectVector[0].width/2;
-        radius.height = regionFrame->mRectVector[0].height/2;
-    }
-    else
-    {
-        center.x = pictureFrame->mIplImage->width/2;
-        center.y = pictureFrame->mIplImage->height/2;
+    foreach (const ElementBase *source, mSourceElementsReadySet)
+        for (int i = 0; i < source->getFramesNo(); ++i)
+            {
+            const FrameBase *frame = source->getFrame(i);
+            if (srcFrame.isCopyable(*frame))
+                srcFrame.resizeAndCopyFrame(*frame);
+            else if (mPointsFrame.isCopyable(*frame))
+                mPointsFrame.resizeAndCopyFrame(*frame);
+            }
 
-        radius.width = pictureFrame->mIplImage->width/4;
-        radius.height = pictureFrame->mIplImage->height/4;
-    }
-    for (int i = 0; i < mPointsNo; ++i)
-    {
-        mPointsFrame.mPointVector[i].x = center.x + static_cast<int>(round(radius.width*cos(i*((2*pi)/mPointsNo))));
-        mPointsFrame.mPointVector[i].y = center.y - radius.height + static_cast<int>(round(radius.height*sin(i*((2*pi)/mPointsNo))));
-    }
-    if (pictureFrame)
-    {
-        Q_ASSERT(pictureFrame->isValid());
-        CvSize searchWindow = {mNeighborhoodSize, mNeighborhoodSize};
+    if (!srcFrame.isEmpty())
+        {
+        CvSize searchWindow = { property("neighborhoodSize").toInt(), property("neighborhoodSize").toInt() };
         CvTermCriteria termCriteria = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1.e-15f);
-        cvSnakeImage(pictureFrame->mIplImage, mPointsFrame.mPointVector, mPointsNo, &mContinuityEnergyWeight, &mCurvatureEnergyWeight, &mImageEnergyWeight, CV_VALUE, searchWindow, termCriteria, 0);
-        mPointsFrame.mPointsNo = mPointsNo;
-    }
-    return true;
-}
+        float continuityEnergyWeight = property("continuityEnergyWeight").toFloat();
+        float curvatureEnergyWeight = property("curvatureEnergyWeight").toFloat();
+        float imageEnergyWeight = property("imageEnergyWeight").toFloat();
 
-Q_EXPORT_PLUGIN2(PLUGINTARGETNAME, PictureSnakeTransformFactory);
+        vector<CvPoint> points;
+        if (mPointsFrame.isEmpty())
+            {
+            cv::Point center(srcFrame.getDimensionT(PictureRGBFrame::Width).mResolution/2, srcFrame.getDimensionT(PictureRGBFrame::Height).mResolution/2);
+            cv::Size radius(srcFrame.getDimensionT(PictureRGBFrame::Width).mResolution/4, srcFrame.getDimensionT(PictureRGBFrame::Height).mResolution/4);
+            points.resize(sqrt(srcFrame.getDimensionT(PictureRGBFrame::Width).mResolution) + sqrt(srcFrame.getDimensionT(PictureRGBFrame::Height).mResolution));
+            for (int i = 0; i < (int)points.size(); ++i)
+                {
+                points[i].x = center.x + static_cast<int>(round(radius.width*cos(i*((2*pi)/points.size()))));
+                points[i].y = center.y - radius.height + static_cast<int>(round(radius.height*sin(i*((2*pi)/points.size()))));
+                }
+            }
+        else
+            mPointsFrame.copyTo(points);
+        cvSnakeImage((IplImage*)srcFrame, points.data(), (int)points.size(), &continuityEnergyWeight, &curvatureEnergyWeight, &imageEnergyWeight, CV_VALUE, searchWindow, termCriteria, 0);
+        mPointsFrame = points;
+        }
+    emit framesReady();
+    }
 
 } // namespace media
-
