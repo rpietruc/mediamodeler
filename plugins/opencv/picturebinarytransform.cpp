@@ -3,11 +3,27 @@
 
 namespace media {
 
-void PCNNTransform(IplImage *pOriImg, IplImage *pResult);
+void PCNNTransform(IplImage *aImg, IplImage *aResult, const CvMat &aKernelF, const CvMat &aKernelL,
+    int aIters = 8,
+    double aV_F = 0.01,
+    double aV_L = 1,
+    double aV_T = 0.2,
+    double aAlfa_F = 0.693,
+    double aAlfa_L = 0.693,
+    double aAlfa_T = 0.069,
+    double aBeta = 0.2);
 
 PictureBinaryTransform::PictureBinaryTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
+    setProperty("iterations", 8);
+    setProperty("feedbackAmplification", 0.01);
+    setProperty("linkingAmplification", 1);
+    setProperty("thresholdAmplification", 0.2);
+    setProperty("feedbackAttenuation", 0.693);
+    setProperty("linkingAttenuation", 0.693);
+    setProperty("thresholdAttenuation", 0.069);
+    setProperty("linkingCoefficient", 0.2);
     }
 
 void PictureBinaryTransform::process()
@@ -23,7 +39,29 @@ void PictureBinaryTransform::process()
 
                 mPictureFrame.setSourceName(frame->getSourceName());
                 mPictureFrame.resize(srcFrame.getDimensionT(PictureRGBFrame::Width).mResolution, srcFrame.getDimensionT(PictureRGBFrame::Height).mResolution);
-                PCNNTransform(srcFrame, mPictureFrame);
+
+                float kF[3][3] = {
+                    {0.707, 1, 0.707},
+                    {1, 1, 1},
+                    {0.707, 1, 0.707}};
+
+                float kL[3][3] = {
+                    {0.1091, 0.1409, 0.1091},
+                    {0.1409, 0, 0.1409},
+                    {0.1091, 0.1409, 0.1091}};
+
+                CvMat kernelL = cvMat(3, 3, CV_32F, kL);
+                CvMat kernelF = cvMat(3, 3, CV_32F, kF);
+
+                PCNNTransform(srcFrame, mPictureFrame, kernelF, kernelL, 
+                    property("iterations").toInt(),
+                    property("feedbackAmplification").toDouble(),
+                    property("linkingAmplification").toDouble(),
+                    property("thresholdAmplification").toDouble(),
+                    property("feedbackAttenuation").toDouble(),
+                    property("linkingAttenuation").toDouble(),
+                    property("thresholdAttenuation").toDouble(),
+                    property("linkingCoefficient").toDouble());
                 emit framesReady();
                 break;
                 }
@@ -33,126 +71,58 @@ void PictureBinaryTransform::process()
 /**
  * source: http://www.oschina.net/code/piece_full?code=5828
  */
-#define N 8
-
-void PCNNTransform(IplImage *pOriImg, IplImage *pResult)
-{
-    int nRow = 0,nCol = 0;
-    nRow = pOriImg->height;
-    nCol = pOriImg->width;
-
-    float k[3][3]={0.707,1,0.707,
-        1, 1, 1,
-        0.707,1,0.707};
- 
-    double dAF = 0.693;
-    double dAL = 0.693;
-    double dAE = 0.069;
-    double dVF = 0.01;
-    //double dVL = 1;
-    double dVE = 0.2;
-    double dB = 0.2;
- 
-    IplImage *pGray = cvCreateImage(cvGetSize(pOriImg),8,1);
-    cvCvtColor(pOriImg,pGray,CV_BGR2GRAY);
-    IplImage *pSUM1 = cvCreateImage(cvGetSize(pOriImg),8,1);
-    CvMat km=cvMat(3,3,CV_32F,k);
- 
-    IplImage *pS = cvCreateImage(cvGetSize(pOriImg),8,1);
-    IplImage *pS2 = cvCreateImage(cvGetSize(pOriImg),IPL_DEPTH_32F,1);
-    IplImage *pF = cvCreateImage(cvGetSize(pOriImg),IPL_DEPTH_32F,1);
-    IplImage *pL = cvCreateImage(cvGetSize(pOriImg),IPL_DEPTH_32F,1);
-    IplImage *pE = cvCreateImage(cvGetSize(pOriImg),IPL_DEPTH_32F,1);
-    IplImage *pY = cvCreateImage(cvGetSize(pOriImg),8,1);
-
-    cvCopyImage(pGray,pS);
-    for(int i = 0;i < nRow;i++)
+void PCNNTransform(IplImage *aImg, IplImage *aResult, const CvMat &aKernelF, const CvMat &aKernelL,
+    int aIters, double aV_F, double aV_L, double aV_T, double aAlfa_F, double aAlfa_L, double aAlfa_T, double aBeta)
     {
-        for(int j = 0;j < nCol;j++)
-        {
-            CvScalar nPixel = cvGet2D(pS,i,j);
-            CvScalar nNewPix;
-            nNewPix.val[0] = nPixel.val[0] / 255.0;
-            nNewPix.val[1] = nPixel.val[1] / 255.0;
-            nNewPix.val[2] = nPixel.val[2] / 255.0;
-            cvSet2D(pS2,i,j,nNewPix);
-            //cout<<cvGet2D(pS2,i,j).val[0]<<"\t" ;
-        }
-        //cout<<endl;
-    }
+    IplImage *imgGray = cvCreateImage(cvGetSize(aImg),8,1);
+    IplImage *kL = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
+    IplImage *kF = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
+    IplImage *S  = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
+    IplImage *F  = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
+    IplImage *L  = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
+    IplImage *T  = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
+    IplImage *Y  = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
 
-    for(int i = 0;i < nRow;i++)
-    {
-        for(int j = 0;j < nCol;j++)
-        {
-            CvScalar nNewPix;
-            nNewPix.val[0] = 0;
-            cvSet2D(pY,i,j,nNewPix);
-        }
-    }
+    cvCvtColor(aImg, imgGray, CV_BGR2GRAY);
+    for (int i = 0; i < S->height; ++i)
+        for (int j = 0; j < S->width; ++j)
+            cvSet2D(S, i, j, cvScalar(cvGet2D(imgGray, i, j).val[0]/255.0, cvGet2D(imgGray, i, j).val[1]/255.0, cvGet2D(imgGray, i, j).val[2]/255.0));
 
-    for(int i = 0;i < nRow;i++)
-    {
-        for(int j = 0;j < nCol;j++)
-        {
-            CvScalar nNewPix;
-            nNewPix.val[0] = 2;
-            cvSet2D(pE,i,j,nNewPix);
-        }
-    }
+    cvSetZero(Y);
+    cvSet(T, cvScalar(2));
 
-    //for(int i = 0;i < nRow;i++)
-    //{
-    //  for(int j = 0;j < nCol;j++)
-    //  {
-    //      cout<<cvGet2D(pGray,i,j).val[0]<<cvGet2D(pGray,i,j).val[1]<<cvGet2D(pGray,i,j).val[2]<<cvGet2D(pGray,i,j).val[3] ;
-    //  }
-    //}
-
-    cvCopyImage(pS2,pF);
-    cvCopyImage(pS2,pL);
+    cvCopyImage(S, F);
+    cvCopyImage(S, L);
  
-    CvScalar cF,cL,cE;
-    for(int n = 0;n < N;n++)
-    {
-        cvFilter2D(pY,pSUM1,&km);
-        double dF,dL,dU,dE;
-        for(int i = 0;i < nRow;i++)
+    for (int n = 0; n < aIters; ++n)
         {
-            for(int j = 0;j < nCol;j++)
-            {
-                dF = cvGet2D(pF,i,j).val[0];
-                dF = exp(-dAF) * cvGet2D(pF,i,j).val[0] + cvGet2D(pS2,i,j).val[0] + dVF * cvGet2D(pSUM1,i,j).val[0];
-                cF.val [0] = dF;
-                cvSet2D(pF,i,j,cF);
-                dL = cvGet2D(pL,i,j).val[0];
-                dL = exp(-dAL) * dL + cvGet2D(pL,i,j).val[0] * cvGet2D(pSUM1,i,j).val[0];
-                cL.val [0] = dL;
-                cvSet2D(pL,i,j,cL);
-                dU = cvGet2D(pF,i,j).val[0] * (1 + dB * cvGet2D(pL,i,j).val[0]);
-                dE = cvGet2D(pE,i,j).val[0];
-                dE = exp(-dAE) * cvGet2D(pE,i,j).val[0] + dVE * cvGet2D(pY,i,j).val[0];
-                cE.val [0] = dE;
-                cvSet2D(pE,i,j,cE);
-                if(dU - dE > 0)
+        cvFilter2D(Y, kL, &aKernelL);
+        cvFilter2D(Y, kF, &aKernelF);
+
+        for(int i = 0; i < S->height; ++i)
+            for(int j = 0; j < S->width; ++j)
                 {
-                    CvScalar sca;
-                    sca.val[0] = 255;
-                    cvSet2D(pY,i,j,sca);
+                //aV_L = cvGet2D(L, i, j).val[0];
+                cvSet2D(F, i, j, cvScalar(exp(-aAlfa_F) * cvGet2D(F, i, j).val[0] + aV_F * cvGet2D(kF, i, j).val[0] + cvGet2D(S, i, j).val[0]));
+                cvSet2D(L, i, j, cvScalar(exp(-aAlfa_L) * cvGet2D(L, i, j).val[0] + aV_L * cvGet2D(kL, i, j).val[0]));
+                cvSet2D(T, i, j, cvScalar(exp(-aAlfa_T) * cvGet2D(T, i, j).val[0] + aV_T * cvGet2D(Y, i, j).val[0]));
+                cvSet2D(Y, i, j, cvScalar((cvGet2D(F, i, j).val[0] * (1 + aBeta * cvGet2D(L, i, j).val[0]) - cvGet2D(T, i, j).val[0] > 0) ? 1 : 0));
                 }
-                else
-                {
-                    CvScalar sca;
-                    sca.val[0] = 0;
-                    cvSet2D(pY,i,j,sca);
-                }
-                //cout<<cvGet2D(pF,i,j).val[0]<<"\t"<<cvGet2D(pL,i,j).val[0]<<"\t"<<cvGet2D(pE,i,j).val[0]<<endl;
-            }
         }
 
-        //Sleep(200);
+//    cvCopyImage(pY, pResult);
+    for (int i = 0; i < Y->height; ++i)
+        for (int j = 0; j < Y->width; ++j)
+            cvSet2D(aResult, i, j, cvScalar(cvGet2D(Y, i, j).val[0]*255.0, cvGet2D(Y, i, j).val[1]*255.0, cvGet2D(Y, i, j).val[2]*255.0));
+
+    cvReleaseImage(&imgGray);
+    cvReleaseImage(&kL);
+    cvReleaseImage(&kF);
+    cvReleaseImage(&S);
+    cvReleaseImage(&F); 
+    cvReleaseImage(&L); 
+    cvReleaseImage(&T); 
+    cvReleaseImage(&Y); 
     }
-    cvCopyImage(pY, pResult);
-}
 
 } // namespace media
