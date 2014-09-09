@@ -4,34 +4,227 @@
 namespace media {
 
 /**
- * Default parameters as in:
- * http://www.oschina.net/code/piece_full?code=5828
+ * Literature:
+ * [Li14] Li, H., Jin, X., Yang, N., Yang, Z., The recognition of landed aircrafts based on PCNN model and affine moment invariants, Pattern Recognition Letters (2014)
+ * 
+ * PCNN structure according to [Li14]
  */
-void PCNNTransform(IplImage *aImg, IplImage *aResult,
-    const CvMat &aKernelF = cvMat(3, 3, CV_32F, (QVector<float>() << 0.707 << 1 << 0.707 << 1 << 1 << 1 << 0.707 << 1 << 0.707).data()),
-    const CvMat &aKernelL = cvMat(3, 3, CV_32F, (QVector<float>() << 0.707 << 1 << 0.707 << 1 << 1 << 1 << 0.707 << 1 << 0.707).data()),
-    int aIters = 8,
-    double aV_F = 0.01,
-    double aV_L = 1,
-    double aV_T = 0.2,
-    double aAlfa_F = 0.693,
-    double aAlfa_L = 0.693,
-    double aAlfa_T = 0.069,
-    double aBeta = 0.2);
+
+// Default parameters
+
+//
+// According to [Li14]
+//
+static const int DefaultIterations = 8;
+static const double DefaultFeedingAmplification = 0;
+static const double DefaultFeedingAttenuation = 0;
+static const QString DefaultFeedingKernel = "0, 0, 0, 0, 0, 0, 0, 0, 0";
+
+static const double DefaultLinkingAmplification = 1;
+static const double DefaultLinkingAttenuation = 0.6931;
+static const QString DefaultLinkingKernel = "0.1091, 0.1409, 0.1091, 0.1409, 0, 0.1409, 0.1091, 0.1409, 0.1091";
+static const double DefaultLinkingCoefficient = 0.2;
+
+static const double DefaultThresholdAmplification = 20;
+static const double DefaultThresholdAttenuation = 0.2;
+
+class PulseBlock
+    {
+public:
+    PulseBlock(const CvSize &aSize) :
+        mOutputImg(cvCreateImage(aSize, 8, 1))
+        {
+        cvSetZero(mOutputImg);
+        }
+
+    virtual ~PulseBlock()
+        {
+        cvReleaseImage(&mOutputImg);
+        }
+
+    void process(const IplImage* aFeedingImg, const IplImage* aLinkingImg, const IplImage* aThresholdImg)
+        {
+        for(int i = 0; i < mOutputImg->height; ++i)
+            for(int j = 0; j < mOutputImg->width; ++j)
+                cvSet2D(mOutputImg, i, j, pulseFun(cvGet2D(aFeedingImg, i, j), cvGet2D(aLinkingImg, i, j), cvGet2D(aThresholdImg, i, j)));
+        }
+
+    const IplImage *getOutput() { return mOutputImg; }
+
+protected:
+    CvScalar pulseFun(const CvScalar &aFeeding, const CvScalar &aLinking, const CvScalar &aThreshold)
+        {
+        return cvScalar(aFeeding.val[0] * aFeeding.val[0] > aThreshold.val[0]);
+        }
+
+private:
+    IplImage *mOutputImg;
+    };
+
+class FeedbackBlock
+    {
+public:
+    FeedbackBlock(const CvSize &aSize) :
+        mFeedbackImg(cvCreateImage(aSize, IPL_DEPTH_32F, 1))
+        {}
+
+    virtual ~FeedbackBlock()
+        {
+        cvReleaseImage(&mFeedbackImg);
+        }
+
+    void setFeedbackParams(double aAmplification, double aAttenuation)
+        {
+        mAmplification = aAmplification;
+        mAttenuation = aAttenuation;
+        }
+
+    virtual IplImage *process(const IplImage* aInput)
+        {
+        for(int i = 0; i < mFeedbackImg->height; ++i)
+            for(int j = 0; j < mFeedbackImg->width; ++j)
+                cvSet2D(mFeedbackImg, i, j, cvScalar(exp(-mAttenuation) * cvGet2D(mFeedbackImg, i, j).val[0] + mAmplification * cvGet2D(aInput, i, j).val[0]));
+
+        return mFeedbackImg;
+        }
+
+    const IplImage *getOutput() { return mFeedbackImg; }
+
+protected:
+    IplImage *mFeedbackImg;
+    double mAmplification;
+    double mAttenuation;
+    };
+
+class FilterBlock
+    {
+public:
+    FilterBlock(const CvSize &aSize) :
+        mFilteredImage(cvCreateImage(aSize, IPL_DEPTH_32F, 1))
+        {}
+
+    virtual ~FilterBlock()
+        {
+        cvReleaseImage(&mFilteredImage);
+        }
+
+    void setFilterParams(const CvMat &aKernel)
+        {
+        mKernel = aKernel;
+        }
+
+    virtual IplImage *process(const IplImage *aImg)
+        {
+        cvFilter2D(aImg, mFilteredImage, &mKernel);
+        return mFilteredImage;
+        }
+
+    const IplImage *getOutput() { return mFilteredImage; }
+
+    static CvMat textToKernel(const QString &aText)
+        {
+        QStringList list = aText.split(",", QString::SkipEmptyParts);
+        QVector<float> kernel;
+        foreach (const QString &s, list)
+            kernel << s.toFloat();
+        CvMat ret = cvMat(sqrt(kernel.size()), sqrt(kernel.size()), CV_32F, kernel.data());
+        return ret;
+        }
+
+protected:
+    IplImage *mFilteredImage;
+    CvMat mKernel;
+    };
+
+class ThresholdBlock : public FeedbackBlock
+    {
+public:
+    ThresholdBlock(const CvSize &aSize) :
+        FeedbackBlock(aSize)
+        {
+        cvSet(mFeedbackImg, cvScalar(1));
+        }
+    };
+
+class FeedingBlock : public FeedbackBlock, public FilterBlock
+    {
+public:
+    FeedingBlock(const IplImage *aImg) :
+        FeedbackBlock(cvGetSize(aImg)),
+        FilterBlock(cvGetSize(aImg)),
+        mSrcImg(cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1))
+        {
+        cvCopyImage(aImg, mFeedbackImg);
+        cvCopyImage(aImg, mSrcImg);
+        }
+
+    virtual ~FeedingBlock()
+        {
+        cvReleaseImage(&mSrcImg);
+        }
+
+    virtual IplImage *process(const IplImage *aImg)
+        {
+        FeedbackBlock::process(FilterBlock::process(aImg));
+        for(int i = 0; i < mFeedbackImg->height; ++i)
+            for(int j = 0; j < mFeedbackImg->width; ++j)
+                cvSet2D(mFeedbackImg, i, j, cvScalar(cvGet2D(mFeedbackImg, i, j).val[0] + cvGet2D(mSrcImg, i, j).val[0]));
+
+        return mFeedbackImg;
+        }
+
+    const IplImage *getOutput() { return mFeedbackImg; }
+
+private:
+    IplImage *mSrcImg;
+    };
+
+struct LinkingBlock : public FeedbackBlock, public FilterBlock
+    {
+public:
+    LinkingBlock(const IplImage *aImg) :
+        FeedbackBlock(cvGetSize(aImg)),
+        FilterBlock(cvGetSize(aImg)),
+        mOutputImg(cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1))
+        {
+        cvCopyImage(aImg, mFeedbackImg);
+        }
+
+    void setLinkingParams(double aLinkingCoefficient) { mLinkingCoefficient = aLinkingCoefficient; }
+
+    virtual IplImage *process(const IplImage *aImg)
+        {
+        FeedbackBlock::process(FilterBlock::process(aImg));
+        for(int i = 0; i < mFeedbackImg->height; ++i)
+            for(int j = 0; j < mFeedbackImg->width; ++j)
+                cvSet2D(mOutputImg, i, j, cvScalar(1 + mLinkingCoefficient * cvGet2D(mFeedbackImg, i, j).val[0]));
+
+        return mOutputImg;
+        }
+
+    const IplImage *getOutput() { return mOutputImg; }
+
+private:
+    double mLinkingCoefficient;
+    IplImage *mOutputImg;
+    };
 
 PictureBinaryTransform::PictureBinaryTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
     {
-    setProperty("iterations", 8);
-    setProperty("feedbackAmplification", 0.01);
-    setProperty("linkingAmplification", 1);
-    setProperty("thresholdAmplification", 0.2);
-    setProperty("feedbackAttenuation", 0.693);
-    setProperty("linkingAttenuation", 0.693);
-    setProperty("thresholdAttenuation", 0.069);
-    setProperty("linkingCoefficient", 0.2);
-    setProperty("feedbackKernel", "0.707, 1, 0.707, 1, 1, 1, 0.707, 1, 0.707");
-    setProperty("linkingKernel", "0.1091, 0.1409, 0.1091, 0.1409, 0, 0.1409, 0.1091, 0.1409, 0.1091");
+    setProperty("iterations", DefaultIterations);
+
+    setProperty("feedingAmplification", DefaultFeedingAmplification);
+    setProperty("feedingAttenuation", DefaultFeedingAttenuation);
+    setProperty("feedingKernel", DefaultFeedingKernel);
+
+    setProperty("linkingAmplification", DefaultLinkingAmplification);
+    setProperty("linkingAttenuation", DefaultLinkingAttenuation);
+    setProperty("linkingKernel", DefaultLinkingKernel);
+    setProperty("linkingCoefficient", DefaultLinkingCoefficient);
+
+    setProperty("thresholdAmplification", DefaultThresholdAmplification);
+    setProperty("thresholdAttenuation", DefaultThresholdAttenuation);
     }
 
 void PictureBinaryTransform::process()
@@ -48,84 +241,43 @@ void PictureBinaryTransform::process()
                 mPictureFrame.setSourceName(frame->getSourceName());
                 mPictureFrame.resize(srcFrame.getDimensionT(PictureRGBFrame::Width).mResolution, srcFrame.getDimensionT(PictureRGBFrame::Height).mResolution);
 
-                QStringList kf = property("feedbackKernel").toString().split(",", QString::SkipEmptyParts);
-                QStringList kl = property("feedbackKernel").toString().split(",", QString::SkipEmptyParts);
+                IplImage *grayImg = cvCreateImage(cvGetSize(srcFrame), 8, 1);
+                cvCvtColor(srcFrame, grayImg, CV_BGR2GRAY);
 
-                QVector<float> kF;
-                foreach (const QString &s, kf)
-                    kF << s.toFloat();
-                QVector<float> kL;
-                foreach (const QString &s, kl)
-                    kL << s.toFloat();
+                IplImage *inputImg = cvCreateImage(cvGetSize(grayImg), IPL_DEPTH_32F, 1);
+                cvConvertScale(grayImg, inputImg, 1/255.);
 
-                CvMat kernelL = cvMat(sqrt(kL.size()), sqrt(kL.size()), CV_32F, kL.data());
-                CvMat kernelF = cvMat(sqrt(kF.size()), sqrt(kF.size()), CV_32F, kF.data());
+                FeedingBlock feedingBlock(inputImg);
+                LinkingBlock linkingBlock(inputImg);
+                ThresholdBlock thresholdBlock(cvGetSize(inputImg));
+                PulseBlock pulseBlock(cvGetSize(inputImg));
 
-                PCNNTransform(srcFrame, mPictureFrame, kernelF, kernelL, 
-                    property("iterations").toInt(),
-                    property("feedbackAmplification").toDouble(),
-                    property("linkingAmplification").toDouble(),
-                    property("thresholdAmplification").toDouble(),
-                    property("feedbackAttenuation").toDouble(),
-                    property("linkingAttenuation").toDouble(),
-                    property("thresholdAttenuation").toDouble(),
-                    property("linkingCoefficient").toDouble());
+                feedingBlock.setFeedbackParams(property("feedingAmplification").toDouble(), property("feedingAttenuation").toDouble());
+                feedingBlock.setFilterParams(FilterBlock::textToKernel(property("feedingKernel").toString()));
+
+                linkingBlock.setFeedbackParams(property("linkingAmplification").toDouble(), property("linkingAttenuation").toDouble());
+                linkingBlock.setFilterParams(FilterBlock::textToKernel(property("linkingKernel").toString()));
+                linkingBlock.setLinkingParams(property("linkingCoefficient").toDouble());
+
+                thresholdBlock.setFeedbackParams(property("thresholdAmplification").toDouble(), property("thresholdAttenuation").toDouble());
+
+                for (int n = 0; n < property("iterations").toInt(); ++n)
+                    {
+                    feedingBlock.process(pulseBlock.getOutput());
+                    linkingBlock.process(pulseBlock.getOutput());
+                    thresholdBlock.process(pulseBlock.getOutput());
+                    pulseBlock.process(feedingBlock.getOutput(), linkingBlock.getOutput(), thresholdBlock.getOutput());
+                    }
+                // cvCopyImage(outputImg, mPictureFrame);
+                cvConvertScale(pulseBlock.getOutput(), mPictureFrame, 255.);
+
+                cvReleaseImage(&grayImg);
+                cvReleaseImage(&inputImg);
+
                 emit framesReady();
                 break;
                 }
             }
-    }
-
-/**
- * PCNN structure according to:
- * Li, H., Jin, X., Yang, N., Yang, Z., The recognition of landed aircrafts based on PCNN model and affine moment invariants, Pattern Recognition Letters (2014)
- */
-void PCNNTransform(IplImage *aImg, IplImage *aResult, const CvMat &aKernelF, const CvMat &aKernelL,
-    int aIters, double aV_F, double aV_L, double aV_T, double aAlfa_F, double aAlfa_L, double aAlfa_T, double aBeta)
-    {
-    IplImage *imgGray = cvCreateImage(cvGetSize(aImg), 8, 1);
-    IplImage *kL = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
-    IplImage *kF = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
-    IplImage *S  = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
-    IplImage *F  = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
-    IplImage *L  = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
-    IplImage *T  = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
-    IplImage *Y  = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
-
-    cvCvtColor(aImg, imgGray, CV_BGR2GRAY);
-    cvConvertScale(imgGray, S, 1/255.);
-    cvSetZero(Y);
-    cvSet(T, cvScalar(1));
-    cvCopyImage(S, F);
-    cvCopyImage(S, L);
- 
-    for (int n = 0; n < aIters; ++n)
-        {
-        cvFilter2D(Y, kL, &aKernelL);
-        cvFilter2D(Y, kF, &aKernelF);
-
-        for(int i = 0; i < S->height; ++i)
-            for(int j = 0; j < S->width; ++j)
-                {
-                //aV_L = cvGet2D(L, i, j).val[0];
-                cvSet2D(F, i, j, cvScalar(exp(-aAlfa_F) * cvGet2D(F, i, j).val[0] + aV_F * cvGet2D(kF, i, j).val[0] + cvGet2D(S, i, j).val[0]));
-                cvSet2D(L, i, j, cvScalar(exp(-aAlfa_L) * cvGet2D(L, i, j).val[0] + aV_L * cvGet2D(kL, i, j).val[0]));
-                cvSet2D(T, i, j, cvScalar(exp(-aAlfa_T) * cvGet2D(T, i, j).val[0] + aV_T * cvGet2D(Y, i, j).val[0]));
-                cvSet2D(Y, i, j, cvScalar((cvGet2D(F, i, j).val[0] * (1 + aBeta * cvGet2D(L, i, j).val[0]) - cvGet2D(T, i, j).val[0] > 0) ? 1 : 0));
-                }
-        }
-
-//    cvCopyImage(Y, aResult);
-    cvConvertScale(Y, aResult, 255.);
-
-    cvReleaseImage(&imgGray);
-    cvReleaseImage(&kL);
-    cvReleaseImage(&kF);
-    cvReleaseImage(&S);
-    cvReleaseImage(&F); 
-    cvReleaseImage(&L); 
-    cvReleaseImage(&T); 
-    cvReleaseImage(&Y); 
     }
 
 } // namespace media
