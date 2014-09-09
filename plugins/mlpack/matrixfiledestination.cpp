@@ -1,6 +1,5 @@
 #include "matrixfiledestination.h"
 #include "../armadillo/armadilloframes.h"
-#include <mlpack/core.hpp>
 
 using namespace mlpack;
 

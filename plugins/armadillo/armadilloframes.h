@@ -2,6 +2,7 @@
 #define MLPACKFRAMES_H
 
 #include "framebase.h"
+#include <mlpack/core.hpp>
 #include <armadillo>
 
 namespace media {

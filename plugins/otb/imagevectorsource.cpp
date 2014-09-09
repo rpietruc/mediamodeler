@@ -32,7 +32,7 @@ void ImageVectorSource::process()
         ReaderType::Pointer reader = ReaderType::New();
         reader->SetFileName(filename.toStdString());
         reader->GenerateOutputInformation();
-        if (reader->GetOutput()->GetNumberOfComponentsPerPixel() != this->mImageFrame.getDimensionT(VectorOtbFrame::Channels).mResolution)
+        if ((int)reader->GetOutput()->GetNumberOfComponentsPerPixel() != this->mImageFrame.getDimensionT(VectorOtbFrame::Channels).mResolution)
             continue; //unsupported file type
         //else
 

@@ -92,6 +92,8 @@ const ColorImageFrame& ColorImageFrame::operator=(const ImageType::Pointer aImag
     for (index[Width] = 0; index[Width] < (int)mImage->GetLargestPossibleRegion().GetSize()[Width]; ++index[Width])
         for (index[Height] = 0; index[Height] < (int)mImage->GetLargestPossibleRegion().GetSize()[Height]; ++index[Height])
             mImage->SetPixel(index, aImage->GetPixel(index));
+
+    return *this;
     }
 
 GrayImageFrame::GrayImageFrame() :

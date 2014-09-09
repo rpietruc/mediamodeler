@@ -1,7 +1,5 @@
 #include "matrixfilesource.h"
 
-#include <mlpack/core.hpp>
-
 using namespace mlpack;
 
 namespace media {

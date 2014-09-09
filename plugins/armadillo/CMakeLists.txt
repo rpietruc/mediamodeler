@@ -12,6 +12,9 @@ if(Qt5Core_FOUND)
   add_definitions(-DQT_SHARED)
 endif(Qt5Core_FOUND)
 
+find_package(LibXml2 2.6.0 REQUIRED)
+include_directories(${LIBXML2_INCLUDE_DIR})
+
 add_library(armadilloframes STATIC armadilloframes.cpp armadilloframes.h)
 target_link_libraries(armadilloframes ${Qt5Core_LIBRARIES} armadillo)
 install(TARGETS armadilloframes ARCHIVE DESTINATION lib)

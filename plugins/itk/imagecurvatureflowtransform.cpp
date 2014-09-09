@@ -29,8 +29,8 @@ void ImageCurvatureFlowTransform::process()
                 const unsigned int Dimension = 2;
                 typedef Image<InternalPixelType, Dimension> InternalImageType;
 
-                typedef GrayImageFrame::PixelType OutputPixelType;
-                typedef Image<OutputPixelType, Dimension> OutputImageType;
+//                 typedef GrayImageFrame::PixelType OutputPixelType;
+//                 typedef Image<OutputPixelType, Dimension> OutputImageType;
 
                 typedef CurvatureFlowImageFilter<InternalImageType, InternalImageType> CurvatureFlowImageFilterType;
                 CurvatureFlowImageFilterType::Pointer curvatureflow = CurvatureFlowImageFilterType::New();

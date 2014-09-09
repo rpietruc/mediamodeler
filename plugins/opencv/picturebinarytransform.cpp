@@ -3,7 +3,13 @@
 
 namespace media {
 
-void PCNNTransform(IplImage *aImg, IplImage *aResult, const CvMat &aKernelF, const CvMat &aKernelL,
+/**
+ * Default parameters as in:
+ * http://www.oschina.net/code/piece_full?code=5828
+ */
+void PCNNTransform(IplImage *aImg, IplImage *aResult,
+    const CvMat &aKernelF = cvMat(3, 3, CV_32F, (QVector<float>() << 0.707 << 1 << 0.707 << 1 << 1 << 1 << 0.707 << 1 << 0.707).data()),
+    const CvMat &aKernelL = cvMat(3, 3, CV_32F, (QVector<float>() << 0.707 << 1 << 0.707 << 1 << 1 << 1 << 0.707 << 1 << 0.707).data()),
     int aIters = 8,
     double aV_F = 0.01,
     double aV_L = 1,
@@ -24,6 +30,8 @@ PictureBinaryTransform::PictureBinaryTransform(ElementFactory *aFactory, const Q
     setProperty("linkingAttenuation", 0.693);
     setProperty("thresholdAttenuation", 0.069);
     setProperty("linkingCoefficient", 0.2);
+    setProperty("feedbackKernel", "0.707, 1, 0.707, 1, 1, 1, 0.707, 1, 0.707");
+    setProperty("linkingKernel", "0.1091, 0.1409, 0.1091, 0.1409, 0, 0.1409, 0.1091, 0.1409, 0.1091");
     }
 
 void PictureBinaryTransform::process()
@@ -40,18 +48,18 @@ void PictureBinaryTransform::process()
                 mPictureFrame.setSourceName(frame->getSourceName());
                 mPictureFrame.resize(srcFrame.getDimensionT(PictureRGBFrame::Width).mResolution, srcFrame.getDimensionT(PictureRGBFrame::Height).mResolution);
 
-                float kF[3][3] = {
-                    {0.707, 1, 0.707},
-                    {1, 1, 1},
-                    {0.707, 1, 0.707}};
+                QStringList kf = property("feedbackKernel").toString().split(",", QString::SkipEmptyParts);
+                QStringList kl = property("feedbackKernel").toString().split(",", QString::SkipEmptyParts);
 
-                float kL[3][3] = {
-                    {0.1091, 0.1409, 0.1091},
-                    {0.1409, 0, 0.1409},
-                    {0.1091, 0.1409, 0.1091}};
+                QVector<float> kF;
+                foreach (const QString &s, kf)
+                    kF << s.toFloat();
+                QVector<float> kL;
+                foreach (const QString &s, kl)
+                    kL << s.toFloat();
 
-                CvMat kernelL = cvMat(3, 3, CV_32F, kL);
-                CvMat kernelF = cvMat(3, 3, CV_32F, kF);
+                CvMat kernelL = cvMat(sqrt(kL.size()), sqrt(kL.size()), CV_32F, kL.data());
+                CvMat kernelF = cvMat(sqrt(kF.size()), sqrt(kF.size()), CV_32F, kF.data());
 
                 PCNNTransform(srcFrame, mPictureFrame, kernelF, kernelL, 
                     property("iterations").toInt(),
@@ -69,12 +77,13 @@ void PictureBinaryTransform::process()
     }
 
 /**
- * source: http://www.oschina.net/code/piece_full?code=5828
+ * PCNN structure according to:
+ * Li, H., Jin, X., Yang, N., Yang, Z., The recognition of landed aircrafts based on PCNN model and affine moment invariants, Pattern Recognition Letters (2014)
  */
 void PCNNTransform(IplImage *aImg, IplImage *aResult, const CvMat &aKernelF, const CvMat &aKernelL,
     int aIters, double aV_F, double aV_L, double aV_T, double aAlfa_F, double aAlfa_L, double aAlfa_T, double aBeta)
     {
-    IplImage *imgGray = cvCreateImage(cvGetSize(aImg),8,1);
+    IplImage *imgGray = cvCreateImage(cvGetSize(aImg), 8, 1);
     IplImage *kL = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
     IplImage *kF = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
     IplImage *S  = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
@@ -84,13 +93,9 @@ void PCNNTransform(IplImage *aImg, IplImage *aResult, const CvMat &aKernelF, con
     IplImage *Y  = cvCreateImage(cvGetSize(aImg), IPL_DEPTH_32F, 1);
 
     cvCvtColor(aImg, imgGray, CV_BGR2GRAY);
-    for (int i = 0; i < S->height; ++i)
-        for (int j = 0; j < S->width; ++j)
-            cvSet2D(S, i, j, cvScalar(cvGet2D(imgGray, i, j).val[0]/255.0, cvGet2D(imgGray, i, j).val[1]/255.0, cvGet2D(imgGray, i, j).val[2]/255.0));
-
+    cvConvertScale(imgGray, S, 1/255.);
     cvSetZero(Y);
-    cvSet(T, cvScalar(2));
-
+    cvSet(T, cvScalar(1));
     cvCopyImage(S, F);
     cvCopyImage(S, L);
  
@@ -110,10 +115,8 @@ void PCNNTransform(IplImage *aImg, IplImage *aResult, const CvMat &aKernelF, con
                 }
         }
 
-//    cvCopyImage(pY, pResult);
-    for (int i = 0; i < Y->height; ++i)
-        for (int j = 0; j < Y->width; ++j)
-            cvSet2D(aResult, i, j, cvScalar(cvGet2D(Y, i, j).val[0]*255.0, cvGet2D(Y, i, j).val[1]*255.0, cvGet2D(Y, i, j).val[2]*255.0));
+//    cvCopyImage(Y, aResult);
+    cvConvertScale(Y, aResult, 255.);
 
     cvReleaseImage(&imgGray);
     cvReleaseImage(&kL);
