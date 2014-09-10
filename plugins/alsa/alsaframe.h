@@ -16,7 +16,7 @@ public:
 
 //    static const int DefaultSampleRate = 8000;
 //    static const int DefaultChannelsNo = 1;
-    static const double DefaultFrameTime = 0.02; //20 ms
+    static const double DefaultFrameTime;
 
     explicit AlsaFrame(QObject *aParent = 0);
     virtual ~AlsaFrame();

@@ -7,6 +7,14 @@
 #include <opencv/highgui.h>
 #include <opencv/cv.h>
 
+struct IplImageDeleter
+    {
+    void operator() (IplImage* aImage)
+        {
+        cvReleaseImage(&aImage);
+        }
+    };
+
 namespace media {
 
 template <int ChannelsNo>

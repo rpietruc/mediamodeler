@@ -3,6 +3,8 @@
 
 namespace media {
 
+const double AlsaFrame::DefaultFrameTime = 0.02; //20 ms
+
 AlsaFrame::AlsaFrame(QObject *aParent) :
     QObject(aParent),
     FrameBase(Dimensions),
