@@ -24,6 +24,32 @@ PictureSegmentTransform::PictureSegmentTransform(ElementFactory *aFactory, const
     setProperty("deltaBeta", 0.01);
     }
 
+static bool allNeuronsHavePulsed(const IplImage* P)
+    {
+    double val;
+    cvMinMaxLoc(P, &val, 0);
+    return val != 0;
+    }
+
+/**
+ * Threshold
+\f[
+    T_x[t] = \left\{ \begin{array}{l l}
+        w t_t \text{,} & \quad \text{if $P_x[t - 1] = 0$} \\
+        \Omega \text{,} & \quad \text{otherwise}
+    \end{array} \right.
+\f]
+ */
+void threshold(const IplImage* P, double omega, double wt_t, IplImage* T)
+    {
+    shared_ptr<IplImage> Wt_t(cvCreateImage(cvGetSize(P), IPL_DEPTH_32F, 1), IplImageDeleter());
+    shared_ptr<IplImage> Omega(cvCreateImage(cvGetSize(P), IPL_DEPTH_32F, 1), IplImageDeleter());
+
+    cvCmpS(P, 0, Wt_t.get(), CV_CMP_EQ);
+    cvCmpS(P, 0, Omega.get(), CV_CMP_NE);
+    cvAddWeighted(Wt_t.get(), wt_t, Omega.get(), omega, 0, T);
+    }
+
 void PictureSegmentTransform::process()
     {
     foreach (const ElementBase *source, mSourceElementsReadySet)
@@ -52,34 +78,23 @@ void PictureSegmentTransform::process()
                 shared_ptr<IplImage> T(cvCreateImage(cvGetSize(G.get()), IPL_DEPTH_32F, 1), IplImageDeleter());
                 shared_ptr<IplImage> P(cvCreateImage(cvGetSize(G.get()), IPL_DEPTH_32F, 1), IplImageDeleter());
                 shared_ptr<IplImage> Y(cvCreateImage(cvGetSize(G.get()), 8, 1), IplImageDeleter());
-                shared_ptr<IplImage> Wt_t(cvCreateImage(cvGetSize(G.get()), IPL_DEPTH_32F, 1), IplImageDeleter());
-                shared_ptr<IplImage> Omega(cvCreateImage(cvGetSize(G.get()), IPL_DEPTH_32F, 1), IplImageDeleter());
+
+                shared_ptr<IplImage> P_old(cvCreateImage(cvGetSize(G.get()), IPL_DEPTH_32F, 1), IplImageDeleter());
 
                 /// Set \f$ \beta_t \f$ sufficient for initial spread
-                bool allNeuronsHavePulsed = false;
-                do // while (!allNeuronsHavePulsed)
+                int t = 1;
+                do // while (!allNeuronsHavePulsed(P.get()))
                     {
                     /// \f$ wt_t = max[G_y] \f$.
                     double wt_t;
-                    cvMinMaxLoc(G.get(), 0, wt_t);
+                    cvMinMaxLoc(G.get(), 0, &wt_t);
 
                     /// \f$ \farall y | P_y[t - 1] = 0 \f$.
-                    cvSetZero(P.get());
+                    //cvSetZero(P.get());
 
-                    /**
-                     * Threshold
-                    \f[
-                        T_x[t] = \left\{ \begin{array}{l l}
-                            w t_t \text{,} & \quad \text{if $P_x[t - 1] = 0$} \\
-                            \Omega \text{,} & \quad \text{otherwise}
-                        \end{array} \right.
-                    \f]
-                     */
                     //cvCopyImage(G.get(), U.get()); // copied at initialization
-                    cvSet(T.get(), cvScalar(property("Omega").toDouble())); // P = 0
-                    cvCmpS(P.get(), 0, Wt_t.get(), CV_CMP_EQ);
-                    cvCmpS(P.get(), 0, Omega.get(), CV_CMP_NE);
-                    cvAddWeighted(Wt_t.get(), wt_t, Omega.get(), property("Omega").toDouble(), 0, T.get());
+                    //cvSet(T.get(), cvScalar(0));
+                    threshold(P.get(), property("Omega").toDouble(), wt_t, T.get());
 
                     /**
                      * Pulse
@@ -131,17 +146,20 @@ void PictureSegmentTransform::process()
                         }
                         // while (!statisticalTerminationConditionMet)
 
-                        /**
-                         * Pulse matrix
-                        \f[
-                            P_x[t] = \left\{ \begin{array}{l l}
-                                t \text{,} & \quad \text{if $Y_x[t] = 1$} \\
-                                P_x[t - 1] \text{,} & \quad \text{otherwise}
-                            \end{array} \right.
-                        \f]
-                         */
+                    /**
+                     * Pulse matrix
+                    \f[
+                        P_x[t] = \left\{ \begin{array}{l l}
+                            t \text{,} & \quad \text{if $Y_x[t] = 1$} \\
+                            P_x[t - 1] \text{,} & \quad \text{otherwise}
+                        \end{array} \right.
+                    \f]
+                     */
+                    cvCmpS(Y.get(), 0, P_old.get(), CV_CMP_EQ);
+                    cvAddWeighted(Y.get(), t, P_old.get(), 1, 0, P.get());
+                    ++t;
                     }
-                while (!allNeuronsHavePulsed);
+                while (!allNeuronsHavePulsed(P.get()));
 
                 // Merge small regions with nearest neighbor.
 
