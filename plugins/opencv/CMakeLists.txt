@@ -16,6 +16,7 @@ add_definitions(${Qt5Widgets_DEFINITIONS})
 add_definitions(${Qt5Svg_DEFINITIONS})
 add_definitions(-DQT_PLUGIN)
 add_definitions(-DQT_SHARED)
+add_definitions(-fPIC)
 #set(CMAKE_CXX_FLAGS "${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
 set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
@@ -177,6 +178,9 @@ add_library(picturebinarytransform SHARED picturebinarytransform.cpp picturebina
 target_link_libraries(picturebinarytransform modelcore pictureframes ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
 install(TARGETS picturebinarytransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 
+add_library(pulsecoupledneuralnetwork STATIC pulsecoupledneuralnetwork.c pulsecoupledneuralnetwork.h)
+target_link_libraries(pulsecoupledneuralnetwork ${OpenCV_LIBS})
+
 add_library(picturesegmenttransform SHARED picturesegmenttransform.cpp picturesegmenttransform.h)
-target_link_libraries(picturesegmenttransform modelcore pictureframes ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(picturesegmenttransform modelcore pictureframes pulsecoupledneuralnetwork ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
 install(TARGETS picturesegmenttransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})

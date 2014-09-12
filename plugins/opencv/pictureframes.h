@@ -3,7 +3,7 @@
 
 #include "framebase.h"
 #include <QString>
-#include <vector>
+//#include <vector>
 #include <opencv/highgui.h>
 #include <opencv/cv.h>
 
