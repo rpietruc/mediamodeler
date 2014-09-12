@@ -1,6 +1,7 @@
 #include "picturebinarytransform.h"
 #include "pictureframes.h"
 #include <boost/shared_ptr.hpp>
+#include "pulsecoupledneuralnetwork.h"
 
 using namespace boost;
 
@@ -75,73 +76,17 @@ void PictureBinaryTransform::process()
                 shared_ptr<IplImage> grayImg(cvCreateImage(cvGetSize(srcFrame), 8, 1), IplImageDeleter());
                 cvCvtColor(srcFrame, grayImg.get(), CV_BGR2GRAY);
 
-                shared_ptr<IplImage> inputImg(cvCreateImage(cvGetSize(srcFrame), IPL_DEPTH_32F, 1), IplImageDeleter());
-                cvConvertScale(grayImg.get(), inputImg.get(), 1/255.);
-
-                QVector<float> kernel = text2vect(property("feedingKernel").toString());
-                CvMat feedingKernel = cvMat(sqrt(kernel.size()), sqrt(kernel.size()), CV_32F, kernel.data());
-                shared_ptr<IplImage> feedingFilter(cvCreateImage(cvGetSize(srcFrame), IPL_DEPTH_32F, 1), IplImageDeleter());
-
-                kernel = text2vect(property("linkingKernel").toString());
-                CvMat linkingKernel = cvMat(sqrt(kernel.size()), sqrt(kernel.size()), CV_32F, kernel.data());
-                shared_ptr<IplImage> linkingFilter(cvCreateImage(cvGetSize(srcFrame), IPL_DEPTH_32F, 1), IplImageDeleter());
-
-                shared_ptr<IplImage> linkingInput((IplImage *)cvClone(inputImg.get()), IplImageDeleter());
-                shared_ptr<IplImage> feedingInput((IplImage *)cvClone(inputImg.get()), IplImageDeleter());
-
-                shared_ptr<IplImage> linking(cvCreateImage(cvGetSize(srcFrame), IPL_DEPTH_32F, 1), IplImageDeleter());
-
-                shared_ptr<IplImage> thresholdFeedback(cvCreateImage(cvGetSize(srcFrame), IPL_DEPTH_32F, 1), IplImageDeleter());
-                cvSet(thresholdFeedback.get(), cvScalar(2));
-
-                shared_ptr<IplImage> pulseGenerator(cvCreateImage(cvGetSize(srcFrame), 8, 1), IplImageDeleter());
-                cvSetZero(pulseGenerator.get());
-
-                for (int n = 0; n < property("iterations").toInt(); ++n)
-                    {
-                    /**
-                     * Feeding input:
-                     * \f$ F_{i,j}[n] = e^{-\alpha_F} F_{i,j}[n - 1] + V_F \sum_{k,l} m_{i, j, k, l} Y_{i,j}[n - 1] + S_{i,j} \f$.
-                     */
-                    cvFilter2D(pulseGenerator.get(), feedingFilter.get(), &feedingKernel);
-                    cvAddWeighted(feedingFilter.get(), exp(-property("feedingAttenuation").toDouble()), feedingInput.get(), property("feedingAmplification").toDouble(), 0., feedingFilter.get());
-                    cvAdd(feedingInput.get(), inputImg.get(), feedingInput.get());
-
-                    /**
-                     * Linking input:
-                     * \f$ L_{i,j}[n] = e^{-\alpha_L} L_{i,j}[n - 1] + V_L \sum_{k,l} w_{i, j, k, l} Y_{i,j}[n-1] \f$.
-                     */
-                    cvFilter2D(pulseGenerator.get(), linkingFilter.get(), &linkingKernel);
-                    cvAddWeighted(linkingFilter.get(), exp(-property("linkingAttenuation").toDouble()), linkingInput.get(), property("linkingAmplification").toDouble(), 0., linkingFilter.get());
-
-                    /**
-                     * Linking:
-                     * \f$ U_{i,j}[n] = F_{i,j}[n](1 + \beta L_{i,j}[n]) \f$.
-                     */
-                    cvScale(linkingInput.get(), linking.get(), property("linkingCoefficient").toFloat());
-                    cvAddS(linking.get(), cvScalar(1), linking.get());
-                    cvMul(feedingInput.get(), linking.get(), linking.get());
-
-                    /**
-                     * Threshold:
-                     * \f$ T_{i,j}[n] = e^{-\alpha_T} T_{i,j}[n - 1] + V_T Y_{i,j}[n - 1] \f$.
-                     */
-                    cvAddWeighted(thresholdFeedback.get(), exp(-property("thresholdAttenuation").toDouble()), pulseGenerator.get(), property("thresholdAmplification").toDouble(), 0., thresholdFeedback.get());
-
-                    /**
-                     * Pulse:
-                    \f[
-                        Y_{i,j}[n] = \left\{ \begin{array}{l l}
-                            1 & \quad U_{i,j}[n] \geq T_{i,j}[n] \\
-                            0 & \quad \text{otherwise}
-                        \end{array} \right.
-                    \f]
-                     */
-                    cvCmp(linking.get(), thresholdFeedback.get(), pulseGenerator.get(), CV_CMP_GE);
-                    }
-
-                // cvCopyImage(outputImg, mPictureFrame);
-                cvConvertScale(pulseGenerator.get(), mPictureFrame, 255.);
+                QVector<float> m = text2vect(property("feedingKernel").toString());
+                QVector<float> w = text2vect(property("linkingKernel").toString());
+                pcnn(grayImg.get(), mPictureFrame, m.data(), sqrt(m.size()), w.data(), sqrt(w.size()),
+                     property("iterations").toInt(),
+                     property("feedingAttenuation").toDouble(),
+                     property("feedingAmplification").toDouble(),
+                     property("linkingAttenuation").toDouble(),
+                     property("linkingAmplification").toDouble(),
+                     property("linkingCoefficient").toDouble(),
+                     property("thresholdAttenuation").toDouble(),
+                     property("thresholdAmplification").toDouble());
 
                 emit framesReady();
                 break;

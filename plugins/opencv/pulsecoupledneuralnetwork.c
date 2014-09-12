@@ -1,68 +1,54 @@
 #include "pulsecoupledneuralnetwork.h"
 
-double workingThreshold(const IplImage* G, const IplImage* P)
+void pcnn(const IplImage* grayImg, IplImage* output, float *m, int mSize, float *w, int wSize, int N, double alfa_F, double V_F, double alfa_L, double V_L, double beta, double alfa_T, double V_T)
     {
-    IplImage* mask = cvCreateImage(cvGetSize(P), IPL_DEPTH_8U, 1);
-    double wt_t;
-    cvCmpS(P, 0, mask, CV_CMP_EQ);
-    cvMinMaxLoc(G, 0, &wt_t, 0, 0, mask);
-    cvReleaseImage(&mask);
-    return wt_t;
-    }
+    IplImage* S = cvCreateImage(cvGetSize(grayImg), IPL_DEPTH_32F, 1);
+    IplImage* MY = cvCreateImage(cvGetSize(grayImg), IPL_DEPTH_32F, 1);
+    IplImage* WY = cvCreateImage(cvGetSize(grayImg), IPL_DEPTH_32F, 1);
+    IplImage* L = (IplImage *)cvClone(S);
+    IplImage* F = (IplImage *)cvClone(S);
+    IplImage* U = cvCreateImage(cvGetSize(grayImg), IPL_DEPTH_32F, 1);
+    IplImage* T = cvCreateImage(cvGetSize(grayImg), IPL_DEPTH_32F, 1);
+    IplImage* Y = cvCreateImage(cvGetSize(grayImg), IPL_DEPTH_8U, 1);
 
-void feeding(const IplImage* Y, IplImage* L, double d)
-    {
-    static float kernel[9] = {1, 1, 1, 1, 0, 1, 1, 1, 1};
-    CvMat N = cvMat(sqrt(sizeof(kernel)/sizeof(kernel[0])), sqrt(sizeof(kernel)/sizeof(kernel[0])), CV_32F, kernel);
-    cvFilter2D(Y, L, &N, cvPoint(-1,-1));
-    cvSubS(L, cvRealScalar(d), L, 0);
-    }
+    CvMat M = cvMat(mSize, mSize, CV_32F, m);
+    CvMat W = cvMat(wSize, wSize, CV_32F, w);
 
-void linking(const IplImage* L, const IplImage* G, IplImage* U, double beta_t)
-    {
-    cvScale(L, U, beta_t, 0);
-    cvAddS(U, cvRealScalar(1), U, 0);
-    cvMul(G, U, U, 1.);
-    }
+    cvConvertScale(grayImg, S, 1/255., 0.);
+    cvSet(T, cvRealScalar(2), 0);
+    cvSetZero(Y);
 
-void threshold(const IplImage* P, double omega, double wt_t, IplImage* T)
-    {
-    cvSet(T, cvRealScalar(wt_t), 0);
-    cvSet(T, cvRealScalar(omega), P);
-    }
+    int n;
+    for (n = 0; n < N; ++n)
+        {
+        /* Feeding input: */
+        cvFilter2D(Y, MY, &M, cvPoint(-1, -1));
+        cvAddWeighted(F, exp(-alfa_F), MY, V_F, 0., F);
+        cvAdd(F, S, F, 0);
 
-void pulseOutput(const IplImage* U, const IplImage* T, IplImage* Y)
-    {
-    cvCmp(U, T, Y, CV_CMP_GE);
-    }
+        /* Linking input: */
+        cvFilter2D(Y, WY, &W, cvPoint(-1, -1));
+        cvAddWeighted(L, exp(-alfa_L), WY, V_L, 0., L);
 
-int pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivity(const IplImage* U, const IplImage* T, IplImage* Y)
-    {
-    IplImage* change = (IplImage *)cvClone(Y);
-    pulseOutput(U, T, Y);
-    cvCmp(change, Y, change, CV_CMP_NE);
-    double changeMaxVal;
-    cvMinMaxLoc(change, 0, &changeMaxVal, 0, 0, 0);
-    cvReleaseImage(&change);
-    return changeMaxVal > 0;
-    }
+        /* Linking: */
+        cvScale(L, U, beta, 0.);
+        cvAddS(U, cvRealScalar(1), U, 0);
+        cvMul(F, U, U, 1.);
 
-void pulseMatrix(const IplImage* Y, IplImage* P, int t)
-    {
-    IplImage* P_old = cvCreateImage(cvGetSize(Y), IPL_DEPTH_8U, 1);
-    cvCmpS(Y, 0, P_old, CV_CMP_EQ);
-    cvAddWeighted(Y, t, P_old, 1, 0, P);
-    cvReleaseImage(&P_old);
-    }
+        /* Threshold: */
+        cvAddWeighted(T, exp(-alfa_T), Y, V_T, 0., T);
 
-int allNeuronsHavePulsed(const IplImage* P)
-    {
-    double minVal;
-    cvMinMaxLoc(P, &minVal, 0, 0, 0, 0);
-    return minVal > 0;
-    }
+        /* Pulse: */
+        cvCmp(U, T, Y, CV_CMP_GE);
+        }
+    cvConvertScale(Y, output, 255., 0.);
 
-int statisticalTerminationConditionMet(double beta_t, double beta_max)
-    {
-    return (beta_t > beta_max); // or ..
+    cvReleaseImage(&S);
+    cvReleaseImage(&MY);
+    cvReleaseImage(&WY);
+    cvReleaseImage(&L);
+    cvReleaseImage(&F);
+    cvReleaseImage(&U);
+    cvReleaseImage(&T);
+    cvReleaseImage(&Y);
     }

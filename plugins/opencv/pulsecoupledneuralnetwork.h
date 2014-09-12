@@ -8,90 +8,36 @@ extern "C" {
 #endif // __cplusplus
 
 /**
-  * Literature:
-  * Robert D. Stewart, Iris Fermin, and Manfred Opper
-  * Region Growing With Pulse-Coupled Neural Networks: An Alternative to Seeded Region Growing
-  * IEEE TRANSACTIONS ON NEURAL NETWORKS, VOL. 13, NO. 6, NOVEMBER 2002
-  */
-
-/**
-  * Working threshold
-  * \f$ wt_t = max[G_y] \quad \farall y | P_y[t - 1] = 0 \f$.
-  * @todo optimize mask array allocation
-  */
-double workingThreshold(const IplImage* G, const IplImage* P);
-
-/**
-  * Feeding:
-  * \f$ L_x[t] = \sum_{z \in N(x)} Y_z[t] - d \f$.
-  */
-void feeding(const IplImage* Y, IplImage* L, double d);
-
-/** 
-  * Linking:
-  * \f$ U_x[t] = G_x\{1 + \beta_t L_x[t]\} \f$.
-  */
-void linking(const IplImage* L, const IplImage* G, IplImage* U, double beta_t);
-
-/**
-  * Threshold
+  * PCNN structure according to:
+  * Li, H., Jin, X., Yang, N., Yang, Z., The recognition of landed aircrafts based on PCNN model and affine moment invariants, Pattern Recognition Letters (2014)
+  * 
+  * Feeding input:  \f$ F_{i,j}[n] = e^{-\alpha_F} F_{i,j}[n - 1] + V_F \sum_{k,l} m_{i, j, k, l} Y_{i,j}[n - 1] + S_{i,j} \f$.
+  * Linking input:  \f$ L_{i,j}[n] = e^{-\alpha_L} L_{i,j}[n - 1] + V_L \sum_{k,l} w_{i, j, k, l} Y_{i,j}[n-1] \f$.
+  * Linking:        \f$ U_{i,j}[n] = F_{i,j}[n](1 + \beta L_{i,j}[n]) \f$.
+  * Threshold:      \f$ T_{i,j}[n] = e^{-\alpha_T} T_{i,j}[n - 1] + V_T Y_{i,j}[n - 1] \f$.
+  * Pulse:
   * \f[
-  *     T_x[t] = \left\{ \begin{array}{l l}
-  *         w t_t \text{,} & \quad \text{if $P_x[t - 1] = 0$} \\
-  *         \Omega \text{,} & \quad \text{otherwise}
+  *     Y_{i,j}[n] = \left\{ \begin{array}{l l}
+  *         1 & \quad U_{i,j}[n] \geq T_{i,j}[n] \\
+  *         0 & \quad \text{otherwise}
   *     \end{array} \right.
   * \f]
+  * @param grayImg input image in gray scale
+  * @param output output image in gray scale
+  * @param m feeding filter kernel
+  * @param mSize feeding filter kernel size mSize*mSize
+  * @param w linking filter kernel
+  * @param wSize linking filter kernel size wSize*wSize
+  * @param N iterations
+  * @param alfa_F feeding attenuation
+  * @param V_F feeding amplification
+  * @param alfa_L linking attenuation
+  * @param V_L linking amplification
+  * @param beta linking coefficient
+  * @param alfa_T threshold attenuation
+  * @param V_T threshold amplification
   */
-void threshold(const IplImage* P, double omega, double wt_t, IplImage* T);
-
-/**
-  * Pulse output
-  * \f[
-  *     Y_x[t] = \left\{ \begin{array}{l l}
-  *         1 \text{,} & \quad \text{if $U_x[t] \geq T_x[t]$} \\
-  *         0 \text{,} & \quad \text{otherwise}
-  *     \end{array} \right.
-  * \f]
-  * 
-  * @return true if there is any change in p ulsing activity
-  * 
-  * @todo optimize temporary array allocation
-  */
-void pulseOutput(const IplImage* U, const IplImage* T, IplImage* Y);
-
-/**
-  * pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivity
-  * @return true if there is any change in p ulsing activity
-  * @todo optimize temporary array allocation
-  */
-int pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivity(const IplImage* U, const IplImage* T, IplImage* Y);
-
-/**
-  * Pulse matrix
-  *  \f[
-  *     P_x[t] = \left\{ \begin{array}{l l}
-  *         t \text{,} & \quad \text{if $Y_x[t] = 1$} \\
-  *         P_x[t - 1] \text{,} & \quad \text{otherwise}
-  *     \end{array} \right.
-  *  \f]
-  *
-  * @todo optimize temporary array allocation
-  */
-void pulseMatrix(const IplImage* Y, IplImage* P, int t);
-
-int allNeuronsHavePulsed(const IplImage* P);
-
-/**
-  * statisticalTerminationConditionMet
-  *
-  * -# Region engulfed -- all neighbors of pulsing neurons are either pulsing or not active.
-  * -# Excessive beta value -- the linking coefficient exceeds a maximum value \f$ \beta_{max} \f$.
-  * -# Excessive mean difference -- difference \f$ \delta \mu \f$ between mean of accepted region \f$ \mu_{old} \f$
-  *    and mean of newly proposed region \f$ \mu_{new} \f$ is greater than a threshold value \f$ S_{B_{max}} \f$.
-  * 
-  * @todo add 2 missing conditions
-  */
-int statisticalTerminationConditionMet(double beta_t, double beta_max);
+void pcnn(const IplImage* grayImg, IplImage* output, float *m, int mSize, float *w, int wSize, int N, double alfa_F, double V_F, double alfa_L, double V_L, double beta, double alfa_T, double V_T);
 
 #ifdef __cplusplus
 }

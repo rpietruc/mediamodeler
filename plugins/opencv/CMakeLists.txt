@@ -174,13 +174,16 @@ add_library(picturesnaketransform SHARED picturesnaketransform.cpp picturesnaket
 target_link_libraries(picturesnaketransform modelcore pictureframes ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
 install(TARGETS picturesnaketransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 
-add_library(picturebinarytransform SHARED picturebinarytransform.cpp picturebinarytransform.h)
-target_link_libraries(picturebinarytransform modelcore pictureframes ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
-install(TARGETS picturebinarytransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
-
 add_library(pulsecoupledneuralnetwork STATIC pulsecoupledneuralnetwork.c pulsecoupledneuralnetwork.h)
 target_link_libraries(pulsecoupledneuralnetwork ${OpenCV_LIBS})
 
+add_library(picturebinarytransform SHARED picturebinarytransform.cpp picturebinarytransform.h)
+target_link_libraries(picturebinarytransform modelcore pictureframes pulsecoupledneuralnetwork ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
+install(TARGETS picturebinarytransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
+
+add_library(regiongrowingpcnn STATIC regiongrowingpcnn.c regiongrowingpcnn.h)
+target_link_libraries(regiongrowingpcnn ${OpenCV_LIBS})
+
 add_library(picturesegmenttransform SHARED picturesegmenttransform.cpp picturesegmenttransform.h)
-target_link_libraries(picturesegmenttransform modelcore pictureframes pulsecoupledneuralnetwork ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(picturesegmenttransform modelcore pictureframes regiongrowingpcnn ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
 install(TARGETS picturesegmenttransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
