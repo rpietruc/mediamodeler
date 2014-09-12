@@ -82,6 +82,7 @@ void threshold(const IplImage* P, double omega, double wt_t, IplImage* T)
 void pulseOutput(const IplImage* U, const IplImage* T, IplImage* Y)
     {
     cvCmp(U, T, Y, CV_CMP_GE);
+    cvScale(Y, Y, 1./255., 0.);
     }
 
 int pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivity(const IplImage* U, const IplImage* T, IplImage* Y)
