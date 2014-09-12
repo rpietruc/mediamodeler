@@ -37,10 +37,8 @@ void regionGrowingPcnn(const IplImage *grayImg, IplImage *output, double omega, 
         }
     while (!allNeuronsHavePulsed(P));
 
-    // Merge small regions with nearest neighbor.
-
-    // cvCopyImage(outputImg, mPictureFrame);
-    cvConvertScale(P, output, 255., 0);
+    //TODO: Merge small regions with nearest neighbor.
+    cvCopyImage(P, output);
 
     cvReleaseImage(&G);
     cvReleaseImage(&L);

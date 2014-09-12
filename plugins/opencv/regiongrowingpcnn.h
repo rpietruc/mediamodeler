@@ -12,6 +12,9 @@ extern "C" {
   * Robert D. Stewart, Iris Fermin, and Manfred Opper
   * Region Growing With Pulse-Coupled Neural Networks: An Alternative to Seeded Region Growing
   * IEEE TRANSACTIONS ON NEURAL NETWORKS, VOL. 13, NO. 6, NOVEMBER 2002
+  *
+  *
+  * @todo Merge small regions with nearest neighbor.
   */
 void regionGrowingPcnn(const IplImage* grayImg, IplImage* output, double omega, double beta_min, double beta_max, double beta_delta, double d);
 

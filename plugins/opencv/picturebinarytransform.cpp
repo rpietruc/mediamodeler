@@ -73,7 +73,7 @@ void PictureBinaryTransform::process()
                 mPictureFrame.setSourceName(frame->getSourceName());
                 mPictureFrame.resize(srcFrame.getDimensionT(PictureRGBFrame::Width).mResolution, srcFrame.getDimensionT(PictureRGBFrame::Height).mResolution);
 
-                shared_ptr<IplImage> grayImg(cvCreateImage(cvGetSize(srcFrame), 8, 1), IplImageDeleter());
+                shared_ptr<IplImage> grayImg(cvCreateImage(cvGetSize(srcFrame), IPL_DEPTH_8U, 1), IplImageDeleter());
                 cvCvtColor(srcFrame, grayImg.get(), CV_BGR2GRAY);
 
                 QVector<float> m = text2vect(property("feedingKernel").toString());

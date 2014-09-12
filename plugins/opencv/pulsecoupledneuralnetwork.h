@@ -12,7 +12,7 @@ extern "C" {
   * Li, H., Jin, X., Yang, N., Yang, Z., The recognition of landed aircrafts based on PCNN model and affine moment invariants, Pattern Recognition Letters (2014)
   * 
   * Feeding input:  \f$ F_{i,j}[n] = e^{-\alpha_F} F_{i,j}[n - 1] + V_F \sum_{k,l} m_{i, j, k, l} Y_{i,j}[n - 1] + S_{i,j} \f$.
-  * Linking input:  \f$ L_{i,j}[n] = e^{-\alpha_L} L_{i,j}[n - 1] + V_L \sum_{k,l} w_{i, j, k, l} Y_{i,j}[n-1] \f$.
+  * Linking input:  \f$ L_{i,j}[n] = e^{-\alpha_L} L_{i,j}[n - 1] + V_L \sum_{k,l} w_{i, j, k, l} Y_{i,j}[n - 1] \f$.
   * Linking:        \f$ U_{i,j}[n] = F_{i,j}[n](1 + \beta L_{i,j}[n]) \f$.
   * Threshold:      \f$ T_{i,j}[n] = e^{-\alpha_T} T_{i,j}[n - 1] + V_T Y_{i,j}[n - 1] \f$.
   * Pulse:
@@ -22,6 +22,7 @@ extern "C" {
   *         0 & \quad \text{otherwise}
   *     \end{array} \right.
   * \f]
+  * 
   * @param grayImg input image in gray scale
   * @param output output image in gray scale
   * @param m feeding filter kernel
