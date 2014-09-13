@@ -153,3 +153,24 @@ BOOST_AUTO_TEST_CASE(pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivityTest)
     BOOST_CHECK_EQUAL(cvGet2D(Y.get(), 1, 0).val[0], 1);
     BOOST_CHECK_EQUAL(cvGet2D(Y.get(), 1, 1).val[0], 1);
     }
+
+BOOST_AUTO_TEST_CASE(pulseMatrixTest)
+    {
+    CvSize size = cvSize(2, 2);
+
+    shared_ptr<IplImage> Y(cvCreateImage(size, IPL_DEPTH_8U, 1), IplImageDeleter());
+    shared_ptr<IplImage> P(cvCreateImage(size, IPL_DEPTH_8U, 1), IplImageDeleter());
+
+    cvSet2D(Y.get(), 0, 0, cvRealScalar(0));
+    cvSet2D(Y.get(), 0, 1, cvRealScalar(1));
+    cvSet2D(Y.get(), 1, 0, cvRealScalar(2));
+    cvSet2D(Y.get(), 1, 1, cvRealScalar(3));
+
+    int t = 5;
+    pulseMatrix(Y.get(), P.get(), t);
+
+    BOOST_CHECK_EQUAL(cvGet2D(P.get(), 0, 0).val[0], 0);
+    BOOST_CHECK_EQUAL(cvGet2D(P.get(), 0, 1).val[0], t);
+    BOOST_CHECK_EQUAL(cvGet2D(P.get(), 1, 0).val[0], 2);
+    BOOST_CHECK_EQUAL(cvGet2D(P.get(), 1, 1).val[0], 3);
+    }
