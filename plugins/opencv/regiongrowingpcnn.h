@@ -65,7 +65,7 @@ void pulseOutput(const IplImage* U, const IplImage* T, IplImage* Y);
 
 /**
   * pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivity
-  * @return true if there is any change in p ulsing activity
+  * @return true if there is any change in pulsing activity
   * @todo optimize temporary array allocation
   */
 int pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivity(const IplImage* U, const IplImage* T, IplImage* Y);

@@ -81,6 +81,30 @@ BOOST_AUTO_TEST_CASE(linkingTest)
     BOOST_CHECK_EQUAL(cvGet2D(U.get(), 1, 1).val[0], 5);
     }
 
+BOOST_AUTO_TEST_CASE(thresholdTest)
+    {
+    CvSize size = cvSize(2, 2);
+
+    double omega = 0.1;
+    double wt_t = 0.2;
+
+    shared_ptr<IplImage> P(cvCreateImage(size, IPL_DEPTH_8U, 1), IplImageDeleter());
+    shared_ptr<IplImage> T(cvCreateImage(size, IPL_DEPTH_32F, 1), IplImageDeleter());
+
+    cvSet2D(P.get(), 0, 0, cvRealScalar(0));
+    cvSet2D(P.get(), 0, 1, cvRealScalar(1));
+    cvSet2D(P.get(), 1, 0, cvRealScalar(2));
+    cvSet2D(P.get(), 1, 1, cvRealScalar(3));
+
+    threshold(P.get(), omega, wt_t, T.get());
+
+    double epsilon = 0.0001;
+    BOOST_CHECK_CLOSE(cvGet2D(T.get(), 0, 0).val[0], wt_t, epsilon);
+    BOOST_CHECK_CLOSE(cvGet2D(T.get(), 0, 1).val[0], omega, epsilon);
+    BOOST_CHECK_CLOSE(cvGet2D(T.get(), 1, 0).val[0], omega, epsilon);
+    BOOST_CHECK_CLOSE(cvGet2D(T.get(), 1, 1).val[0], omega, epsilon);
+    }
+
 BOOST_AUTO_TEST_CASE(pulseOutputTest)
     {
     CvSize size = cvSize(2, 2);
@@ -97,6 +121,32 @@ BOOST_AUTO_TEST_CASE(pulseOutputTest)
 
     // U >= T
     pulseOutput(U.get(), T.get(), Y.get());
+
+    BOOST_CHECK_EQUAL(cvGet2D(Y.get(), 0, 0).val[0], 0);
+    BOOST_CHECK_EQUAL(cvGet2D(Y.get(), 0, 1).val[0], 0);
+    BOOST_CHECK_EQUAL(cvGet2D(Y.get(), 1, 0).val[0], 1);
+    BOOST_CHECK_EQUAL(cvGet2D(Y.get(), 1, 1).val[0], 1);
+    }
+
+BOOST_AUTO_TEST_CASE(pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivityTest)
+    {
+    CvSize size = cvSize(2, 2);
+
+    shared_ptr<IplImage> U(cvCreateImage(size, IPL_DEPTH_32F, 1), IplImageDeleter());
+    shared_ptr<IplImage> T(cvCreateImage(size, IPL_DEPTH_32F, 1), IplImageDeleter());
+    shared_ptr<IplImage> Y(cvCreateImage(size, IPL_DEPTH_8U, 1), IplImageDeleter());
+
+    cvSet2D(U.get(), 0, 0, cvRealScalar(0));
+    cvSet2D(U.get(), 0, 1, cvRealScalar(1));
+    cvSet2D(U.get(), 1, 0, cvRealScalar(2));
+    cvSet2D(U.get(), 1, 1, cvRealScalar(3));
+    cvSet(T.get(), cvRealScalar(2));
+
+    cvSet(Y.get(), cvRealScalar(0));
+    int res = pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivity(U.get(), T.get(), Y.get());
+    BOOST_CHECK_EQUAL(res, 1);
+    res = pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivity(U.get(), T.get(), Y.get());
+    BOOST_CHECK_EQUAL(res, 0);
 
     BOOST_CHECK_EQUAL(cvGet2D(Y.get(), 0, 0).val[0], 0);
     BOOST_CHECK_EQUAL(cvGet2D(Y.get(), 0, 1).val[0], 0);
