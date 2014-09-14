@@ -68,7 +68,7 @@ void feeding(const IplImage* Y, IplImage* L, double d)
 
 void linking(const IplImage* L, const IplImage* G, IplImage* U, double beta_t)
     {
-    cvScale(L, U, beta_t, 0);
+    cvConvertScale(L, U, beta_t, 0);
     cvAddS(U, cvRealScalar(1), U, 0);
     cvMul(G, U, U, 1.);
     }
@@ -82,7 +82,7 @@ void threshold(const IplImage* P, double omega, double wt_t, IplImage* T)
 void pulseOutput(const IplImage* U, const IplImage* T, IplImage* Y)
     {
     cvCmp(U, T, Y, CV_CMP_GE);
-    cvScale(Y, Y, 1./255., 0.);
+    cvConvertScale(Y, Y, 1./255., 0.);
     }
 
 int pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivity(const IplImage* U, const IplImage* T, IplImage* Y)

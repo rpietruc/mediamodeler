@@ -40,6 +40,7 @@ void pcnn(const IplImage* grayImg, IplImage* output, float *m, int mSize, float 
 
         /* Pulse: */
         cvCmp(U, T, Y, CV_CMP_GE);
+        cvConvertScale(Y, Y, 1./255., 0.);
         }
     cvConvertScale(Y, output, 255., 0.);
 
