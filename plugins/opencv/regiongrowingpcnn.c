@@ -100,6 +100,7 @@ void pulseMatrix(const IplImage* Y, IplImage* P, int t)
     {
     IplImage* P_old = cvCreateImage(cvGetSize(Y), IPL_DEPTH_8U, 1);
     cvCmpS(Y, 0, P_old, CV_CMP_EQ);
+    cvCopy(P, P_old, P_old);
     cvAddWeighted(Y, t, P_old, 1, 0, P);
     cvReleaseImage(&P_old);
     }

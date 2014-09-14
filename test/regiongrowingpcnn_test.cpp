@@ -43,19 +43,19 @@ BOOST_AUTO_TEST_CASE(feedingTest)
     // 1 2 3
     // 4 0 5
     // 6 7 8
-    cvSet2D(Y.get(), 0, 0, cvRealScalar(1));
-    cvSet2D(Y.get(), 0, 1, cvRealScalar(2));
-    cvSet2D(Y.get(), 0, 2, cvRealScalar(3));
-    cvSet2D(Y.get(), 1, 0, cvRealScalar(4));
+    cvSet2D(Y.get(), 0, 0, cvRealScalar(0));
+    cvSet2D(Y.get(), 0, 1, cvRealScalar(1));
+    cvSet2D(Y.get(), 0, 2, cvRealScalar(0));
+    cvSet2D(Y.get(), 1, 0, cvRealScalar(1));
     cvSet2D(Y.get(), 1, 1, cvRealScalar(0));
-    cvSet2D(Y.get(), 1, 2, cvRealScalar(5));
-    cvSet2D(Y.get(), 2, 0, cvRealScalar(6));
-    cvSet2D(Y.get(), 2, 1, cvRealScalar(7));
-    cvSet2D(Y.get(), 2, 2, cvRealScalar(8));
+    cvSet2D(Y.get(), 1, 2, cvRealScalar(1));
+    cvSet2D(Y.get(), 2, 0, cvRealScalar(0));
+    cvSet2D(Y.get(), 2, 1, cvRealScalar(1));
+    cvSet2D(Y.get(), 2, 2, cvRealScalar(0));
 
-    feeding(Y.get(), L.get(), 1);
+    feeding(Y.get(), L.get(), 0.5);
 
-    BOOST_CHECK_EQUAL(cvGet2D(L.get(), 1, 1).val[0], 35);
+    BOOST_CHECK_EQUAL(cvGet2D(L.get(), 1, 1).val[0], 3.5);
     }
 
 BOOST_AUTO_TEST_CASE(linkingTest)
@@ -157,20 +157,45 @@ BOOST_AUTO_TEST_CASE(pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivityTest)
 BOOST_AUTO_TEST_CASE(pulseMatrixTest)
     {
     CvSize size = cvSize(2, 2);
-
+ 
     shared_ptr<IplImage> Y(cvCreateImage(size, IPL_DEPTH_8U, 1), IplImageDeleter());
     shared_ptr<IplImage> P(cvCreateImage(size, IPL_DEPTH_8U, 1), IplImageDeleter());
 
-    cvSet2D(Y.get(), 0, 0, cvRealScalar(0));
-    cvSet2D(Y.get(), 0, 1, cvRealScalar(1));
-    cvSet2D(Y.get(), 1, 0, cvRealScalar(2));
-    cvSet2D(Y.get(), 1, 1, cvRealScalar(3));
+    cvSetZero(Y.get());
+    cvSet2D(Y.get(), 1, 1, cvRealScalar(1));
+
+    cvSet2D(P.get(), 0, 0, cvRealScalar(0));
+    cvSet2D(P.get(), 0, 1, cvRealScalar(1));
+    cvSet2D(P.get(), 1, 0, cvRealScalar(2));
+    cvSet2D(P.get(), 1, 1, cvRealScalar(3));
 
     int t = 5;
     pulseMatrix(Y.get(), P.get(), t);
 
     BOOST_CHECK_EQUAL(cvGet2D(P.get(), 0, 0).val[0], 0);
-    BOOST_CHECK_EQUAL(cvGet2D(P.get(), 0, 1).val[0], t);
+    BOOST_CHECK_EQUAL(cvGet2D(P.get(), 0, 1).val[0], 1);
     BOOST_CHECK_EQUAL(cvGet2D(P.get(), 1, 0).val[0], 2);
-    BOOST_CHECK_EQUAL(cvGet2D(P.get(), 1, 1).val[0], 3);
+    BOOST_CHECK_EQUAL(cvGet2D(P.get(), 1, 1).val[0], 5);
+    }
+
+BOOST_AUTO_TEST_CASE(allNeuronsHavePulsedTest)
+    {
+    CvSize size = cvSize(2, 2);
+
+    shared_ptr<IplImage> P(cvCreateImage(size, IPL_DEPTH_8U, 1), IplImageDeleter());
+
+    cvSet2D(P.get(), 0, 0, cvRealScalar(0));
+    cvSet2D(P.get(), 0, 1, cvRealScalar(1));
+    cvSet2D(P.get(), 1, 0, cvRealScalar(2));
+    cvSet2D(P.get(), 1, 1, cvRealScalar(3));
+
+    BOOST_CHECK_EQUAL(allNeuronsHavePulsed(P.get()), 0);
+    cvSet2D(P.get(), 0, 0, cvRealScalar(4));
+    BOOST_CHECK_EQUAL(allNeuronsHavePulsed(P.get()), 1);
+    }
+
+BOOST_AUTO_TEST_CASE(statisticalTerminationConditionMetTest)
+    {
+    BOOST_CHECK_EQUAL(statisticalTerminationConditionMet(4., 3.), 1);
+    BOOST_CHECK_EQUAL(statisticalTerminationConditionMet(3., 4.), 0);
     }
