@@ -1,6 +1,22 @@
 #include "regiongrowingpcnn.h"
 
-void regionGrowingPcnn(const IplImage *grayImg, IplImage *output, double omega, double beta_min, double beta_max, double beta_delta, double d)
+#ifndef ABS
+#  define ABS(a) ((a) < 0 ? (-a) : (a))
+#endif
+
+static void print(const IplImage *P)
+    {
+    int i, j;
+    for (i = 0; i < P->width; ++i)
+        {
+        for (j = 0; j < P->height; ++j)
+            printf("%f ", cvGet2D(P, i, j).val[0]);
+        printf("\n");
+        }
+    printf("\n");
+    }
+
+void regionGrowingPcnn(const IplImage *grayImg, IplImage *output, double omega, double beta_min, double beta_max, double beta_delta, double d, double SBmax)
     {
     IplImage* G = cvCreateImage(cvGetSize(grayImg), IPL_DEPTH_32F, 1);
     IplImage* L = cvCreateImage(cvGetSize(grayImg), IPL_DEPTH_32F, 1);
@@ -8,8 +24,9 @@ void regionGrowingPcnn(const IplImage *grayImg, IplImage *output, double omega, 
     IplImage* T = cvCreateImage(cvGetSize(grayImg), IPL_DEPTH_32F, 1);
     IplImage* P = cvCreateImage(cvGetSize(grayImg), IPL_DEPTH_8U, 1);
     IplImage* Y = cvCreateImage(cvGetSize(grayImg), IPL_DEPTH_8U, 1);
+    IplImage* Yold = cvCreateImage(cvGetSize(grayImg), IPL_DEPTH_8U, 1);
 
-    cvConvertScale(grayImg, G, 1/255., 0);
+    cvConvertScale(grayImg, G, 1./255., 0);
     cvSetZero(P);
 
     /// Set \f$ d \f$ and \f$ \Omega \f$ 
@@ -21,18 +38,28 @@ void regionGrowingPcnn(const IplImage *grayImg, IplImage *output, double omega, 
         pulseOutput(G, T, Y); // U = G
         double beta_t = beta_min; /// Set \f$ \beta_t \f$ sufficient for initial spread
 
-        while (!statisticalTerminationConditionMet(beta_t, beta_max))
+        //cvCopy(Y, Yold, 0);
+        //while (!statisticalTerminationConditionMet(G, Y, Yold, P, beta_t, beta_max, SBmax))
+        do
             {
+            cvCopy(Y, Yold, 0);
             do
                 {
-                feeding(Y, L, d);
-                linking(L, G, U, beta_t);
+//                 printf("linking, feeding\n");
+//                 print(Y);
+                linking(Y, L, d);
+                feeding(L, G, U, beta_t);
                 }
             while (pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivity(U, T, Y));
 
+//             printf("next\n");
             beta_t += beta_delta;
             }
+        while (!statisticalTerminationConditionMet(G, Y, Yold, P, beta_t, beta_max, SBmax));
+
+//         printf("pulse\n");
         pulseMatrix(Y, P, t);
+//         print(P);
         ++t;
         }
     while (!allNeuronsHavePulsed(P));
@@ -46,6 +73,7 @@ void regionGrowingPcnn(const IplImage *grayImg, IplImage *output, double omega, 
     cvReleaseImage(&T);
     cvReleaseImage(&P);
     cvReleaseImage(&Y);
+    cvReleaseImage(&Yold);
     }
 
 double workingThreshold(const IplImage* G, const IplImage* P)
@@ -58,7 +86,7 @@ double workingThreshold(const IplImage* G, const IplImage* P)
     return wt_t;
     }
 
-void feeding(const IplImage* Y, IplImage* L, double d)
+void linking(const IplImage* Y, IplImage* L, double d)
     {
     static float kernel[9] = {1, 1, 1, 1, 0, 1, 1, 1, 1};
     CvMat N = cvMat(sqrt(sizeof(kernel)/sizeof(kernel[0])), sqrt(sizeof(kernel)/sizeof(kernel[0])), CV_32F, kernel);
@@ -66,7 +94,7 @@ void feeding(const IplImage* Y, IplImage* L, double d)
     cvSubS(L, cvRealScalar(d), L, 0);
     }
 
-void linking(const IplImage* L, const IplImage* G, IplImage* U, double beta_t)
+void feeding(const IplImage* L, const IplImage* G, IplImage* U, double beta_t)
     {
     cvConvertScale(L, U, beta_t, 0);
     cvAddS(U, cvRealScalar(1), U, 0);
@@ -112,7 +140,39 @@ int allNeuronsHavePulsed(const IplImage* P)
     return minVal > 0;
     }
 
-int statisticalTerminationConditionMet(double beta_t, double beta_max)
+int excessiveBetaValue(double beta_t, double beta_max)
     {
-    return (beta_t > beta_max); // or ..
+    return (beta_t > beta_max);
+    }
+
+int regionEngulfed(const IplImage* Y, const IplImage* P)
+    {
+    int i, j, k, l;
+    for (i = 0; i < Y->width; ++i)
+        for (j = 0; j < Y->height; ++j)
+            if (cvGet2D(Y, i, j).val[0] > 0)
+                for (k = (i > 0 ? i - 1 : i); (k < Y->width) && (k <= (i + 1)); ++k)
+                    for (l = (j > 0 ? j - 1 : j); (l < Y->height) && (l <= (j + 1)); ++l)
+                        if (((k != i) || (l != j)) && (cvGet2D(Y, k, l).val[0]  < 1) && cvGet2D(P, k, l).val[0] < 1)
+                            return 0;
+    return 1;
+    }
+
+int excessiveMeanDifference(const IplImage* G, IplImage* Y, const IplImage* Yold, double SBmax)
+    {
+    int ret = 0;
+    IplImage* Ynew = cvCreateImage(cvGetSize(Y), IPL_DEPTH_8U, 1);
+    cvSub(Y, Yold, Ynew, Y);
+    if (ABS(cvMean(G, Yold) - cvMean(G, Ynew)) > SBmax)
+        {
+        cvCopy(Yold, Y, 0); //if condition is violated the neuron is reset.
+        ret = 1;
+        }
+    cvReleaseImage(&Ynew);
+    return ret;
+    }
+
+int statisticalTerminationConditionMet(const IplImage* G, IplImage* Y, const IplImage* Yold, const IplImage* P, double beta_t, double beta_max, double SBmax)
+    {
+    return regionEngulfed(Y, P) || excessiveBetaValue(beta_t, beta_max) || excessiveMeanDifference(G, Y, Yold, SBmax);
     }

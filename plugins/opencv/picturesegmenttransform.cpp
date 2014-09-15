@@ -12,10 +12,11 @@ PictureSegmentTransform::PictureSegmentTransform(ElementFactory *aFactory, const
     {
     // Default parameters
     setProperty("d", 1.);
-    setProperty("Omega", 1);
+    setProperty("Omega", 10000);
     setProperty("minBeta", 0.2);
     setProperty("deltaBeta", 0.01);
     setProperty("maxBeta", 1.);
+    setProperty("SBmax", 0.8);
     }
 
 void PictureSegmentTransform::process()
@@ -40,7 +41,8 @@ void PictureSegmentTransform::process()
                                   property("minBeta").toDouble(),
                                   property("maxBeta").toDouble(),
                                   property("deltaBeta").toDouble(),
-                                  property("d").toDouble());
+                                  property("d").toDouble(),
+                                  property("SBMax").toDouble());
 
                 emit framesReady();
                 break;

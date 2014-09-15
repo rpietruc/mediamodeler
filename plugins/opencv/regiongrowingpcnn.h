@@ -16,7 +16,7 @@ extern "C" {
   *
   * @todo Merge small regions with nearest neighbor.
   */
-void regionGrowingPcnn(const IplImage* grayImg, IplImage* output, double omega, double beta_min, double beta_max, double beta_delta, double d);
+void regionGrowingPcnn(const IplImage* grayImg, IplImage* output, double omega, double beta_min, double beta_max, double beta_delta, double d, double SBmax);
 
 /**
   * Working threshold
@@ -26,16 +26,16 @@ void regionGrowingPcnn(const IplImage* grayImg, IplImage* output, double omega, 
 double workingThreshold(const IplImage* G, const IplImage* P);
 
 /**
-  * Feeding:
+  * Linking:
   * \f$ L_x[t] = \sum_{z \in N(x)} Y_z[t] - d \f$.
   */
-void feeding(const IplImage* Y, IplImage* L, double d);
+void linking(const IplImage* Y, IplImage* L, double d);
 
 /** 
-  * Linking:
+  * Feeding:
   * \f$ U_x[t] = G_x\{1 + \beta_t L_x[t]\} \f$.
   */
-void linking(const IplImage* L, const IplImage* G, IplImage* U, double beta_t);
+void feeding(const IplImage* L, const IplImage* G, IplImage* U, double beta_t);
 
 /**
   * Threshold
@@ -86,16 +86,39 @@ void pulseMatrix(const IplImage* Y, IplImage* P, int t);
 int allNeuronsHavePulsed(const IplImage* P);
 
 /**
+  * Excessive beta value
+  * 
+  * the linking coefficient exceeds a maximum value \f$ \beta_{max} \f$.
+  */
+int excessiveBetaValue(double beta_t, double beta_max);
+
+/**
+  * Region engulfed
+  * 
+  * all neighbors of pulsing neurons are either pulsing or not active.
+  */
+int regionEngulfed(const IplImage* Y, const IplImage* P);
+
+/**
+  * Excessive mean difference
+  * 
+  * difference \f$ \delta \mu \f$ between mean of accepted region \f$ \mu_{old} \f$
+  * and mean of newly proposed region \f$ \mu_{new} \f$ is greater than a threshold value \f$ S_{B_{max}} \f$.
+  * 
+  * @todo implement
+  */
+int excessiveMeanDifference(const IplImage* G, IplImage* Y, const IplImage* Yold, double SBmax);
+
+/**
   * statisticalTerminationConditionMet
   *
-  * -# Region engulfed -- all neighbors of pulsing neurons are either pulsing or not active.
-  * -# Excessive beta value -- the linking coefficient exceeds a maximum value \f$ \beta_{max} \f$.
-  * -# Excessive mean difference -- difference \f$ \delta \mu \f$ between mean of accepted region \f$ \mu_{old} \f$
-  *    and mean of newly proposed region \f$ \mu_{new} \f$ is greater than a threshold value \f$ S_{B_{max}} \f$.
+  * -# Region engulfed
+  * -# Excessive beta value
+  * -# Excessive mean difference
   * 
   * @todo add 2 missing conditions
   */
-int statisticalTerminationConditionMet(double beta_t, double beta_max);
+int statisticalTerminationConditionMet(const IplImage* G, IplImage* Y, const IplImage* Yold, const IplImage* P, double beta_t, double beta_max, double SBmax);
 
 #ifdef __cplusplus
 }

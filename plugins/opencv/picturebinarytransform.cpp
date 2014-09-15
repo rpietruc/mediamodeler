@@ -19,6 +19,7 @@ namespace media {
 //
 // According to [Li14]
 //
+namespace Li14 {
 static const int DefaultIterations = 8;
 static const double DefaultFeedingAmplification = 0;
 static const double DefaultFeedingAttenuation = 0;
@@ -31,6 +32,22 @@ static const double DefaultLinkingCoefficient = 0.2;
 
 static const double DefaultThresholdAmplification = 20;
 static const double DefaultThresholdAttenuation = 0.2;
+}
+namespace tltongleitl {
+static const int DefaultIterations = 8;
+static const double DefaultFeedingAmplification = 0.01;
+static const double DefaultFeedingAttenuation = 0.693;
+static const QString DefaultFeedingKernel = "0.707, 1, 0.707, 1, 1, 1, 0.707, 1, 0.707";
+
+static const double DefaultLinkingAmplification = 1.;
+static const double DefaultLinkingAttenuation = 0.693;
+static const QString DefaultLinkingKernel = "0.707, 1, 0.707, 1, 1, 1, 0.707, 1, 0.707";
+static const double DefaultLinkingCoefficient = 0.2;
+
+static const double DefaultThresholdAmplification = 0.2;
+static const double DefaultThresholdAttenuation = 0.069;
+}
+using namespace tltongleitl;
 
 PictureBinaryTransform::PictureBinaryTransform(ElementFactory *aFactory, const QString &aObjectName) :
     ElementBase(aFactory, aObjectName)
