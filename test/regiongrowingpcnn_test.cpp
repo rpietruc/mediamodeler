@@ -128,13 +128,14 @@ BOOST_AUTO_TEST_CASE(pulseOutputTest)
     BOOST_CHECK_EQUAL(cvGet2D(Y.get(), 1, 1).val[0], 1);
     }
 
-BOOST_AUTO_TEST_CASE(pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivityTest)
+BOOST_AUTO_TEST_CASE(changeInPulsingActivityTest)
     {
     CvSize size = cvSize(2, 2);
 
     shared_ptr<IplImage> U(cvCreateImage(size, IPL_DEPTH_32F, 1), IplImageDeleter());
     shared_ptr<IplImage> T(cvCreateImage(size, IPL_DEPTH_32F, 1), IplImageDeleter());
     shared_ptr<IplImage> Y(cvCreateImage(size, IPL_DEPTH_8U, 1), IplImageDeleter());
+    shared_ptr<IplImage> Ytmp(cvCreateImage(size, IPL_DEPTH_8U, 1), IplImageDeleter());
 
     cvSet2D(U.get(), 0, 0, cvRealScalar(0));
     cvSet2D(U.get(), 0, 1, cvRealScalar(1));
@@ -143,10 +144,16 @@ BOOST_AUTO_TEST_CASE(pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivityTest)
     cvSet(T.get(), cvRealScalar(2));
 
     cvSet(Y.get(), cvRealScalar(0));
-    int res = pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivity(U.get(), T.get(), Y.get());
-    BOOST_CHECK_EQUAL(res, 1);
-    res = pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivity(U.get(), T.get(), Y.get());
-    BOOST_CHECK_EQUAL(res, 0);
+
+    // pulse and check if there was change in pulsing output
+    cvCopy(Y.get(), Ytmp.get(), 0);
+    pulseOutput(U.get(), T.get(), Y.get());
+    BOOST_CHECK_EQUAL(equal(Ytmp.get(), Y.get(), Ytmp.get()), 0);
+
+    // pulse and check if there was change in pulsing output
+    cvCopy(Y.get(), Ytmp.get(), 0);
+    pulseOutput(U.get(), T.get(), Y.get());
+    BOOST_CHECK_EQUAL(equal(Ytmp.get(), Y.get(), Ytmp.get()), 1);
 
     BOOST_CHECK_EQUAL(cvGet2D(Y.get(), 0, 0).val[0], 0);
     BOOST_CHECK_EQUAL(cvGet2D(Y.get(), 0, 1).val[0], 0);
@@ -192,12 +199,6 @@ BOOST_AUTO_TEST_CASE(allNeuronsHavePulsedTest)
     BOOST_CHECK_EQUAL(allNeuronsHavePulsed(P.get()), 0);
     cvSet2D(P.get(), 0, 0, cvRealScalar(4));
     BOOST_CHECK_EQUAL(allNeuronsHavePulsed(P.get()), 1);
-    }
-
-BOOST_AUTO_TEST_CASE(excessiveBetaValueTest)
-    {
-    BOOST_CHECK_EQUAL(excessiveBetaValue(4., 3.), 1);
-    BOOST_CHECK_EQUAL(excessiveBetaValue(3., 4.), 0);
     }
 
 BOOST_AUTO_TEST_CASE(regionEngulfedTest)
@@ -271,21 +272,16 @@ BOOST_AUTO_TEST_CASE(excessiveMeanDifferenceTest)
     shared_ptr<IplImage> Yold(cvCreateImage(size, IPL_DEPTH_8U, 1), IplImageDeleter());
     createExampleImg(G.get());
     cvSetZero(Y.get());
-    for (int i = 0; i < Y.get()->width/2; ++i)
-        for (int j = 0; j < Y.get()->height; ++j)
-            cvSet2D(Y.get(), i, j, cvRealScalar(1.));
+    cvRectangle(Y.get(), cvPoint(0, 0), cvPoint(1, 3), cvRealScalar(1.), CV_FILLED, 8, 0);
     cvCopy(Y.get(), Yold.get());
-    cvSet2D(Y.get(), 2, 0, cvRealScalar(1.));
+    cvSet2D(Y.get(), 0, 2, cvRealScalar(1.));
     // FFEE + BB
     // CCBB
     // DDEE
     // CCDD
     // .8(6) - .7(3) = .1(3)
     BOOST_CHECK_EQUAL(excessiveMeanDifference(G.get(), Y.get(), Yold.get(), SBmax), 1);
-    for (int i = 0; i < Y.get()->width; ++i)
-        for (int j = 0; j < Y.get()->height; ++j)
-            BOOST_CHECK_EQUAL(cvGet2D(Y.get(), i, j).val[0], cvGet2D(Yold.get(), i, j).val[0]);
-     }
+    }
 
 BOOST_AUTO_TEST_CASE(regionGrowingPcnnTest)
     {
@@ -301,7 +297,7 @@ BOOST_AUTO_TEST_CASE(regionGrowingPcnnTest)
     double beta_max = 1.;
     double beta_delta = 0.01;
     double d = 0.5;
-    double SBmax = 0.25;
+    double SBmax = 0.2;
 
     IplImage* G = cvCreateImage(size, IPL_DEPTH_32F, 1);
     IplImage* L = cvCreateImage(size, IPL_DEPTH_32F, 1);
@@ -316,8 +312,8 @@ BOOST_AUTO_TEST_CASE(regionGrowingPcnnTest)
     double wt_t = workingThreshold(G, P);
     BOOST_CHECK_CLOSE(wt_t, 1., epsilon);
     threshold(P, omega, wt_t, T);
-    for (int i = 0; i < size.width; ++i)
-        for (int j = 0; j < size.height; ++j)
+    for (int i = 0; i < size.height; ++i)
+        for (int j = 0; j < size.width; ++j)
             BOOST_CHECK_CLOSE(cvGet2D(T, i, j).val[0], 1., epsilon);
 
     // 1000
@@ -325,8 +321,8 @@ BOOST_AUTO_TEST_CASE(regionGrowingPcnnTest)
     // 0000
     // 0000
     pulseOutput(G, T, Y); // U = G
-    for (int i = 0; i < size.width; ++i)
-        for (int j = 0; j < size.height; ++j)
+    for (int i = 0; i < size.height; ++i)
+        for (int j = 0; j < size.width; ++j)
             if (i+j)
                 BOOST_CHECK_CLOSE(cvGet2D(Y, i, j).val[0], 0., epsilon);
             else

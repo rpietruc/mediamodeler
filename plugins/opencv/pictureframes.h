@@ -82,13 +82,13 @@ public:
         if (aFrame.getMaxDimension() < getMaxDimension())
             return MultiChannelFrame::resizeAndCopyFrame(aFrame);
         //else
-        if (aFrame.getDimensionT(Channels).mResolution > 3)
+        if (aFrame.getDimensionT(Channels).mResolution >= 3)
             {
             IplImageFrame<3> frame;
             frame.MultiChannelFrame::resizeAndCopyFrame(aFrame);
             this->operator =(*(IplImage*)frame);
             }
-        else if (aFrame.getDimensionT(Channels).mResolution > 1)
+        else if (aFrame.getDimensionT(Channels).mResolution >= 1)
             {
             IplImageFrame<1> frame;
             frame.MultiChannelFrame::resizeAndCopyFrame(aFrame);

@@ -64,13 +64,6 @@ void threshold(const IplImage* P, double omega, double wt_t, IplImage* T);
 void pulseOutput(const IplImage* U, const IplImage* T, IplImage* Y);
 
 /**
-  * pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivity
-  * @return true if there is any change in pulsing activity
-  * @todo optimize temporary array allocation
-  */
-int pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivity(const IplImage* U, const IplImage* T, IplImage* Y);
-
-/**
   * Pulse matrix
   *  \f[
   *     P_x[t] = \left\{ \begin{array}{l l}
@@ -84,13 +77,6 @@ int pulseOutputAndCheckIfThereIsAnyChangeInPulsingActivity(const IplImage* U, co
 void pulseMatrix(const IplImage* Y, IplImage* P, int t);
 
 int allNeuronsHavePulsed(const IplImage* P);
-
-/**
-  * Excessive beta value
-  * 
-  * the linking coefficient exceeds a maximum value \f$ \beta_{max} \f$.
-  */
-int excessiveBetaValue(double beta_t, double beta_max);
 
 /**
   * Region engulfed
@@ -107,18 +93,9 @@ int regionEngulfed(const IplImage* Y, const IplImage* P);
   * 
   * @todo implement
   */
-int excessiveMeanDifference(const IplImage* G, IplImage* Y, const IplImage* Yold, double SBmax);
+int excessiveMeanDifference(const IplImage* G, const IplImage* Y, const IplImage* Yold, double SBmax);
 
-/**
-  * statisticalTerminationConditionMet
-  *
-  * -# Region engulfed
-  * -# Excessive beta value
-  * -# Excessive mean difference
-  * 
-  * @todo add 2 missing conditions
-  */
-int statisticalTerminationConditionMet(const IplImage* G, IplImage* Y, const IplImage* Yold, const IplImage* P, double beta_t, double beta_max, double SBmax);
+int equal(const IplImage* in1, const IplImage* in2, IplImage* out);
 
 #ifdef __cplusplus
 }
