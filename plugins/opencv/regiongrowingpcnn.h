@@ -95,6 +95,10 @@ int regionEngulfed(const IplImage* Y, const IplImage* P);
   */
 int excessiveMeanDifference(const IplImage* G, const IplImage* Y, const IplImage* Yold, double SBmax);
 
+/**
+  * calls cvCmp(in1, in2, out, CV_CMP_NE)
+  * @return 1 if input images are identical
+  */
 int equal(const IplImage* in1, const IplImage* in2, IplImage* out);
 
 #ifdef __cplusplus

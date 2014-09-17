@@ -1,30 +1,35 @@
 #include "regiongrowingpcnn.h"
-#include <stdio.h>
 
 #ifndef ABS
 #  define ABS(a) ((a) < 0 ? (-a) : (a))
 #endif
 
+#if 0
+#   include <stdio.h>
+#   define LOGF(...) printf(__VA_ARGS__)
+#else
+#   define LOGF(...)
+#endif
+
 static void print(const IplImage *P, const char* name)
     {
     int i, j, k;
-    printf("%s\n", name);
+    LOGF("%s\n", name);
     for (i = 0; i < P->height; ++i)
         {
         for (j = 0; j < P->width; ++j)
-            printf("%f ", cvGet2D(P, i, j).val[0]);
-        printf("\n");
+            LOGF("%f ", cvGet2D(P, i, j).val[0]);
+        LOGF("\n");
         }
-    printf("\n");
+    LOGF("\n");
     }
 
 int equal(const IplImage* in1, const IplImage* in2, IplImage* out)
     {
-    static const double epsilon = 0.1;
     cvCmp(in1, in2, out, CV_CMP_NE);
     double outMaxVal;
     cvMinMaxLoc(out, 0, &outMaxVal, 0, 0, 0);
-    return outMaxVal < epsilon;
+    return outMaxVal < 1;
     }
 
 void regionGrowingPcnn(const IplImage *grayImg, IplImage *output, double omega, double beta_min, double beta_max, double beta_delta, double d, double SBmax)
@@ -42,65 +47,42 @@ void regionGrowingPcnn(const IplImage *grayImg, IplImage *output, double omega, 
     IplImage* Ytmp = cvCreateImage(cvGetSize(grayImg), IPL_DEPTH_8U, 1);
 
     cvConvertScale(grayImg, G, 1./255., 0);
-//     print(G, "G");
+    print(G, "G");
     cvSetZero(P);
 
     /// Set \f$ d \f$ and \f$ \Omega \f$ 
-    for (t = 1; t < 256; ++t)
-        {
-        wt_t = workingThreshold(G, P);
-//         printf("wt_t = %f\n", wt_t);
-        threshold(P, omega, wt_t, T);
-//         print(T, "T");
-        pulseOutput(G, T, Y);
-//         print(Y, "Y");
+    for (t = 0; (t < 255) && !allNeuronsHavePulsed(P); pulseMatrix(Y, P, ++t))
+        {                              print(P, "P");
+        wt_t = workingThreshold(G, P); LOGF("wt_t = %f\n", wt_t);
+        threshold(P, omega, wt_t, T);  print(T, "T");
+        pulseOutput(G, T, Y);          print(Y, "Y");
 
         /// Set \f$ \beta_t \f$ sufficient for initial spread
         for (beta_t = beta_min; beta_t <= beta_max; beta_t  += beta_delta)
             {
-//             printf("beta_t = %f\n", beta_t);
-            cvCopy(Y, Yold, 0);
-            while (1)
+            cvCopy(Y, Yold, 0);            LOGF("beta_t = %f\n", beta_t);
+            do
                 {
-                linking(Y, L, d);
-//                 print(L, "L");
-                feeding(L, G, U, beta_t);
-//                 print(U, "U");
+                linking(Y, L, d);              print(L, "L");
+                feeding(L, G, U, beta_t);      print(U, "U");
 
-                // pulse and check if there was change in pulsing output
                 cvCopy(Y, Ytmp, 0);
-                pulseOutput(U, T, Y);
-//                 print(Y, "Y");
-                if (equal(Ytmp, Y, Ytmp))
-                    {
-//                     printf("no change\n");
-                    break;
-                    }
+                pulseOutput(U, T, Y);          print(Y, "Y");
                 }
+            while (!equal(Ytmp, Y, Ytmp)); //check if there was change in pulsing output
 
             // check if any of statistical termination condition is met
-            if (regionEngulfed(Y, P))
+            if (regionEngulfed(Y, P)) break;
+            if ((beta_t > beta_min) && excessiveMeanDifference(G, Y, Yold, SBmax))
                 {
-//                 printf("region engulfed\n");
-                break;
-                }
-
-            if (excessiveMeanDifference(G, Y, Yold, SBmax))
-                {
-//                 printf("excessiveMeanDifference\n");
                 cvCopy(Yold, Y, 0);
                 break;
                 }
-
             }
-        pulseMatrix(Y, P, t);
-//         print(P, "P");
-        if (allNeuronsHavePulsed(P))
-            break;
         }
 
     //TODO: Merge small regions with nearest neighbor.
-    cvCopyImage(P, output);
+    cvCopyImage(P, output);        print(P, "P");
 
     cvReleaseImage(&G);
     cvReleaseImage(&L);
@@ -175,6 +157,7 @@ int regionEngulfed(const IplImage* Y, const IplImage* P)
                     for (l = (j > 0 ? j - 1 : j); (l < Y->width) && (l <= (j + 1)); ++l)
                         if (((k != i) || (l != j)) && (cvGet2D(Y, k, l).val[0]  < 1) && cvGet2D(P, k, l).val[0] < 1)
                             return 0;
+    LOGF("region engulfed\n");
     return 1;
     }
 
@@ -184,7 +167,10 @@ int excessiveMeanDifference(const IplImage* G, const IplImage* Y, const IplImage
     IplImage* Ynew = cvCreateImage(cvGetSize(Y), IPL_DEPTH_8U, 1);
     cvSub(Y, Yold, Ynew, Y);
     if (ABS(cvMean(G, Yold) - cvMean(G, Ynew)) > SBmax)
+        {
+        LOGF("excessiveMeanDifference\n");
         ret = 1;
+        }
     cvReleaseImage(&Ynew);
     return ret;
     }

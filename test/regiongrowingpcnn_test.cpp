@@ -297,7 +297,7 @@ BOOST_AUTO_TEST_CASE(regionGrowingPcnnTest)
     double beta_max = 1.;
     double beta_delta = 0.01;
     double d = 0.5;
-    double SBmax = 0.2;
+    double SBmax = 0.13;
 
     IplImage* G = cvCreateImage(size, IPL_DEPTH_32F, 1);
     IplImage* L = cvCreateImage(size, IPL_DEPTH_32F, 1);
