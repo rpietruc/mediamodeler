@@ -125,6 +125,11 @@ public:
         return *this;
         }
 
+    const IplImageFrame& operator=(const cv::Mat &aMat)
+        {
+        return operator=((IplImage)aMat);
+        }
+
 private:
     int mDepth;
     IplImage* mIplImage;
