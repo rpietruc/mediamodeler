@@ -41,3 +41,9 @@ Run application:
 
 Open some ini file from 'ini' directory to build processing graph...
 
+Example test data
+-----------------
+
+Speech Codec Wav Samples:
+
+    http://www.signalogic.com/index.pl?page=codec_samples
