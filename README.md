@@ -24,12 +24,24 @@ Build instructions
 Project was successfully built by the authors on Archlinux OS.
 Prerequirements: cmake, qt5-base, qt5-multimedia, qwt-qt5, insight-toolkit, opencv, alsa-lib, libsndfile, qcustomplot-qt5, ffmpeg.
 
-Build project using cmake:
+Build entire project using cmake:
 
     #git clone qmediamodeler...
     mkdir qmediamodeler-build && cd qmediamodeler-build
     cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Debug ../qmediamodeler
     make -j5
+
+To build only specific plugins use following cmake switches:
+
+   -DBUILD_ALSA_PLUGINS=1
+   -DBUILD_AV_PLUGINS=1
+   -DBUILD_AUDIO_PLUGINS=1
+   -DBUILD_ITK_PLUGINS=1
+   -DBUILD_OPENCV_PLUGINS=1
+   -DBUILD_POTRACE_PLUGINS=1
+   -DBUILD_ARMADILLO_PLUGINS=1
+   -DBUILD_MLPACK_PLUGINS=1
+   -DBUILD_OTB_PLUGINS=1
 
 Install:
 
