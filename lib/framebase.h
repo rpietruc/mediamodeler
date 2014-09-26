@@ -39,6 +39,7 @@ public:
 
     int getMaxDimension() const { return mDimensions.size(); }
     const Dimension& getDimensionT(int aIndex) const;
+    const QVector<Dimension>& getDimensions() const { return mDimensions; }
 
     QString getSourceName() const { return mSourceName; }
     void setSourceName(const QString& aSourceName) { mSourceName = aSourceName; }
