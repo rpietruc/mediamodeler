@@ -6,6 +6,7 @@
 //#include <vector>
 #include <opencv/highgui.h>
 #include <opencv/cv.h>
+#include <QtGui/QImage>
 
 struct IplImageDeleter
     {
@@ -128,6 +129,47 @@ public:
     const IplImageFrame& operator=(const cv::Mat &aMat)
         {
         return operator=((IplImage)aMat);
+        }
+
+    const IplImageFrame& operator=(const QImage &aImage)
+        {
+        IplImage* img = QImage2Ipl(aImage);
+        operator=(*img);
+        cvReleaseImage(&img);
+        return *this;
+        }
+
+    /**
+      * @brief source: https://code.google.com/p/find-object/
+      */
+    static IplImage* QImage2Ipl(const QImage & image)
+        {
+        IplImage * iplTmp = 0;
+        if(!image.isNull() && image.depth() == 32 && image.format() == QImage::Format_RGB32)
+            {
+            int x;
+            int y;
+
+            // assume RGB (3 channels)
+            int channels = 3;
+            iplTmp = cvCreateImage(cvSize(image.width(), image.height()), IPL_DEPTH_8U, channels);
+            char* data = iplTmp->imageData;
+            for( y = 0; y < image.height(); ++y, data+=iplTmp->widthStep)
+                {
+                for( x = 0; x < image.width(); ++x)
+                    {
+                    QRgb rgb = image.pixel(x, y);
+                    data[x * channels+2] = qRed(rgb); //r
+                    data[x * channels+1] = qGreen(rgb); //g
+                    data[x * channels] = qBlue(rgb); //b
+                    }
+                }
+            }
+        else
+            {
+            printf("failed to convert image : depth=%d(!=32) format=%d(!=%d)\n", image.depth(), image.format(), QImage::Format_RGB32);
+            }
+        return iplTmp;
         }
 
 private:

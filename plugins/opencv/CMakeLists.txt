@@ -53,6 +53,7 @@ set(QMM_OPENCV_SRC
     videocamerasource.cpp
     videofilesource.cpp
     vectorfiledestination.cpp
+    vectorfilesource.cpp
     vectordrawtransform.cpp
     picturesnaketransform.cpp)
 
@@ -75,6 +76,7 @@ set(QMM_OPENCV_INC
     videocamerasource.h
     videofilesource.h
     vectorfiledestination.h
+    vectorfilesource.h
     vectordrawtransform.h
     picturesnaketransform.h)
 
@@ -161,6 +163,10 @@ install(TARGETS videofilesource LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 add_library(vectorfiledestination SHARED vectorfiledestination.cpp vectorfiledestination.h)
 target_link_libraries(vectorfiledestination pictureframes ellipseframe linesegmentframe ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Svg_LIBRARIES})
 install(TARGETS vectorfiledestination LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
+
+add_library(vectorfilesource SHARED vectorfilesource.cpp vectorfilesource.h)
+target_link_libraries(vectorfilesource pictureframes ellipseframe linesegmentframe ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Svg_LIBRARIES})
+install(TARGETS vectorfilesource LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 
 add_library(vectordrawtransform SHARED vectordrawtransform.cpp vectordrawtransform.h)
 target_link_libraries(vectordrawtransform pictureframes ellipseframe linesegmentframe ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
