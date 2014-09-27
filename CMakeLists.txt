@@ -28,7 +28,18 @@ endif(NOT EXECUTABLE_OUTPUT_PATH)
 mark_as_advanced(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 message(STATUS "qmediamodeler: Example executables are stored in ${EXECUTABLE_OUTPUT_PATH}")
 
-subdirs(lib)
-subdirs(app)
-subdirs(plugins)
-subdirs(ini)
+# add a target to generate API documentation with Doxygen
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+    add_custom_target(doc
+        ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Generating API documentation with Doxygen" VERBATIM
+    )
+endif(DOXYGEN_FOUND)
+
+add_subdirectory(lib)
+add_subdirectory(app)
+add_subdirectory(plugins)
+add_subdirectory(ini)

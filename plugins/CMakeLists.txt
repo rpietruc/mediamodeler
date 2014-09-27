@@ -29,37 +29,37 @@ endif(NOT BUILD_AV_PLUGINS)
 endif(NOT BUILD_ALSA_PLUGINS)
 
 if(BUILD_ALSA_PLUGINS)
-subdirs(alsa)
+add_subdirectory(alsa)
 endif(BUILD_ALSA_PLUGINS)
 
 if(BUILD_AV_PLUGINS)
-subdirs(av)
+add_subdirectory(av)
 endif(BUILD_AV_PLUGINS)
 
 if(BUILD_AUDIO_PLUGINS)
-subdirs(audio)
+add_subdirectory(audio)
 endif(BUILD_AUDIO_PLUGINS)
 
 if(BUILD_ITK_PLUGINS)
-subdirs(itk)
+add_subdirectory(itk)
 endif(BUILD_ITK_PLUGINS)
 
 if(BUILD_OPENCV_PLUGINS)
-subdirs(opencv)
+add_subdirectory(opencv)
 endif(BUILD_OPENCV_PLUGINS)
 
 if(BUILD_POTRACE_PLUGINS)
-subdirs(potrace)
+add_subdirectory(potrace)
 endif(BUILD_POTRACE_PLUGINS)
 
 if(BUILD_ARMADILLO_PLUGINS)
-subdirs(armadillo)
+add_subdirectory(armadillo)
 endif(BUILD_ARMADILLO_PLUGINS)
 
 if(BUILD_MLPACK_PLUGINS)
-subdirs(mlpack)
+add_subdirectory(mlpack)
 endif(BUILD_MLPACK_PLUGINS)
 
 if(BUILD_OTB_PLUGINS)
-subdirs(otb)
+add_subdirectory(otb)
 endif(BUILD_OTB_PLUGINS)
