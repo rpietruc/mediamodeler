@@ -44,6 +44,12 @@ set(QMM_APP_INI
 #    imageclustering.ini
     wavcopy.ini
     wavfilter.ini
-    wavplayer.ini)
+    wavplayer.ini
+    contourapproximation.ini
+    contourapproximation_simple.ini
+    contourapproximation_save.ini
+    contourapproximation_itk.ini
+    regiongrowingpcnn.ini
+    pcnnsegmentation.ini)
 
 install(FILES ${QMM_APP_INI} DESTINATION ${QMM_INI_PATH})

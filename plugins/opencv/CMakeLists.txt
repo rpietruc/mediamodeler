@@ -175,3 +175,19 @@ install(TARGETS vectordrawtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
 add_library(picturesnaketransform SHARED picturesnaketransform.cpp picturesnaketransform.h)
 target_link_libraries(picturesnaketransform modelcore pictureframes ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
 install(TARGETS picturesnaketransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
+
+add_library(contourapproximationtransform SHARED contourapproximationtransform.cpp contourapproximationtransform.h)
+target_link_libraries(contourapproximationtransform contourapproximation ${QMM_LIBRARIES} ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
+install(TARGETS contourapproximationtransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
+
+add_library(picturebinarytransform SHARED picturebinarytransform.cpp picturebinarytransform.h)
+target_link_libraries(picturebinarytransform pulsecoupledneuralnetwork ${QMM_LIBRARIES} ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
+install(TARGETS picturebinarytransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
+
+add_library(picturesegmenttransform SHARED picturesegmenttransform.cpp picturesegmenttransform.h)
+target_link_libraries(picturesegmenttransform regiongrowingpcnn ${QMM_LIBRARIES} ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
+install(TARGETS picturesegmenttransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
+
+add_library(picturecolorsegmenttransform SHARED picturecolorsegmenttransform.cpp picturecolorsegmenttransform.h)
+target_link_libraries(picturecolorsegmenttransform multiplechannelpcnn ${QMM_LIBRARIES} ${Qt5Core_LIBRARIES} ${OpenCV_LIBS})
+install(TARGETS picturecolorsegmenttransform LIBRARY DESTINATION ${QMM_PLUGINS_PATH})
