@@ -1,6 +1,7 @@
 project(pulsecoupledneuralnetwork)
 #set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+add_definitions(-std=c++11)
 find_package(OpenCV REQUIRED)
 
 add_library(pulsecoupledneuralnetwork STATIC pulsecoupledneuralnetwork.c pulsecoupledneuralnetwork.h)

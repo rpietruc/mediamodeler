@@ -14,7 +14,6 @@ add_definitions(-DINSTALL_INI="${CMAKE_INSTALL_PREFIX}/${QMM_INI_PATH}")
 #set(CMAKE_VERBOSE_MAKEFILE true)
 add_definitions(-Wall)
 add_definitions(-fPIC)
-add_definitions(-std=c++11)
 
 include_directories(${PROJECT_SOURCE_DIR}/lib/core)
 include_directories(${PROJECT_SOURCE_DIR}/lib/contourapproximation)
