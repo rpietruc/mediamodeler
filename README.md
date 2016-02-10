@@ -17,12 +17,25 @@ Main authors:
 
 * Rafal Pietruch
 
-    
+Prerequisites
+------------------
+
+* CMake 2.8+
+* Qt5 5.5 (base, multimedia)
+* Qwt 6.1.2 (Qt5)
+* alsa-lib 1.1.0
+* libsndfile 1.0.26
+* FFmpeg 2.8.6
+* OpenCV 2.4.12
+* InsightToolkit-4.9.0
+* armadillo 6.500.4
+* mlpack 2.0.1
+* QCustomPlot 1.3.2 (Qt5)
+ 
 Build instructions
 ------------------
 
 Project was successfully built by the authors on Archlinux OS.
-Prerequirements: cmake, qt5-base, qt5-multimedia, qwt-qt5, insight-toolkit, opencv, alsa-lib, libsndfile, qcustomplot-qt5, ffmpeg.
 
 Build entire project using cmake:
 
