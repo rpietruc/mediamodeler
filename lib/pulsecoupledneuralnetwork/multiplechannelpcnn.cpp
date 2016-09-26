@@ -1,4 +1,5 @@
 #include "multiplechannelpcnn.h"
+#include <numeric>
 
 using namespace cv;
 using namespace std;
@@ -28,7 +29,7 @@ void getAllUnitShifts(const Mat& rgbImg, vector<Mat> &shifts)
     vector<int> indexes(9);
     iota(indexes.begin(), indexes.end(), 0); // (0..8)
     indexes.erase(indexes.begin() + 4); // (0..3, 5..8)
- 
+
     vector<CvPoint> points;
     transform(indexes.begin(), indexes.end(), back_inserter(points), [](int i) { return cvPoint(i/3, i%3); });
     // (0, 0) -> [1,0,0; 0,0,0; 0,0,0]
@@ -40,7 +41,7 @@ void getAllUnitShifts(const Mat& rgbImg, vector<Mat> &shifts)
     // (2, 0) -> [0,0,1; 0,0,0; 0,0,0]
     // (2, 1) -> [0,0,0; 0,0,1; 0,0,0]
     // (2, 2) -> [0,0,0; 0,0,0; 0,0,1]
- 
+
     transform(points.begin(), points.end(), back_inserter(shifts),
         [rgbImg] (const CvPoint &delta)
             {
@@ -78,7 +79,7 @@ vector<Mat> getRBFOutput(const Mat& rgbImg, int t, double theta)
     vector<Mat> absdiffs;
     getAbsDiffs(rgbImg, neighbours, absdiffs);
 
-    // output PSP 8 color images at time t 
+    // output PSP 8 color images at time t
     vector<Mat> psp;
     transform(absdiffs.begin(), absdiffs.end(), back_inserter(psp),
         [t](const Mat& mat)

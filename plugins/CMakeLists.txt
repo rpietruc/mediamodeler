@@ -1,64 +1,23 @@
 project(QMM_PLUGINS)
 
-if(NOT BUILD_ALSA_PLUGINS)
-if(NOT BUILD_AV_PLUGINS)
-if(NOT BUILD_AUDIO_PLUGINS)
-if(NOT BUILD_ITK_PLUGINS)
-if(NOT BUILD_OPENCV_PLUGINS)
-if(NOT BUILD_POTRACE_PLUGINS)
-if(NOT BUILD_ARMADILLO_PLUGINS)
-if(NOT BUILD_MLPACK_PLUGINS)
-if(NOT BUILD_OTB_PLUGINS)
-set(BUILD_ALSA_PLUGINS 1)
-set(BUILD_AV_PLUGINS 1)
-set(BUILD_AUDIO_PLUGINS 1)
-set(BUILD_ITK_PLUGINS 1)
-set(BUILD_OPENCV_PLUGINS 1)
-set(BUILD_POTRACE_PLUGINS 1)
-set(BUILD_ARMADILLO_PLUGINS 1)
-set(BUILD_MLPACK_PLUGINS 1)
-set(BUILD_OTB_PLUGINS 0) #no default orpheo-toolbox
-endif(NOT BUILD_OTB_PLUGINS)
-endif(NOT BUILD_MLPACK_PLUGINS)
-endif(NOT BUILD_ARMADILLO_PLUGINS)
-endif(NOT BUILD_POTRACE_PLUGINS)
-endif(NOT BUILD_OPENCV_PLUGINS)
-endif(NOT BUILD_ITK_PLUGINS)
-endif(NOT BUILD_AUDIO_PLUGINS)
-endif(NOT BUILD_AV_PLUGINS)
-endif(NOT BUILD_ALSA_PLUGINS)
+#mandatory plugins
 
-if(BUILD_ALSA_PLUGINS)
 add_subdirectory(alsa)
-endif(BUILD_ALSA_PLUGINS)
-
-if(BUILD_AV_PLUGINS)
 add_subdirectory(av)
-endif(BUILD_AV_PLUGINS)
-
-if(BUILD_AUDIO_PLUGINS)
 add_subdirectory(audio)
-endif(BUILD_AUDIO_PLUGINS)
+add_subdirectory(opencv)
+add_subdirectory(mlpack)
+add_subdirectory(armadillo)
+
+#optional plugins
 
 if(BUILD_ITK_PLUGINS)
 add_subdirectory(itk)
 endif(BUILD_ITK_PLUGINS)
 
-if(BUILD_OPENCV_PLUGINS)
-add_subdirectory(opencv)
-endif(BUILD_OPENCV_PLUGINS)
-
 if(BUILD_POTRACE_PLUGINS)
 add_subdirectory(potrace)
 endif(BUILD_POTRACE_PLUGINS)
-
-if(BUILD_ARMADILLO_PLUGINS)
-add_subdirectory(armadillo)
-endif(BUILD_ARMADILLO_PLUGINS)
-
-if(BUILD_MLPACK_PLUGINS)
-add_subdirectory(mlpack)
-endif(BUILD_MLPACK_PLUGINS)
 
 if(BUILD_OTB_PLUGINS)
 add_subdirectory(otb)

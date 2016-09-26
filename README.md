@@ -1,4 +1,4 @@
-qmediamodeler - Multidimensional Signal/Image Processing Framework 
+qmediamodeler - Multidimensional Signal/Image Processing Framework
 ==================================================================
 
 Introduction
@@ -17,21 +17,27 @@ Main authors:
 
 * Rafal Pietruch
 
-Prerequisites
+Dependencies
 ------------------
 
-* CMake 2.8+
-* Qt5 5.5 (base, multimedia)
-* Qwt 6.1.2 (Qt5)
-* alsa-lib 1.1.0
-* libsndfile 1.0.26
-* FFmpeg 2.8.6
-* OpenCV 2.4.12
-* InsightToolkit-4.9.0
-* armadillo 6.500.4
-* mlpack 2.0.1
-* QCustomPlot 1.3.2 (Qt5)
- 
+* [CMake 3.6.2](https://cmake.org/)
+* [Qt 5.7](https://www.qt.io/)
+* [Qwt 6.1.3](http://qwt.sourceforge.net/)
+* [alsa-lib 1.1.2](http://alsa-project.org/)
+* [libsndfile 1.0.27](http://www.mega-nerd.com/libsndfile/)
+* [FFmpeg 3.1.3](https://www.ffmpeg.org/)
+* [OpenCV 3.1.0](http://opencv.org/)
+* [Armadillo 7.400.2](http://arma.sourceforge.net/)
+* [Atlas-Lapack 3.10.3](http://math-atlas.sourceforge.net/)
+* [mlpack 2.0.3](http://www.mlpack.org/)
+* [QCustomPlot-Qt5 1.3.2](http://qcustomplot.com/)
+
+Optional Dependencies
+------------------
+
+* [InsightToolkit-4.10.0](https://itk.org/)
+* [Potrace 1.13](http://potrace.sourceforge.net/)
+
 Build instructions
 ------------------
 
@@ -44,16 +50,10 @@ Build entire project using cmake:
     cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Debug ../qmediamodeler
     make -j5
 
-To build only specific plugins use following cmake switches:
+To build optional plugins use following cmake switches:
 
-    -DBUILD_ALSA_PLUGINS=1
-    -DBUILD_AV_PLUGINS=1
-    -DBUILD_AUDIO_PLUGINS=1
     -DBUILD_ITK_PLUGINS=1
-    -DBUILD_OPENCV_PLUGINS=1
     -DBUILD_POTRACE_PLUGINS=1
-    -DBUILD_ARMADILLO_PLUGINS=1
-    -DBUILD_MLPACK_PLUGINS=1
     -DBUILD_OTB_PLUGINS=1
 
 Install:

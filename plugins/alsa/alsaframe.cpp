@@ -43,7 +43,7 @@ void AlsaFrame::setSampleTime(double aSampleTime)
 
 void AlsaFrame::setFrameTime(double aFrameTime)
     {
-    if (mDimensions[Time].mDelta);
+    if (mDimensions[Time].mDelta)
         {
         mDimensions[Time].mResolution = aFrameTime/mDimensions[Time].mDelta;
         resizeSoundBuffer();

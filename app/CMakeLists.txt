@@ -7,12 +7,6 @@ find_package(Qt5Widgets REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(Boost COMPONENTS system chrono program_options REQUIRED)
 
-find_package(ITK REQUIRED)
-if(ITK_FOUND)
-  include(${ITK_USE_FILE})
-  include_directories(${ITK_INCLUDE_DIRS})
-endif(ITK_FOUND)
-
 include_directories(${Qt5Widgets_INCLUDES})
 include_directories(${Boost_INCLUDE_DIR})
 
